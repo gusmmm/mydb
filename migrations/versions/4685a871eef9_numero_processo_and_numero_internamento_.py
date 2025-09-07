@@ -1,8 +1,8 @@
-"""initial migration
+"""numero_processo and numero_internamento are now unique
 
-Revision ID: 17057df566ef
+Revision ID: 4685a871eef9
 Revises: 
-Create Date: 2025-09-07 22:25:00.439459
+Create Date: 2025-09-07 22:42:46.829437
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '17057df566ef'
+revision: str = '4685a871eef9'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,16 +29,35 @@ def upgrade() -> None:
     sa.Column('sexo', sa.Enum('M', 'F', name='sexoenum'), nullable=False),
     sa.Column('morada', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('numero_processo')
     )
     op.create_table('internamento',
     sa.Column('numero_internamento', sa.Integer(), nullable=False),
     sa.Column('data_entrada', sa.Date(), nullable=True),
     sa.Column('data_alta', sa.Date(), nullable=True),
+    sa.Column('data_queimadura', sa.Date(), nullable=True),
+    sa.Column('origem_entrada', sa.Integer(), nullable=True),
+    sa.Column('destino_alta', sa.Integer(), nullable=True),
+    sa.Column('ASCQ_total', sa.Integer(), nullable=True),
+    sa.Column('lesao_inalatoria', sa.Enum('SIM', 'NAO', 'SUSPEITA', name='lesaoinalatorialenum'), nullable=True),
+    sa.Column('mecanismo_queimadura', sa.Integer(), nullable=True),
+    sa.Column('agente_queimadura', sa.Integer(), nullable=True),
+    sa.Column('tipo_acidente', sa.Integer(), nullable=True),
+    sa.Column('incendio_florestal', sa.Boolean(), nullable=True),
+    sa.Column('contexto_violento', sa.Enum('SIM', 'NAO', 'SUSPEITA', name='contextoviolentoenum'), nullable=True),
+    sa.Column('suicidio_tentativa', sa.Boolean(), nullable=True),
+    sa.Column('fogueira_queda', sa.Boolean(), nullable=True),
+    sa.Column('lareira_queda', sa.Boolean(), nullable=True),
+    sa.Column('escarotomias_entrada', sa.Boolean(), nullable=True),
+    sa.Column('intubacao_OT', sa.Enum('SIM', 'NAO', 'OUTRO', name='intubacaootenum'), nullable=True),
+    sa.Column('VMI_dias', sa.Integer(), nullable=True),
+    sa.Column('VNI', sa.Boolean(), nullable=True),
     sa.Column('doente_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['doente_id'], ['doente.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('numero_internamento')
     )
     # ### end Alembic commands ###
 

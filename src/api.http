@@ -1,23 +1,251 @@
+### Test Cases for MyDB API
+
+### 1. Basic Patient Creation (Simple Case)
 POST http://localhost:8088/doentes
 Content-Type: application/json
 
 {
-    "nome": "panssa",
-    "numero_processo": 3851,
-    "data_nascimento": "2000-01-01",
+    "nome": "João Silva",
+    "numero_processo": 12345,
+    "data_nascimento": "1990-05-15",
     "sexo": "M",
-    "morada": "Rua Testis, 123",
+    "morada": "Rua das Flores, 123"
+}
+
+###
+
+### 2. Patient with Basic Internamentos
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Maria Santos",
+    "numero_processo": 12346,
+    "data_nascimento": "1985-03-20",
+    "sexo": "F",
+    "morada": "Avenida Central, 456",
     "internamentos": [
         {
-            "numero_internamento": 523532,
-            "data_entrada": "2023-01-01",
-            "data_alta": "2023-01-10"
-        },
-        {
-            "numero_internamento": 523533,
-            "data_entrada": "2023-02-01",
-            "data_alta": "2023-02-05"
+            "numero_internamento": 1001,
+            "data_entrada": "2023-01-15",
+            "data_alta": "2023-01-25"
         }
     ]
 }
+
+###
+
+### 3. Patient with Complex Internamento (All Fields)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Carlos Ferreira",
+    "numero_processo": 52666,
+    "data_nascimento": "1978-12-10",
+    "sexo": "M",
+    "morada": "Rua Nova, 789",
+    "internamentos": [
+        {
+            "numero_internamento": 626242,
+            "data_entrada": "2023-06-01",
+            "data_alta": "2023-06-15",
+            "data_queimadura": "2023-05-30",
+            "origem_entrada": 1,
+            "destino_alta": 2,
+            "ASCQ_total": 25,
+            "lesao_inalatoria": "SIM",
+            "mecanismo_queimadura": 1,
+            "agente_queimadura": 1,
+            "tipo_acidente": 1,
+            "incendio_florestal": false,
+            "contexto_violento": "NAO",
+            "suicidio_tentativa": false,
+            "fogueira_queda": true,
+            "lareira_queda": false,
+            "escarotomias_entrada": true,
+            "intubacao_OT": "SIM",
+            "VMI_dias": 5,
+            "VNI": false
+        }
+    ]
+}
+
+###
+
+### 4. Patient with Multiple Internamentos
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Ana Costa",
+    "numero_processo": 12348,
+    "data_nascimento": "1992-08-25",
+    "sexo": "F",
+    "morada": "Travessa do Sol, 321",
+    "internamentos": [
+        {
+            "numero_internamento": 3001,
+            "data_entrada": "2023-03-01",
+            "data_alta": "2023-03-10",
+            "data_queimadura": "2023-02-28",
+            "lesao_inalatoria": "SUSPEITA",
+            "contexto_violento": "SUSPEITA",
+            "VMI_dias": 2
+        },
+        {
+            "numero_internamento": 3002,
+            "data_entrada": "2023-07-15",
+            "data_alta": "2023-07-20",
+            "data_queimadura": "2023-07-14",
+            "lesao_inalatoria": "NAO",
+            "contexto_violento": "NAO",
+            "suicidio_tentativa": true,
+            "intubacao_OT": "NAO"
+        }
+    ]
+}
+
+###
+
+### 5. Patient with Forest Fire Case
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Pedro Oliveira",
+    "numero_processo": 12349,
+    "data_nascimento": "1965-11-03",
+    "sexo": "M",
+    "morada": "Aldeia das Montanhas, s/n",
+    "internamentos": [
+        {
+            "numero_internamento": 4001,
+            "data_entrada": "2023-08-10",
+            "data_alta": "2023-09-05",
+            "data_queimadura": "2023-08-09",
+            "ASCQ_total": 45,
+            "lesao_inalatoria": "SIM",
+            "incendio_florestal": true,
+            "contexto_violento": "NAO",
+            "escarotomias_entrada": true,
+            "intubacao_OT": "SIM",
+            "VMI_dias": 12,
+            "VNI": true
+        }
+    ]
+}
+
+###
+
+### 6. GET - List All Patients
+GET http://localhost:8088/doentes
+
+###
+
+### 7. GET - Filter Patients by Gender (Male)
+GET http://localhost:8088/doentes?sexo=M
+
+###
+
+### 8. GET - Filter Patients by Gender (Female)
+GET http://localhost:8088/doentes?sexo=F
+
+###
+
+### 9. GET - Get Patient by Process Number (Existing)
+GET http://localhost:8088/doentes/numero_processo/12345
+
+###
+
+### 10. GET - Get Patient by Process Number (Non-existing - Should return 404)
+GET http://localhost:8088/doentes/numero_processo/99999
+
+###
+
+### 11. POST - Test Validation Error (Missing Required Field)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "numero_processo": 12350,
+    "data_nascimento": "1980-01-01",
+    "sexo": "M",
+    "morada": "Rua Teste"
+}
+
+###
+
+### 12. POST - Test Validation Error (Invalid Gender)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Teste Invalid",
+    "numero_processo": 12351,
+    "data_nascimento": "1980-01-01",
+    "sexo": "X",
+    "morada": "Rua Teste"
+}
+
+###
+
+### 13. POST - Test Validation Error (Invalid Date Format)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Teste Date",
+    "numero_processo": 12352,
+    "data_nascimento": "invalid-date",
+    "sexo": "M",
+    "morada": "Rua Teste"
+}
+
+###
+
+### 14. POST - Test Validation Error (Invalid Enum in Internamento)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Teste Enum",
+    "numero_processo": 12353,
+    "data_nascimento": "1980-01-01",
+    "sexo": "M",
+    "morada": "Rua Teste",
+    "internamentos": [
+        {
+            "numero_internamento": 5001,
+            "data_entrada": "2023-01-01",
+            "lesao_inalatoria": "INVALID_VALUE"
+        }
+    ]
+}
+
+###
+
+### 15. POST - Test Duplicate Process Number (Should Fail)
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Duplicate Test",
+    "numero_processo": 12345,
+    "data_nascimento": "1990-01-01",
+    "sexo": "F",
+    "morada": "Rua Duplicate"
+}
+
+###
+
+### 16. GET - About Endpoint
+GET http://localhost:8088/about
+
+###
+
+### 17. GET - Root Endpoint
+GET http://localhost:8088/
+
+###
 

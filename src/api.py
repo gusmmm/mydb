@@ -86,12 +86,12 @@ async def create_doente(
                internamento.numero_internamento, internamento.data_entrada)
             ic(f"Internamento {i + 1} date types:", 
                type(internamento.data_entrada), type(internamento.data_alta))
-            internamento_bd = Internamento(
-                numero_internamento=internamento.numero_internamento,
-                data_entrada=internamento.data_entrada,
-                data_alta=internamento.data_alta,
-                doente_id=doente_bd.id  # Now this will have the correct ID
-            )
+            
+            # Convert the InternamentoCreate to dict and add doente_id
+            internamento_data = internamento.model_dump()
+            internamento_data['doente_id'] = doente_bd.id
+            
+            internamento_bd = Internamento(**internamento_data)
             ic(f"Created internamento {i + 1} with doente_id:",
                internamento_bd.doente_id)
             session.add(internamento_bd)
