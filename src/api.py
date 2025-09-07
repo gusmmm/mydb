@@ -5,7 +5,7 @@ from icecream import ic
 from sqlmodel import Session, select
 
 from src.db import get_session, init_db
-from src.models.models import Doente, DoenteCreate, Internamento, SexoEnum
+from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum
 
 
 @asynccontextmanager
@@ -58,7 +58,8 @@ async def create_doente(
 ) -> Doente:
     ic("Starting doente creation")
     ic(doente.nome, doente.numero_processo, doente.sexo)
-
+    ic("Date type check - data_nascimento:", type(doente.data_nascimento), doente.data_nascimento)
+    
     # Create the doente instance
     doente_bd = Doente(
         nome=doente.nome,
@@ -67,7 +68,7 @@ async def create_doente(
         sexo=doente.sexo,
         morada=doente.morada
     )
-
+    
     ic("Created doente instance", doente_bd)
 
     # Add and flush to get the ID, but don't commit yet
@@ -83,6 +84,8 @@ async def create_doente(
         for i, internamento in enumerate(doente.internamentos):
             ic(f"Creating internamento {i + 1}",
                internamento.numero_internamento, internamento.data_entrada)
+            ic(f"Internamento {i + 1} date types:", 
+               type(internamento.data_entrada), type(internamento.data_alta))
             internamento_bd = Internamento(
                 numero_internamento=internamento.numero_internamento,
                 data_entrada=internamento.data_entrada,

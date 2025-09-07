@@ -6,6 +6,18 @@ Content-Type: application/json
     "numero_processo": 3851,
     "data_nascimento": "2000-01-01",
     "sexo": "M",
-    "morada": "Rua Testis, 123"
+    "morada": "Rua Testis, 123",
+    "internamentos": [
+        {
+            "numero_internamento": 523532,
+            "data_entrada": "2023-01-01",
+            "data_alta": "2023-01-10"
+        },
+        {
+            "numero_internamento": 523533,
+            "data_entrada": "2023-02-01",
+            "data_alta": "2023-02-05"
+        }
+    ]
 }
 
