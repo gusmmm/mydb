@@ -1,0 +1,215 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+// database bduq
+
+Table doentes {
+  id int [pk]
+  numero_processo int [not null, unique]
+  nome varchar
+  data_nascimento date
+  sexo enum [note: "('Masculino', 'Feminino', 'Outro')"]
+  morada varchar
+  created_at datetime
+  last_modified datetime
+}
+
+Table internamentos {
+  id int [pk]
+  numero_internamento int [not null, unique]
+  doente_id int [not null]
+  data_entrada date
+  data_alta date
+  data_queimadura date
+  origem_entrada int
+  destino_alta int
+  ASCQ_total int
+  lesao_inalatoria enum
+  mecanismo_queimadura int
+  agente_queimadura int
+  tipo_acidente int
+  incendio_florestal bool
+  contexto_violento enum
+  suicidio_tentativa bool
+  fogueira_queda bool
+  lareira_queda bool
+  escarotomias_entrada bool
+  intubacao_OT enum
+  VMI_dias int
+  VNI bool
+
+}
+
+Table tipoAcidente {
+  id int [pk]
+  acidente varchar
+  tipo_acidente varchar
+}
+
+Table agenteQueimadura {
+  id int [pk]
+  agente_queimadura varchar
+  nota varchar
+}
+
+Table mecanismoQueimadura {
+  id int [pk]
+  mecanismo_queimadura varchar
+  nota varchar
+}
+
+Table origemDestino {
+  id int [pk]
+  local varchar [not null]
+  int_ext enum [note: "('Interno', 'Externo', 'Outro')"]
+  descricao varchat
+}
+
+Table queimaduras {
+  id int [pk]
+  internamento_id int [not null]
+  local_anatomico int
+  grau_maximo enum
+  notas varchar
+}
+
+Table traumas {
+  id int [pk]
+  internamento_id int [not null]
+  tipo_local int
+  cirurgia_urgente bool
+}
+
+Table infecoes {
+  id int [pk]
+  internamento_id int [not null]
+  agente int
+  local_tipo_infecao int
+  nota varchar
+}
+
+Table Internamento_Antibioticos {
+  id int [pk]
+  internamento_id int [not null]
+  antibiotico int
+  indicacao int
+}
+
+Table Internamento_Procedimentos {
+  id int [pk]
+  internamento_id int [not null]
+  procedimento int
+}
+
+Table procedimento {
+  id int [pk]
+  nome_procedimento varchar
+  tipo_procedimento varchar
+}
+
+Table Doente_Patologias {
+  id int [pk]
+  doente_id int [not null]
+  patologia int
+  nota varchar
+}
+
+Table patologia {
+  id int [pk]
+  nome_patologia varchar
+  classe_patologia varchar
+  codigo varchar
+}
+
+Table Doente_Medicacoes {
+  id int [pk]
+  doente_id int [not null]
+  medicacao int
+  nota varchar
+}
+
+Table medicacao {
+  id int [pk]
+  nome_medicacao varchar
+  classe_terapeutica varchar
+  codigo varchar
+}
+
+Table localAnatomico {
+  id int [pk]
+  local_anatomico varchar
+  regiao_anatomica varchar
+}
+
+Table traumaTipo {
+  id int [pk]
+  local varchar
+  tipo varchar
+}
+
+Table agenteInfeccioso {
+  id int [pk]
+  nome varchar
+  tipo_agente varchar
+}
+
+Table tipoInfeccao {
+  id int [pk]
+  tipo_infeccao varchar
+  local varchar
+}
+
+Table antibiotico {
+  id int [pk]
+  nome_antibiotico varchar
+  classe_antibiotico varchar
+  codigo varchar  
+}
+
+Table indicacaoAntibiotico {
+  id int [pk]
+  indicacao varchar
+}
+
+Ref: "doentes"."id" < "internamentos"."doente_id"
+
+Ref: "origemDestino"."id" < "internamentos"."origem_entrada"
+
+Ref: "origemDestino"."id" < "internamentos"."destino_alta"
+
+Ref: "internamentos"."id" < "queimaduras"."internamento_id"
+
+Ref: "internamentos"."id" < "traumas"."internamento_id"
+
+Ref: "internamentos"."id" < "infecoes"."internamento_id"
+
+Ref: "internamentos"."id" < "Internamento_Antibioticos"."internamento_id"
+
+Ref: "internamentos"."id" < "Internamento_Procedimentos"."internamento_id"
+
+Ref: "doentes"."id" < "Doente_Patologias"."doente_id"
+
+Ref: "doentes"."id" < "Doente_Medicacoes"."doente_id"
+
+Ref: "mecanismoQueimadura"."id" < "internamentos"."mecanismo_queimadura"
+
+Ref: "agenteQueimadura"."id" < "internamentos"."agente_queimadura"
+
+Ref: "procedimento"."id" < "Internamento_Procedimentos"."procedimento"
+
+Ref: "tipoAcidente"."id" < "internamentos"."tipo_acidente"
+
+Ref: "medicacao"."id" < "Doente_Medicacoes"."medicacao"
+
+Ref: "localAnatomico"."id" < "queimaduras"."local_anatomico"
+
+Ref: "traumaTipo"."id" < "traumas"."tipo_local"
+
+Ref: "agenteInfeccioso"."id" < "infecoes"."agente"
+
+Ref: "tipoInfeccao"."id" < "infecoes"."local_tipo_infecao"
+
+Ref: "antibiotico"."id" < "Internamento_Antibioticos"."antibiotico"
+
+Ref: "indicacaoAntibiotico"."id" < "Internamento_Antibioticos"."indicacao"
+
+Ref: "patologia"."id" < "Doente_Patologias"."patologia"
