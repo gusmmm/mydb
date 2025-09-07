@@ -11,7 +11,7 @@
 
 ## libraries
 - use fastapi for the backend. url: https://fastapi.tiangolo.com
-- use sqlalchemy and sqlmodel for the database
+- use sqlalchemy and sqlmodel for the database. url for sqlmodel: https://sqlmodel.tiangolo.com
 - use pydantic for data validation. Always use pydantic V2. url: https://docs.pydantic.dev/latest/
 - use alembic for database migrations
 - use pytest and pytest-cov for testing

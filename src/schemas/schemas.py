@@ -15,8 +15,10 @@ class DoenteBase(BaseModel):
     sexo: SexoEnum
     morada: str
 
+
 class DoenteCreate(DoenteBase):
     pass
+
 
 class DoenteWithID(DoenteBase):
     id: int

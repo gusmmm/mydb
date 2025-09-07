@@ -2,7 +2,7 @@
 // Docs: https://dbml.dbdiagram.io/docs
 // database bduq
 
-Table doentes {
+Table doente {
   id int [pk]
   numero_processo int [not null, unique]
   nome varchar
@@ -13,7 +13,7 @@ Table doentes {
   last_modified datetime
 }
 
-Table internamentos {
+Table internamento {
   id int [pk]
   numero_internamento int [not null, unique]
   doente_id int [not null]
@@ -170,33 +170,33 @@ Table indicacaoAntibiotico {
   indicacao varchar
 }
 
-Ref: "doentes"."id" < "internamentos"."doente_id"
+Ref: "doente"."id" < "internamento"."doente_id"
 
-Ref: "origemDestino"."id" < "internamentos"."origem_entrada"
+Ref: "origemDestino"."id" < "internamento"."origem_entrada"
 
-Ref: "origemDestino"."id" < "internamentos"."destino_alta"
+Ref: "origemDestino"."id" < "internamento"."destino_alta"
 
-Ref: "internamentos"."id" < "queimaduras"."internamento_id"
+Ref: "internamento"."id" < "queimaduras"."internamento_id"
 
-Ref: "internamentos"."id" < "traumas"."internamento_id"
+Ref: "internamento"."id" < "traumas"."internamento_id"
 
-Ref: "internamentos"."id" < "infecoes"."internamento_id"
+Ref: "internamento"."id" < "infecoes"."internamento_id"
 
-Ref: "internamentos"."id" < "Internamento_Antibioticos"."internamento_id"
+Ref: "internamento"."id" < "Internamento_Antibioticos"."internamento_id"
 
-Ref: "internamentos"."id" < "Internamento_Procedimentos"."internamento_id"
+Ref: "internamento"."id" < "Internamento_Procedimentos"."internamento_id"
 
-Ref: "doentes"."id" < "Doente_Patologias"."doente_id"
+Ref: "doente"."id" < "Doente_Patologias"."doente_id"
 
-Ref: "doentes"."id" < "Doente_Medicacoes"."doente_id"
+Ref: "doente"."id" < "Doente_Medicacoes"."doente_id"
 
-Ref: "mecanismoQueimadura"."id" < "internamentos"."mecanismo_queimadura"
+Ref: "mecanismoQueimadura"."id" < "internamento"."mecanismo_queimadura"
 
-Ref: "agenteQueimadura"."id" < "internamentos"."agente_queimadura"
+Ref: "agenteQueimadura"."id" < "internamento"."agente_queimadura"
 
 Ref: "procedimento"."id" < "Internamento_Procedimentos"."procedimento"
 
-Ref: "tipoAcidente"."id" < "internamentos"."tipo_acidente"
+Ref: "tipoAcidente"."id" < "internamento"."tipo_acidente"
 
 Ref: "medicacao"."id" < "Doente_Medicacoes"."medicacao"
 

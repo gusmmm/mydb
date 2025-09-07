@@ -1,0 +1,23 @@
+POST http://localhost:8088/doentes
+Content-Type: application/json
+
+{
+    "nome": "Brutus Caesar",
+    "numero_processo": 12346,
+    "data_nascimento": "2000-01-01",
+    "sexo": "F",
+    "morada": "Rua Nova, 123",
+    "internamentos": [
+        {
+            "numero_internamento": 1,
+            "data_entrada": "2023-01-01",
+            "data_alta": "2023-01-10"
+        },
+        {
+            "numero_internamento": 2,
+            "data_entrada": "2023-02-01",
+            "data_alta": "2023-02-05"
+        }
+    ]
+}
+

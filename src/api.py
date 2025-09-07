@@ -1,8 +1,18 @@
-from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
 
-from src.schemas.schemas import DoenteCreate, DoenteWithID, SexoEnum
+from fastapi import FastAPI, Depends, HTTPException
 
-app = FastAPI()
+from src.db import init_db, get_session
+from src.models.models import SexoEnum, Doente, DoenteCreate, Internamento
+from sqlmodel import Session
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 doentes = [
     {"id": 1, "nome": "Alice", "numero_processo": 30,
@@ -17,7 +27,7 @@ doentes = [
      "data_nascimento": "1988-07-14", "sexo": "F", "morada": "Rua E, 202"},
 ]
 
-
+"""
 @app.get("/")
 async def index() -> dict[str, str]:
     return {"message": "Hello, World!"}
@@ -34,8 +44,10 @@ async def read_doentes(sexo: SexoEnum | None = None) -> list[DoenteWithID]:
         result = [doente for doente in doentes
               if doente["sexo"].upper() == sexo.value.upper()]
         if not result:
-            raise HTTPException(status_code=404,
-                                detail="No doentes found with the specified sexo")
+            raise HTTPException(
+                status_code=404,
+                detail="No doentes found with the specified sexo"
+            )
         return [DoenteWithID(**doente) for doente in result]
     return [
         DoenteWithID(**doente) for doente in doentes
@@ -58,18 +70,47 @@ async def read_doente_by_numero_processo(numero_processo: int) -> DoenteWithID:
     raise HTTPException(status_code=404, detail="Doente not found")
 
 
-# @app.get("/doentes/sexo/{sexo}")
-# async def read_doentes_by_sexo(sexo: SexoEnum) -> list[Doente]:
-#     result = [doente for doente in doentes
-#               if doente["sexo"].upper() == sexo.value.upper()]
-#     if not result:
-#         raise HTTPException(status_code=404,
-#                             detail="No doentes found with the specified sexo")
-#     return [Doente(**doente) for doente in result]
+@app.get("/doentes/sexo/{sexo}")
+async def read_doentes_by_sexo(sexo: SexoEnum) -> list[Doente]:
+    result = [doente for doente in doentes
+              if doente["sexo"].upper() == sexo.value.upper()]
+    if not result:
+        raise HTTPException(status_code=404,
+                            detail="No doentes found with the specified sexo")
+    return [Doente(**doente) for doente in result]
+"""
 
 @app.post("/doentes", status_code=201)
-async def create_doente(doente: DoenteCreate) -> DoenteWithID:
-    new_id = max(doente["id"] for doente in doentes) + 1 if doentes else 1
-    new_doente = DoenteWithID(id=new_id, **doente.model_dump()).model_dump()
-    doentes.append(new_doente)
-    return DoenteWithID(**new_doente)
+async def create_doente(
+    doente: DoenteCreate,
+    session: Session = Depends(get_session)
+) -> Doente:
+    # Create the doente instance
+    doente_bd = Doente(
+        nome=doente.nome,
+        numero_processo=doente.numero_processo,
+        data_nascimento=doente.data_nascimento,
+        sexo=doente.sexo,
+        morada=doente.morada
+    )
+    
+    # Add and flush to get the ID, but don't commit yet
+    session.add(doente_bd)
+    session.flush()  # This assigns the ID to doente_bd
+    
+    # Now create internamentos with the correct doente_id
+    if doente.internamentos:
+        for internamento in doente.internamentos:
+            internamento_bd = Internamento(
+                numero_internamento=internamento.numero_internamento,
+                data_entrada=internamento.data_entrada,
+                data_alta=internamento.data_alta,
+                doente_id=doente_bd.id  # Now this will have the correct ID
+            )
+            session.add(internamento_bd)
+    
+    # Commit all changes
+    session.commit()
+    session.refresh(doente_bd)
+    return doente_bd
+

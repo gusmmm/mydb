@@ -10,6 +10,7 @@ dependencies = [
     "pytest-cov>=6.3.0",
     "python-dotenv>=1.1.1",
     "ruff>=0.12.12",
+    "sqlmodel>=0.0.24",
     "taskipy>=1.14.1",
 ]
 
