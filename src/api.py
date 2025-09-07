@@ -49,17 +49,6 @@ async def read_doente_by_numero_processo(
         raise HTTPException(status_code=404, detail="Doente not found")
     return doente
 
-
-# @app.get("/doentes/sexo/{sexo}")
-# async def read_doentes_by_sexo(sexo: SexoEnum) -> list[Doente]:
-#     result = [doente for doente in doentes
-#               if doente["sexo"].upper() == sexo.value.upper()]
-#     if not result:
-#         raise HTTPException(status_code=404,
-#                             detail="No doentes found with the specified sexo")
-#     return [Doente(**doente) for doente in result]
-
-
 @app.post("/doentes", status_code=201)
 async def create_doente(
     doente: DoenteCreate,
