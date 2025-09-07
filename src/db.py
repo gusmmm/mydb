@@ -3,10 +3,13 @@ import os
 from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine, Session
 
+# Import models so they are registered with SQLModel
+from src.models.models import Doente, Internamento
+
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./mydb.db")
 
 engine = create_engine(DATABASE_URL, echo=True)
 

@@ -27,7 +27,7 @@ class InternamentoBase(SQLModel):
     numero_internamento: int
     data_entrada: str | None = None
     data_alta: str | None = None
-    doente_id: int = Field(foreign_key="doente.id")
+    doente_id: int | None = Field(foreign_key="doente.id")
 
 
 class Internamento(InternamentoBase, table=True):
