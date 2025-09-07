@@ -1,10 +1,9 @@
 import os
 
 from dotenv import load_dotenv
-from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel import Session, SQLModel, create_engine
 
 # Import models so they are registered with SQLModel
-from src.models.models import Doente, Internamento
 
 # Load environment variables
 load_dotenv()
@@ -16,6 +15,7 @@ engine = create_engine(DATABASE_URL, echo=True)
 
 def init_db():
     SQLModel.metadata.create_all(engine)
+
 
 def get_session():
     with Session(engine) as session:

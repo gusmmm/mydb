@@ -15,8 +15,10 @@ class DoenteBase(SQLModel):
     sexo: SexoEnum
     morada: str
 
+
 class DoenteCreate(DoenteBase):
     internamentos: list["Internamento"] | None = None
+
 
 class Doente(DoenteBase, table=True):
     id: int = Field(default=None, primary_key=True)
