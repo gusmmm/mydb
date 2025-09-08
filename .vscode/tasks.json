@@ -1,0 +1,85 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Alembic Upgrade",
+			"type": "shell",
+			"command": "alembic upgrade head",
+			"group": "build"
+		},
+		{
+			"label": "Run Alembic Upgrade via UV",
+			"type": "shell",
+			"command": "uv run alembic upgrade head",
+			"group": "build"
+		},
+		{
+			"label": "Check Database Schema",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(doente)')); print('Doente columns:', [row for row in result]); result = conn.execute(text('PRAGMA table_info(internamento)')); print('Internamento columns:', [row for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Start FastAPI Server",
+			"type": "shell",
+			"command": "uv run uvicorn src.api:app --reload --port 8000",
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Start FastAPI Server on Port 8001",
+			"type": "shell",
+			"command": "uv run uvicorn src.api:app --reload --port 8001",
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Test Patient Creation with Audit Fields",
+			"type": "shell",
+			"command": "curl -X POST http://127.0.0.1:8001/doentes/ -H \"Content-Type: application/json\" -d '{\"nome\": \"Audit Test Patient\", \"numero_processo\": 12345, \"sexo\": \"M\", \"morada\": \"Test Address\", \"data_nascimento\": \"1990-01-01\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Simple Patient Creation Test",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/doentes/' -H 'Content-Type: application/json' -d '{\"nome\": \"Test Patient\", \"numero_processo\": 99999, \"sexo\": \"M\", \"morada\": \"Test Street\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Test API Without Trailing Slash",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/doentes' -H 'Content-Type: application/json' -d '{\"nome\": \"Test Patient\", \"numero_processo\": 88888, \"sexo\": \"M\", \"morada\": \"Test Street\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Get All Patients",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/doentes'",
+			"group": "test"
+		},
+		{
+			"label": "Test Internamento Creation with Audit Fields",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 77777, \"doente_id\": 1, \"data_entrada\": \"2025-09-08\", \"ASCQ_total\": 15, \"lesao_inalatoria\": \"NAO\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Check Current Patient Data",
+			"type": "shell",
+			"command": "sleep 2 && curl -X GET 'http://127.0.0.1:8001/doentes/88888'",
+			"group": "test"
+		},
+		{
+			"label": "Get Patient by Numero Processo",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/doentes/numero_processo/88888'",
+			"group": "test"
+		},
+		{
+			"label": "Get Internamento by Number",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/internamentos/77777'",
+			"group": "test"
+		}
+	]
+}

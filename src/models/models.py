@@ -1,8 +1,9 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Optional
 
 from pydantic import field_validator
+from sqlalchemy import func
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -50,6 +51,8 @@ class DoenteCreate(DoenteBase):
 
 class Doente(DoenteBase, table=True):
     id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), sa_column_kwargs={"server_default": func.now()})
+    last_modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()})
     internamentos: list["Internamento"] = Relationship(back_populates="doente")
 
 
@@ -90,4 +93,6 @@ class InternamentoCreate(InternamentoBase):
 
 class Internamento(InternamentoBase, table=True):
     id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), sa_column_kwargs={"server_default": func.now()})
+    last_modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()})
     doente: Doente = Relationship(back_populates="internamentos")
