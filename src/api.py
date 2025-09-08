@@ -51,6 +51,59 @@ async def read_doente_by_numero_processo(
     return doente
 
 
+@app.get("/internamentos")
+async def read_internamentos(
+    session: Session = Depends(get_session)
+) -> list[Internamento]:
+    statement = select(Internamento)
+    internamentos = session.exec(statement).all()
+    return list(internamentos)
+
+
+@app.get("/internamentos/{numero_internamento}")
+async def read_internamento_by_numero(
+    numero_internamento: int,
+    session: Session = Depends(get_session)
+) -> Internamento:
+    statement = select(Internamento).where(Internamento.numero_internamento == numero_internamento)
+    internamento = session.exec(statement).first()
+    if not internamento:
+        raise HTTPException(status_code=404, detail="Internamento not found")
+    return internamento
+
+
+@app.post("/internamentos", status_code=201)
+async def create_internamento(
+    internamento: InternamentoCreate,
+    session: Session = Depends(get_session)
+) -> Internamento:
+    ic("Starting internamento creation")
+    ic("Internamento numero:", internamento.numero_internamento, "doente_id:", internamento.doente_id)
+    
+    # Validate that the doente exists if doente_id is provided
+    if internamento.doente_id:
+        doente = session.get(Doente, internamento.doente_id)
+        if not doente:
+            raise HTTPException(status_code=404, detail="Doente not found")
+    
+    # Convert the InternamentoCreate to dict
+    internamento_data = internamento.model_dump()
+    
+    # Create the internamento instance
+    internamento_bd = Internamento(**internamento_data)
+    
+    ic("Created internamento instance", internamento_bd.numero_internamento)
+    
+    # Add and commit
+    session.add(internamento_bd)
+    session.commit()
+    session.refresh(internamento_bd)
+    
+    ic("Committed internamento successfully", internamento_bd.id)
+    
+    return internamento_bd
+
+
 @app.post("/doentes", status_code=201)
 async def create_doente(
     doente: DoenteCreate,

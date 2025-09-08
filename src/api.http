@@ -249,3 +249,25 @@ GET http://localhost:8088/
 
 ###
 
+### GET - List All Internamentos
+GET http://localhost:8088/internamentos
+
+###
+
+### GET - Get Specific Internamento
+GET http://localhost:8088/internamentos/2001
+
+###
+
+### POST - Create Standalone Internamento
+POST http://localhost:8088/internamentos
+Content-Type: application/json
+
+{
+    "numero_internamento": 9001,
+    "data_entrada": "2023-12-01",
+    "data_alta": "2023-12-10",
+    "doente_id": 1,
+    "lesao_inalatoria": "SIM",
+    "contexto_violento": "NAO"
+}
