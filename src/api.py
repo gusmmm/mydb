@@ -5,7 +5,7 @@ from icecream import ic
 from sqlmodel import Session, select
 
 from src.db import get_session, init_db
-from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum
+from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum, TipoAcidente, TipoAcidenteCreate
 
 
 @asynccontextmanager
@@ -161,3 +161,39 @@ async def create_doente(
     ic("Refreshed doente", doente_bd.id)
 
     return doente_bd
+
+
+# TipoAcidente endpoints
+@app.get("/tipos_acidente")
+def read_tipos_acidente(session: Session = Depends(get_session)) -> list[TipoAcidente]:
+    """Get all tipos de acidente."""
+    ic("Getting all tipos de acidente")
+    tipos = session.exec(select(TipoAcidente)).all()
+    ic(f"Found {len(tipos)} tipos de acidente")
+    return tipos
+
+
+@app.get("/tipos_acidente/{tipo_id}")
+def read_tipo_acidente(tipo_id: int, session: Session = Depends(get_session)) -> TipoAcidente:
+    """Get a specific tipo de acidente by ID."""
+    ic(f"Getting tipo de acidente with id: {tipo_id}")
+    tipo = session.get(TipoAcidente, tipo_id)
+    if not tipo:
+        ic(f"Tipo de acidente {tipo_id} not found")
+        raise HTTPException(status_code=404, detail="Tipo de acidente not found")
+    ic(f"Found tipo de acidente: {tipo.acidente}")
+    return tipo
+
+
+@app.post("/tipos_acidente", status_code=201)
+def create_tipo_acidente(tipo: TipoAcidenteCreate, session: Session = Depends(get_session)) -> TipoAcidente:
+    """Create a new tipo de acidente."""
+    ic(f"Creating new tipo de acidente: {tipo.acidente}")
+    
+    tipo_bd = TipoAcidente(**tipo.model_dump())
+    session.add(tipo_bd)
+    session.commit()
+    session.refresh(tipo_bd)
+    
+    ic(f"Created tipo de acidente with id: {tipo_bd.id}")
+    return tipo_bd

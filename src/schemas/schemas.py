@@ -22,3 +22,16 @@ class DoenteCreate(DoenteBase):
 
 class DoenteWithID(DoenteBase):
     id: int
+
+
+class TipoAcidenteBase(BaseModel):
+    acidente: str
+    tipo_acidente: str
+
+
+class TipoAcidenteCreate(TipoAcidenteBase):
+    pass
+
+
+class TipoAcidenteWithID(TipoAcidenteBase):
+    id: int

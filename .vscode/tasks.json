@@ -80,6 +80,72 @@
 			"type": "shell",
 			"command": "curl -X GET 'http://127.0.0.1:8001/internamentos/77777'",
 			"group": "test"
+		},
+		{
+			"label": "Create Migration for TipoAcidente",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"add tipoacidente table and foreign key relationship\"",
+			"group": "build"
+		},
+		{
+			"label": "Run TipoAcidente Migration",
+			"type": "shell",
+			"command": "uv run alembic upgrade head",
+			"group": "build"
+		},
+		{
+			"label": "Check Database Tables",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('SELECT name FROM sqlite_master WHERE type=\\\"table\\\"')); print('Tables:', [row[0] for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Mark Migration as Complete",
+			"type": "shell",
+			"command": "uv run alembic stamp head",
+			"group": "build"
+		},
+		{
+			"label": "Check TipoAcidente Table Schema",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(tipoacidente)')); print('TipoAcidente columns:', [row for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Create TipoAcidente 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/tipos_acidente' -H 'Content-Type: application/json' -d '{\"acidente\": \"Queimadura térmica\", \"tipo_acidente\": \"Doméstico\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create TipoAcidente 2",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/tipos_acidente' -H 'Content-Type: application/json' -d '{\"acidente\": \"Queimadura elétrica\", \"tipo_acidente\": \"Profissional\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create TipoAcidente 3",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/tipos_acidente' -H 'Content-Type: application/json' -d '{\"acidente\": \"Incêndio florestal\", \"tipo_acidente\": \"Natural\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Get All TipoAcidente",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/tipos_acidente'",
+			"group": "test"
+		},
+		{
+			"label": "Test Internamento with TipoAcidente Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 66666, \"doente_id\": 1, \"data_entrada\": \"2025-09-08\", \"ASCQ_total\": 25, \"lesao_inalatoria\": \"SIM\", \"tipo_acidente\": 1}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Invalid TipoAcidente Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 55555, \"doente_id\": 1, \"data_entrada\": \"2025-09-08\", \"ASCQ_total\": 10, \"lesao_inalatoria\": \"NAO\", \"tipo_acidente\": 999}'",
+			"group": "test"
 		}
 	]
 }

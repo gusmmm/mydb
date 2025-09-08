@@ -2,6 +2,7 @@
 // Docs: https://dbml.dbdiagram.io/docs
 // database bduq
 
+// implemented
 Table doente {
   id int [pk]
   numero_processo int [not null, unique]
@@ -13,6 +14,7 @@ Table doente {
   last_modified datetime
 }
 
+// implemented
 Table internamento {
   id int [pk]
   numero_internamento int [not null, unique]
@@ -39,6 +41,7 @@ Table internamento {
 
 }
 
+// implemented
 Table tipoAcidente {
   id int [pk]
   acidente varchar
