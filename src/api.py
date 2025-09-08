@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from src.db import get_session, init_db
 from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum, TipoAcidente, TipoAcidenteCreate
+from src.schemas.schemas import DoenteUpdate, DoentePatch
 
 
 @asynccontextmanager
@@ -49,6 +50,117 @@ async def read_doente_by_numero_processo(
     if not doente:
         raise HTTPException(status_code=404, detail="Doente not found")
     return doente
+
+
+@app.get("/doentes/{doente_id}")
+async def read_doente_by_id(
+    doente_id: int,
+    session: Session = Depends(get_session)
+) -> Doente:
+    """Get a specific doente by ID."""
+    ic(f"Getting doente with id: {doente_id}")
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f"Doente {doente_id} not found")
+        raise HTTPException(status_code=404, detail="Doente not found")
+    ic(f"Found doente: {doente.nome}")
+    return doente
+
+
+@app.put("/doentes/{doente_id}")
+async def update_doente(
+    doente_id: int,
+    doente_update: DoenteUpdate,
+    session: Session = Depends(get_session)
+) -> Doente:
+    """Full update of a doente (PUT - replaces all fields)."""
+    ic(f"Full update of doente with id: {doente_id}")
+    ic("Update data:", doente_update.model_dump())
+    
+    # Get the existing doente
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f"Doente {doente_id} not found for update")
+        raise HTTPException(status_code=404, detail="Doente not found")
+    
+    # Update all fields from the update model
+    update_data = doente_update.model_dump()
+    for field, value in update_data.items():
+        # Handle date field conversion
+        if field == "data_nascimento" and isinstance(value, str):
+            from datetime import date
+            value = date.fromisoformat(value)
+        setattr(doente, field, value)
+    
+    ic("Updated doente fields")
+    
+    # Commit changes
+    session.add(doente)
+    session.commit()
+    session.refresh(doente)
+    
+    ic(f"Successfully updated doente {doente_id}")
+    return doente
+
+
+@app.patch("/doentes/{doente_id}")
+async def patch_doente(
+    doente_id: int,
+    doente_patch: DoentePatch,
+    session: Session = Depends(get_session)
+) -> Doente:
+    """Partial update of a doente (PATCH - updates only provided fields)."""
+    ic(f"Partial update of doente with id: {doente_id}")
+    ic("Patch data:", doente_patch.model_dump(exclude_unset=True))
+    
+    # Get the existing doente
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f"Doente {doente_id} not found for patch")
+        raise HTTPException(status_code=404, detail="Doente not found")
+    
+    # Update only the fields that were provided (exclude_unset=True)
+    update_data = doente_patch.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        # Handle date field conversion
+        if field == "data_nascimento" and isinstance(value, str):
+            from datetime import date
+            value = date.fromisoformat(value)
+        setattr(doente, field, value)
+    
+    ic(f"Updated {len(update_data)} fields")
+    
+    # Commit changes
+    session.add(doente)
+    session.commit()
+    session.refresh(doente)
+    
+    ic(f"Successfully patched doente {doente_id}")
+    return doente
+
+
+@app.delete("/doentes/{doente_id}")
+async def delete_doente(
+    doente_id: int,
+    session: Session = Depends(get_session)
+) -> dict[str, str]:
+    """Delete a doente."""
+    ic(f"Deleting doente with id: {doente_id}")
+    
+    # Get the existing doente
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f"Doente {doente_id} not found for deletion")
+        raise HTTPException(status_code=404, detail="Doente not found")
+    
+    ic(f"Found doente to delete: {doente.nome}")
+    
+    # Delete the doente (cascade will handle related internamentos if configured)
+    session.delete(doente)
+    session.commit()
+    
+    ic(f"Successfully deleted doente {doente_id}")
+    return {"message": f"Doente {doente_id} deleted successfully"}
 
 
 @app.get("/internamentos")
@@ -170,7 +282,7 @@ def read_tipos_acidente(session: Session = Depends(get_session)) -> list[TipoAci
     ic("Getting all tipos de acidente")
     tipos = session.exec(select(TipoAcidente)).all()
     ic(f"Found {len(tipos)} tipos de acidente")
-    return tipos
+    return list(tipos)
 
 
 @app.get("/tipos_acidente/{tipo_id}")

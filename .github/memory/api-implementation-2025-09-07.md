@@ -46,10 +46,9 @@ Following CRUD patterns as specified in project guidelines:
 
 **Resource**: `/doentes` (Patients)
 - `GET /doentes` → `read_doentes` (list)
+- `GET /doentes/{id}` → `read_doente_by_id` (get by ID)  
 - `GET /doentes/numero_processo/{id}` → `read_doente_by_numero_processo` (get by process number)
 - `POST /doentes` → `create_doente` (create)
-
-**Future Endpoints** (not yet implemented):
 - `PUT /doentes/{id}` → `update_doente` (full update)
 - `PATCH /doentes/{id}` → `patch_doente` (partial update)
 - `DELETE /doentes/{id}` → `delete_doente` (delete)

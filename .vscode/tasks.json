@@ -146,6 +146,48 @@
 			"type": "shell",
 			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 55555, \"doente_id\": 1, \"data_entrada\": \"2025-09-08\", \"ASCQ_total\": 10, \"lesao_inalatoria\": \"NAO\", \"tipo_acidente\": 999}'",
 			"group": "test"
+		},
+		{
+			"label": "Test GET Doente by ID",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/doentes/1'",
+			"group": "test"
+		},
+		{
+			"label": "Test PUT Update Doente",
+			"type": "shell",
+			"command": "curl -X PUT 'http://127.0.0.1:8001/doentes/1' -H 'Content-Type: application/json' -d '{\"nome\": \"Updated Patient Name\", \"numero_processo\": 88888, \"sexo\": \"F\", \"morada\": \"Updated Address\", \"data_nascimento\": \"1985-01-01\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Test PUT Update Doente Fixed",
+			"type": "shell",
+			"command": "curl -X PUT 'http://127.0.0.1:8001/doentes/1' -H 'Content-Type: application/json' -d '{\"nome\": \"Updated Patient Name\", \"numero_processo\": 88888, \"sexo\": \"F\", \"morada\": \"Updated Address\", \"data_nascimento\": \"1985-01-01\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Test PATCH Partial Update Doente",
+			"type": "shell",
+			"command": "curl -X PATCH 'http://127.0.0.1:8001/doentes/1' -H 'Content-Type: application/json' -d '{\"nome\": \"Partially Updated Name\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Test DELETE Doente",
+			"type": "shell",
+			"command": "curl -X DELETE 'http://127.0.0.1:8001/doentes/2'",
+			"group": "test"
+		},
+		{
+			"label": "Verify Deletion - List All Doentes",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/doentes'",
+			"group": "test"
+		},
+		{
+			"label": "Test DELETE Non-existent Doente",
+			"type": "shell",
+			"command": "curl -X DELETE 'http://127.0.0.1:8001/doentes/999'",
+			"group": "test"
 		}
 	]
 }
