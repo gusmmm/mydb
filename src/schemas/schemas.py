@@ -35,7 +35,9 @@ class DoenteUpdate(BaseModel):
 class DoentePatch(BaseModel):
     nome: str | None = None
     numero_processo: int | None = None
-    data_nascimento: str | None = Field(default=None, pattern=r'^\d{4}-\d{2}-\d{2}$')
+    data_nascimento: str | None = Field(
+        default=None, pattern=r'^\d{4}-\d{2}-\d{2}$'
+    )
     sexo: SexoEnum | None = None
     morada: str | None = None
 

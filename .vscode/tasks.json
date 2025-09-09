@@ -272,6 +272,42 @@
 			"type": "shell",
 			"command": "uv run pytest tests/test_agentequeimadura.py -v",
 			"group": "test"
+		},
+		{
+			"label": "Check Linting Errors",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix",
+			"group": "test"
+		},
+		{
+			"label": "Final Linting Check",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix",
+			"group": "test"
+		},
+		{
+			"label": "Run All Tests",
+			"type": "shell",
+			"command": "uv run pytest -v",
+			"group": "test"
+		},
+		{
+			"label": "Fix Init File Name",
+			"type": "shell",
+			"command": "mv tests/__initi__.py tests/__init__.py",
+			"group": "build"
+		},
+		{
+			"label": "Run All Tests with Summary",
+			"type": "shell",
+			"command": "uv run pytest -v --tb=short",
+			"group": "test"
+		},
+		{
+			"label": "Final API Verification",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/agentes_queimadura' | jq .",
+			"group": "test"
 		}
 	]
 }
