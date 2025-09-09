@@ -308,6 +308,30 @@
 			"type": "shell",
 			"command": "curl -X GET 'http://127.0.0.1:8001/agentes_queimadura' | jq .",
 			"group": "test"
+		},
+		{
+			"label": "Test AgenteQueimadura with Fixed Connections",
+			"type": "shell",
+			"command": "uv run pytest tests/test_agentequeimadura.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Test AgenteQueimadura Without ResourceWarnings",
+			"type": "shell",
+			"command": "uv run pytest tests/test_agentequeimadura.py -v -W ignore::ResourceWarning",
+			"group": "test"
+		},
+		{
+			"label": "Final Clean Test Run",
+			"type": "shell",
+			"command": "uv run pytest tests/test_agentequeimadura.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Run Test Task with Coverage",
+			"type": "shell",
+			"command": "uv run task test",
+			"group": "test"
 		}
 	]
 }

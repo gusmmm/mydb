@@ -30,7 +30,29 @@ quote-style = 'single'
 
 [tool.pytest.ini_options]
 pythonpath = "."
-addopts = '-p no:warnings'
+addopts = "-p no:warnings"
+filterwarnings = [
+    "ignore::ResourceWarning",
+    "ignore::pytest.PytestUnraisableExceptionWarning"
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError"
+]
 
 [tool.taskipy.tasks]
 lint = 'ruff check'
@@ -38,5 +60,5 @@ pre_format = 'ruff check --fix'
 format = 'ruff format'
 run = 'fastapi dev src/api.py --port 8088'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=mydb -vv'
+test = 'pytest -s -x --cov=src -vv'
 post_test = 'coverage html'

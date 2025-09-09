@@ -2,6 +2,8 @@
 Tests for AgenteQueimadura functionality.
 """
 
+import tracemalloc
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -15,18 +17,30 @@ HTTP_201_CREATED = 201
 HTTP_404_NOT_FOUND = 404
 HTTP_422_UNPROCESSABLE_ENTITY = 422
 
+# Start tracemalloc to track memory allocations
+tracemalloc.start()
 
-@pytest.fixture(name="session")
-def session_fixture():
-    """Create a test database session."""
+
+@pytest.fixture(name="engine")
+def engine_fixture():
+    """Create a test database engine."""
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool
     )
     SQLModel.metadata.create_all(engine)
+    yield engine
+    # Ensure engine is properly disposed
+    engine.dispose()
+
+
+@pytest.fixture(name="session")
+def session_fixture(engine):
+    """Create a test database session."""
     with Session(engine) as session:
         yield session
+        # Session is automatically closed by context manager
 
 
 @pytest.fixture(name="client")
@@ -36,8 +50,11 @@ def client_fixture(session: Session):
         return session
 
     app.dependency_overrides[get_session] = get_session_override
-    client = TestClient(app)
-    yield client
+
+    with TestClient(app) as client:
+        yield client
+
+    # Clean up
     app.dependency_overrides.clear()
 
 
