@@ -46,6 +46,22 @@ class TipoAcidente(TipoAcidenteBase, table=True):
     internamentos: list["Internamento"] = Relationship(back_populates="tipo_acidente_ref")
 
 
+class AgenteQueimaduraBase(SQLModel):
+    agente_queimadura: str
+    nota: str
+
+
+class AgenteQueimaduraCreate(AgenteQueimaduraBase):
+    pass
+
+
+class AgenteQueimadura(AgenteQueimaduraBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    
+    # Relationships
+    internamentos: list["Internamento"] = Relationship(back_populates="agente_queimadura_ref")
+
+
 class DoenteBase(SQLModel):
     nome: str
     numero_processo: int = Field(unique=True)
@@ -82,7 +98,7 @@ class InternamentoBase(SQLModel):
     ASCQ_total: int | None = None
     lesao_inalatoria: LesaoInalatorialEnum | None = None
     mecanismo_queimadura: int | None = None
-    agente_queimadura: int | None = None
+    agente_queimadura: int | None = Field(default=None, foreign_key="agentequeimadura.id")
     tipo_acidente: int | None = Field(default=None, foreign_key="tipoacidente.id")
     incendio_florestal: bool | None = None
     contexto_violento: ContextoViolentoEnum | None = None
@@ -115,3 +131,4 @@ class Internamento(InternamentoBase, table=True):
     # Relationships
     doente: Doente = Relationship(back_populates="internamentos")
     tipo_acidente_ref: TipoAcidente | None = Relationship(back_populates="internamentos")
+    agente_queimadura_ref: AgenteQueimadura | None = Relationship(back_populates="internamentos")

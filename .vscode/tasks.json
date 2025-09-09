@@ -188,6 +188,90 @@
 			"type": "shell",
 			"command": "curl -X DELETE 'http://127.0.0.1:8001/doentes/999'",
 			"group": "test"
+		},
+		{
+			"label": "Create Migration for AgenteQueimadura",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"add agentequeimadura table and foreign key relationship\"",
+			"group": "build"
+		},
+		{
+			"label": "Create AgenteQueimadura 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/agentes_queimadura' -H 'Content-Type: application/json' -d '{\"agente_queimadura\": \"Fogo direto\", \"nota\": \"Exposição direta ao fogo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create AgenteQueimadura 2",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/agentes_queimadura' -H 'Content-Type: application/json' -d '{\"agente_queimadura\": \"Líquido quente\", \"nota\": \"Água fervente, óleo quente, etc.\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create AgenteQueimadura 3",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/agentes_queimadura' -H 'Content-Type: application/json' -d '{\"agente_queimadura\": \"Electricidade\", \"nota\": \"Queimadura eléctrica por contacto\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Get All AgenteQueimadura",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/agentes_queimadura'",
+			"group": "test"
+		},
+		{
+			"label": "Get AgenteQueimadura by ID",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/agentes_queimadura/2'",
+			"group": "test"
+		},
+		{
+			"label": "Check Available Patients",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/doentes'",
+			"group": "test"
+		},
+		{
+			"label": "Test Internamento with AgenteQueimadura Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 44444, \"doente_id\": 1, \"data_entrada\": \"2025-09-09\", \"ASCQ_total\": 30, \"lesao_inalatoria\": \"SIM\", \"tipo_acidente\": 1, \"agente_queimadura\": 2}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Invalid AgenteQueimadura Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 33333, \"doente_id\": 1, \"data_entrada\": \"2025-09-09\", \"ASCQ_total\": 10, \"lesao_inalatoria\": \"NAO\", \"agente_queimadura\": 999}'",
+			"group": "test"
+		},
+		{
+			"label": "Check AgenteQueimadura Table Schema",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(agentequeimadura)')); print('AgenteQueimadura columns:', [row for row in result]); result = conn.execute(text('PRAGMA table_info(internamento)')); print('Internamento columns:', [row for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Get Internamento with AgenteQueimadura Foreign Key",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/internamentos/44444'",
+			"group": "test"
+		},
+		{
+			"label": "Test Non-existent AgenteQueimadura",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/agentes_queimadura/999'",
+			"group": "test"
+		},
+		{
+			"label": "Run AgenteQueimadura Tests",
+			"type": "shell",
+			"command": "uv run pytest tests/test_agentequeimadura.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Run AgenteQueimadura Tests Fixed",
+			"type": "shell",
+			"command": "uv run pytest tests/test_agentequeimadura.py -v",
+			"group": "test"
 		}
 	]
 }

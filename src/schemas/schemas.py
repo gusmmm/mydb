@@ -51,3 +51,16 @@ class TipoAcidenteCreate(TipoAcidenteBase):
 
 class TipoAcidenteWithID(TipoAcidenteBase):
     id: int
+
+
+class AgenteQueimaduraBase(BaseModel):
+    agente_queimadura: str
+    nota: str
+
+
+class AgenteQueimaduraCreate(AgenteQueimaduraBase):
+    pass
+
+
+class AgenteQueimaduraWithID(AgenteQueimaduraBase):
+    id: int

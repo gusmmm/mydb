@@ -1,0 +1,162 @@
+"""
+Tests for AgenteQueimadura functionality.
+"""
+
+import pytest
+from fastapi.testclient import TestClient
+from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel.pool import StaticPool
+
+from src.api import app, get_session
+from src.models.models import AgenteQueimadura, Doente, Internamento
+
+
+@pytest.fixture(name="session")
+def session_fixture():
+    """Create a test database session."""
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    SQLModel.metadata.create_all(engine)
+    with Session(engine) as session:
+        yield session
+
+
+@pytest.fixture(name="client")
+def client_fixture(session: Session):
+    """Create a test client with the test database session."""
+    def get_session_override():
+        return session
+
+    app.dependency_overrides[get_session] = get_session_override
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()
+
+
+def test_create_agente_queimadura(client: TestClient):
+    """Test creating a new agente queimadura."""
+    response = client.post(
+        "/agentes_queimadura",
+        json={
+            "agente_queimadura": "Test Agente",
+            "nota": "Test nota"
+        }
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["agente_queimadura"] == "Test Agente"
+    assert data["nota"] == "Test nota"
+    assert "id" in data
+
+
+def test_get_all_agentes_queimadura(client: TestClient):
+    """Test getting all agentes queimadura."""
+    # First create some agentes
+    client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "Agente 1", "nota": "Nota 1"}
+    )
+    client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "Agente 2", "nota": "Nota 2"}
+    )
+    
+    response = client.get("/agentes_queimadura")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    assert data[0]["agente_queimadura"] == "Agente 1"
+    assert data[1]["agente_queimadura"] == "Agente 2"
+
+
+def test_get_agente_queimadura_by_id(client: TestClient):
+    """Test getting a specific agente queimadura by ID."""
+    # Create an agente
+    create_response = client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "Specific Agente", "nota": "Specific nota"}
+    )
+    agente_id = create_response.json()["id"]
+    
+    response = client.get(f"/agentes_queimadura/{agente_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["agente_queimadura"] == "Specific Agente"
+    assert data["nota"] == "Specific nota"
+    assert data["id"] == agente_id
+
+
+def test_get_agente_queimadura_not_found(client: TestClient):
+    """Test getting a non-existent agente queimadura."""
+    response = client.get("/agentes_queimadura/999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Agente de queimadura not found"}
+
+
+def test_internamento_with_agente_queimadura_foreign_key(client: TestClient):
+    """Test creating an internamento with agente queimadura foreign key."""
+    # First create a patient
+    patient_response = client.post(
+        "/doentes/",
+        json={
+            "nome": "Test Patient",
+            "numero_processo": 12345,
+            "sexo": "M",
+            "morada": "Test Address",
+            "data_nascimento": "1990-01-01"
+        }
+    )
+    patient_id = patient_response.json()["id"]
+    
+    # Create an agente queimadura
+    agente_response = client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "Test Agente FK", "nota": "Test FK nota"}
+    )
+    agente_id = agente_response.json()["id"]
+    
+    # Create internamento with foreign key
+    internamento_response = client.post(
+        "/internamentos",
+        json={
+            "numero_internamento": 98765,
+            "doente_id": patient_id,
+            "data_entrada": "2025-09-09",
+            "ASCQ_total": 25,
+            "lesao_inalatoria": "SIM",
+            "agente_queimadura": agente_id
+        }
+    )
+    assert internamento_response.status_code == 201
+    data = internamento_response.json()
+    assert data["agente_queimadura"] == agente_id
+    assert data["doente_id"] == patient_id
+
+
+def test_agente_queimadura_validation(client: TestClient):
+    """Test validation for agente queimadura creation."""
+    # Test missing required fields
+    response = client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "Test without nota"}
+    )
+    assert response.status_code == 422
+    
+    response = client.post(
+        "/agentes_queimadura",
+        json={"nota": "Test without agente"}
+    )
+    assert response.status_code == 422
+
+
+def test_agente_queimadura_empty_fields(client: TestClient):
+    """Test agente queimadura with empty fields."""
+    response = client.post(
+        "/agentes_queimadura",
+        json={"agente_queimadura": "", "nota": ""}
+    )
+    assert response.status_code == 201  # Empty strings are allowed
+    data = response.json()
+    assert data["agente_queimadura"] == ""
+    assert data["nota"] == ""

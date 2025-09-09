@@ -5,7 +5,7 @@ from icecream import ic
 from sqlmodel import Session, select
 
 from src.db import get_session, init_db
-from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum, TipoAcidente, TipoAcidenteCreate
+from src.models.models import Doente, DoenteCreate, Internamento, InternamentoCreate, SexoEnum, TipoAcidente, TipoAcidenteCreate, AgenteQueimadura, AgenteQueimaduraCreate
 from src.schemas.schemas import DoenteUpdate, DoentePatch
 
 
@@ -309,3 +309,39 @@ def create_tipo_acidente(tipo: TipoAcidenteCreate, session: Session = Depends(ge
     
     ic(f"Created tipo de acidente with id: {tipo_bd.id}")
     return tipo_bd
+
+
+# AgenteQueimadura endpoints
+@app.get("/agentes_queimadura")
+def read_agentes_queimadura(session: Session = Depends(get_session)) -> list[AgenteQueimadura]:
+    """Get all agentes de queimadura."""
+    ic("Getting all agentes de queimadura")
+    agentes = session.exec(select(AgenteQueimadura)).all()
+    ic(f"Found {len(agentes)} agentes de queimadura")
+    return list(agentes)
+
+
+@app.get("/agentes_queimadura/{agente_id}")
+def read_agente_queimadura(agente_id: int, session: Session = Depends(get_session)) -> AgenteQueimadura:
+    """Get a specific agente de queimadura by ID."""
+    ic(f"Getting agente de queimadura with id: {agente_id}")
+    agente = session.get(AgenteQueimadura, agente_id)
+    if not agente:
+        ic(f"Agente de queimadura {agente_id} not found")
+        raise HTTPException(status_code=404, detail="Agente de queimadura not found")
+    ic(f"Found agente de queimadura: {agente.agente_queimadura}")
+    return agente
+
+
+@app.post("/agentes_queimadura", status_code=201)
+def create_agente_queimadura(agente: AgenteQueimaduraCreate, session: Session = Depends(get_session)) -> AgenteQueimadura:
+    """Create a new agente de queimadura."""
+    ic(f"Creating new agente de queimadura: {agente.agente_queimadura}")
+    
+    agente_bd = AgenteQueimadura(**agente.model_dump())
+    session.add(agente_bd)
+    session.commit()
+    session.refresh(agente_bd)
+    
+    ic(f"Created agente de queimadura with id: {agente_bd.id}")
+    return agente_bd
