@@ -48,6 +48,7 @@ Table tipoAcidente {
   tipo_acidente varchar
 }
 
+// implemented
 Table agenteQueimadura {
   id int [pk]
   agente_queimadura varchar
