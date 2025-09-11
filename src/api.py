@@ -15,6 +15,8 @@ from src.models.models import (
     InternamentoCreate,
     MecanismoQueimadura,
     MecanismoQueimaduraCreate,
+    OrigemDestino,
+    OrigemDestinoCreate,
     SexoEnum,
     TipoAcidente,
     TipoAcidenteCreate,
@@ -429,3 +431,51 @@ def create_mecanismo_queimadura(
 
     ic(f"Created mecanismo de queimadura with id: {mecanismo_bd.id}")
     return mecanismo_bd
+
+
+# OrigemDestino endpoints
+@app.get("/origens_destino")
+def read_origens_destino(
+    session: Session = Depends(get_session)
+) -> list[OrigemDestino]:
+    """Get all origens e destinos."""
+    ic("Getting all origens e destinos")
+    origens = session.exec(select(OrigemDestino)).all()
+    ic(f"Found {len(origens)} origens e destinos")
+    return list(origens)
+
+
+@app.get("/origens_destino/{origem_id}")
+def read_origem_destino(
+    origem_id: int, session: Session = Depends(get_session)
+) -> OrigemDestino:
+    """Get a specific origem/destino by ID."""
+    ic(f"Getting origem/destino with id: {origem_id}")
+    origem = session.get(OrigemDestino, origem_id)
+    if not origem:
+        ic(f"Origem/destino {origem_id} not found")
+        raise HTTPException(
+            status_code=404, detail="Origem/destino not found"
+        )
+    ic(f"Found origem/destino: {origem.local}")
+    return origem
+
+
+@app.post("/origens_destino", status_code=201)
+def create_origem_destino(
+    origem: OrigemDestinoCreate,
+    session: Session = Depends(get_session)
+) -> OrigemDestino:
+    """Create a new origem/destino."""
+    ic(
+        f"Creating new origem/destino: "
+        f"{origem.local}"
+    )
+
+    origem_bd = OrigemDestino(**origem.model_dump())
+    session.add(origem_bd)
+    session.commit()
+    session.refresh(origem_bd)
+
+    ic(f"Created origem/destino with id: {origem_bd.id}")
+    return origem_bd

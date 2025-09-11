@@ -452,6 +452,120 @@
 			"type": "shell",
 			"command": "uv run pytest tests/test_mecanismoqueimadura.py -v",
 			"group": "test"
+		},
+		{
+			"label": "Create Migration for OrigemDestino",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"add origemdestino table and foreign key relationships\"",
+			"group": "build"
+		},
+		{
+			"label": "Run OrigemDestino Migration",
+			"type": "shell",
+			"command": "uv run alembic upgrade head",
+			"group": "build"
+		},
+		{
+			"label": "Check OrigemDestino Table Schema",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('SELECT name FROM sqlite_master WHERE type=\\\"table\\\" ORDER BY name')); tables = [row[0] for row in result]; print('Tables:', tables); result = conn.execute(text('PRAGMA table_info(origemdestino)')); print('OrigemDestino columns:', [row for row in result]); result = conn.execute(text('PRAGMA table_info(internamento)')); cols = [row for row in result]; origem_cols = [col for col in cols if 'origem' in col[1] or 'destino' in col[1]]; print('Internamento origem/destino columns:', origem_cols); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Create OrigemDestino 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/origens_destino' -H 'Content-Type: application/json' -d '{\"local\": \"Urgência Central\", \"int_ext\": \"INTERNO\", \"descricao\": \"Serviço de Urgência do hospital central\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create OrigemDestino 2",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/origens_destino' -H 'Content-Type: application/json' -d '{\"local\": \"Bombeiros\", \"int_ext\": \"EXTERNO\", \"descricao\": \"Corpo de Bombeiros local\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create OrigemDestino 3",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/origens_destino' -H 'Content-Type: application/json' -d '{\"local\": \"Domicílio\", \"int_ext\": \"OUTRO\", \"descricao\": \"Residência do doente\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Get All OrigemDestino",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/origens_destino'",
+			"group": "test"
+		},
+		{
+			"label": "Get OrigemDestino by ID",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/origens_destino/2'",
+			"group": "test"
+		},
+		{
+			"label": "Test Internamento with OrigemDestino Foreign Keys",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 10101, \"doente_id\": 1, \"data_entrada\": \"2025-09-12\", \"ASCQ_total\": 35, \"lesao_inalatoria\": \"SIM\", \"tipo_acidente\": 1, \"agente_queimadura\": 2, \"mecanismo_queimadura\": 1, \"origem_entrada\": 2, \"destino_alta\": 3}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Invalid OrigemDestino Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 20202, \"doente_id\": 1, \"data_entrada\": \"2025-09-12\", \"ASCQ_total\": 20, \"lesao_inalatoria\": \"NAO\", \"origem_entrada\": 999}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Non-existent OrigemDestino",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/origens_destino/999'",
+			"group": "test"
+		},
+		{
+			"label": "Run OrigemDestino Tests",
+			"type": "shell",
+			"command": "uv run pytest tests/test_origemdestino.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Run OrigemDestino Tests Fixed",
+			"type": "shell",
+			"command": "uv run pytest tests/test_origemdestino.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Run OrigemDestino Tests Final",
+			"type": "shell",
+			"command": "uv run pytest tests/test_origemdestino.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Final Linting Check OrigemDestino",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix",
+			"group": "test"
+		},
+		{
+			"label": "Fix Linting Issues",
+			"type": "shell",
+			"command": "uv run ruff check --fix",
+			"group": "test"
+		},
+		{
+			"label": "Remove corrupted test file",
+			"type": "shell",
+			"command": "rm tests/test_origemdestino.py",
+			"group": "build"
+		},
+		{
+			"label": "Final Linting Fix",
+			"type": "shell",
+			"command": "uv run ruff check --fix",
+			"group": "test"
+		},
+		{
+			"label": "Run OrigemDestino Tests Final",
+			"type": "shell",
+			"command": "uv run pytest tests/test_origemdestino.py -v",
+			"group": "test"
 		}
 	]
 }

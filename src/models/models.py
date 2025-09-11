@@ -84,6 +84,40 @@ class MecanismoQueimadura(MecanismoQueimaduraBase, table=True):
     )
 
 
+class IntExtEnum(str, Enum):
+    INTERNO = "INTERNO"
+    EXTERNO = "EXTERNO"
+    OUTRO = "OUTRO"
+
+
+class OrigemDestinoBase(SQLModel):
+    local: str
+    int_ext: IntExtEnum
+    descricao: str
+
+
+class OrigemDestinoCreate(OrigemDestinoBase):
+    pass
+
+
+class OrigemDestino(OrigemDestinoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships for origem_entrada
+    internamentos_origem: list["Internamento"] = Relationship(
+        back_populates="origem_entrada_ref",
+        sa_relationship_kwargs={
+            "foreign_keys": "[Internamento.origem_entrada]"
+        }
+    )
+
+    # Relationships for destino_alta
+    internamentos_destino: list["Internamento"] = Relationship(
+        back_populates="destino_alta_ref",
+        sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
+    )
+
+
 class DoenteBase(SQLModel):
     nome: str
     numero_processo: int = Field(unique=True)
@@ -126,8 +160,12 @@ class InternamentoBase(SQLModel):
     data_entrada: date | None = None
     data_alta: date | None = None
     data_queimadura: date | None = None
-    origem_entrada: int | None = None
-    destino_alta: int | None = None
+    origem_entrada: int | None = Field(
+        default=None, foreign_key="origemdestino.id"
+    )
+    destino_alta: int | None = Field(
+        default=None, foreign_key="origemdestino.id"
+    )
     ASCQ_total: int | None = None
     lesao_inalatoria: LesaoInalatorialEnum | None = None
     mecanismo_queimadura: int | None = Field(
@@ -189,4 +227,14 @@ class Internamento(InternamentoBase, table=True):
     )
     mecanismo_queimadura_ref: MecanismoQueimadura | None = Relationship(
         back_populates="internamentos"
+    )
+    origem_entrada_ref: OrigemDestino | None = Relationship(
+        back_populates="internamentos_origem",
+        sa_relationship_kwargs={
+            "foreign_keys": "[Internamento.origem_entrada]"
+        }
+    )
+    destino_alta_ref: OrigemDestino | None = Relationship(
+        back_populates="internamentos_destino",
+        sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
     )

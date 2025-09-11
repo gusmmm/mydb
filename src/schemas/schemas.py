@@ -79,3 +79,17 @@ class MecanismoQueimaduraCreate(MecanismoQueimaduraBase):
 
 class MecanismoQueimaduraWithID(MecanismoQueimaduraBase):
     id: int
+
+
+class OrigemDestinoBase(BaseModel):
+    local: str
+    int_ext: str
+    descricao: str
+
+
+class OrigemDestinoCreate(OrigemDestinoBase):
+    pass
+
+
+class OrigemDestinoWithID(OrigemDestinoBase):
+    id: int
