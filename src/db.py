@@ -8,7 +8,7 @@ from sqlmodel import Session, SQLModel, create_engine
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./mydb.db")
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///./mydb.db')
 
 engine = create_engine(DATABASE_URL, echo=True)
 

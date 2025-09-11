@@ -8,26 +8,33 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class SexoEnum(str, Enum):
-    M = "M"
-    F = "F"
+    M = 'M'
+    F = 'F'
 
 
 class LesaoInalatorialEnum(str, Enum):
-    SIM = "SIM"
-    NAO = "NAO"
-    SUSPEITA = "SUSPEITA"
+    SIM = 'SIM'
+    NAO = 'NAO'
+    SUSPEITA = 'SUSPEITA'
 
 
 class ContextoViolentoEnum(str, Enum):
-    SIM = "SIM"
-    NAO = "NAO"
-    SUSPEITA = "SUSPEITA"
+    SIM = 'SIM'
+    NAO = 'NAO'
+    SUSPEITA = 'SUSPEITA'
 
 
 class IntubacaoOTEnum(str, Enum):
-    SIM = "SIM"
-    NAO = "NAO"
-    OUTRO = "OUTRO"
+    SIM = 'SIM'
+    NAO = 'NAO'
+    OUTRO = 'OUTRO'
+
+
+class GrauMaximoEnum(str, Enum):
+    PRIMEIRO = 'PRIMEIRO'
+    SEGUNDO = 'SEGUNDO'
+    TERCEIRO = 'TERCEIRO'
+    QUARTO = 'QUARTO'
 
 
 class TipoAcidenteBase(SQLModel):
@@ -43,8 +50,8 @@ class TipoAcidente(TipoAcidenteBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     # Relationships
-    internamentos: list["Internamento"] = Relationship(
-        back_populates="tipo_acidente_ref"
+    internamentos: list['Internamento'] = Relationship(
+        back_populates='tipo_acidente_ref'
     )
 
 
@@ -61,8 +68,8 @@ class AgenteQueimadura(AgenteQueimaduraBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     # Relationships
-    internamentos: list["Internamento"] = Relationship(
-        back_populates="agente_queimadura_ref"
+    internamentos: list['Internamento'] = Relationship(
+        back_populates='agente_queimadura_ref'
     )
 
 
@@ -79,22 +86,15 @@ class MecanismoQueimadura(MecanismoQueimaduraBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     # Relationships
-    internamentos: list["Internamento"] = Relationship(
-        back_populates="mecanismo_queimadura_ref"
+    internamentos: list['Internamento'] = Relationship(
+        back_populates='mecanismo_queimadura_ref'
     )
 
 
 class IntExtEnum(str, Enum):
-    INTERNO = "INTERNO"
-    EXTERNO = "EXTERNO"
-    OUTRO = "OUTRO"
-
-
-class GrauMaximoEnum(str, Enum):
-    PRIMEIRO = "PRIMEIRO"
-    SEGUNDO = "SEGUNDO"
-    TERCEIRO = "TERCEIRO"
-    QUARTO = "QUARTO"
+    INTERNO = 'INTERNO'
+    EXTERNO = 'EXTERNO'
+    OUTRO = 'OUTRO'
 
 
 class OrigemDestinoBase(SQLModel):
@@ -111,47 +111,18 @@ class OrigemDestino(OrigemDestinoBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
     # Relationships for origem_entrada
-    internamentos_origem: list["Internamento"] = Relationship(
-        back_populates="origem_entrada_ref",
+    internamentos_origem: list['Internamento'] = Relationship(
+        back_populates='origem_entrada_ref',
         sa_relationship_kwargs={
-            "foreign_keys": "[Internamento.origem_entrada]"
-        }
+            'foreign_keys': '[Internamento.origem_entrada]'
+        },
     )
 
     # Relationships for destino_alta
-    internamentos_destino: list["Internamento"] = Relationship(
-        back_populates="destino_alta_ref",
-        sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
+    internamentos_destino: list['Internamento'] = Relationship(
+        back_populates='destino_alta_ref',
+        sa_relationship_kwargs={'foreign_keys': '[Internamento.destino_alta]'},
     )
-
-
-class QueimaduraBase(SQLModel):
-    internamento_id: int = Field(foreign_key="internamento.id")
-    local_anatomico: str | None = None  # Anatomical location as text
-    grau_maximo: GrauMaximoEnum | None = None
-    notas: str | None = None
-
-
-class QueimaduraCreate(QueimaduraBase):
-    pass
-
-
-class Queimadura(QueimaduraBase, table=True):
-    id: int = Field(default=None, primary_key=True)
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={"server_default": func.now()}
-    )
-    last_modified: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={
-            "server_default": func.now(),
-            "onupdate": func.now()
-        }
-    )
-
-    # Relationships
-    internamento: "Internamento" = Relationship(back_populates="queimaduras")
 
 
 class DoenteBase(SQLModel):
@@ -170,25 +141,23 @@ class DoenteBase(SQLModel):
 
 
 class DoenteCreate(DoenteBase):
-    internamentos: list["InternamentoCreate"] | None = None
+    internamentos: list['InternamentoCreate'] | None = None
 
 
 class Doente(DoenteBase, table=True):
     id: int = Field(default=None, primary_key=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={"server_default": func.now()}
+        sa_column_kwargs={'server_default': func.now()},
     )
     last_modified: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column_kwargs={
-            "server_default": func.now(),
-            "onupdate": func.now()
-        }
+            'server_default': func.now(),
+            'onupdate': func.now(),
+        },
     )
-    internamentos: list["Internamento"] = Relationship(
-        back_populates="doente"
-    )
+    internamentos: list['Internamento'] = Relationship(back_populates='doente')
 
 
 class InternamentoBase(SQLModel):
@@ -197,21 +166,21 @@ class InternamentoBase(SQLModel):
     data_alta: date | None = None
     data_queimadura: date | None = None
     origem_entrada: int | None = Field(
-        default=None, foreign_key="origemdestino.id"
+        default=None, foreign_key='origemdestino.id'
     )
     destino_alta: int | None = Field(
-        default=None, foreign_key="origemdestino.id"
+        default=None, foreign_key='origemdestino.id'
     )
     ASCQ_total: int | None = None
     lesao_inalatoria: LesaoInalatorialEnum | None = None
     mecanismo_queimadura: int | None = Field(
-        default=None, foreign_key="mecanismoqueimadura.id"
+        default=None, foreign_key='mecanismoqueimadura.id'
     )
     agente_queimadura: int | None = Field(
-        default=None, foreign_key="agentequeimadura.id"
+        default=None, foreign_key='agentequeimadura.id'
     )
     tipo_acidente: int | None = Field(
-        default=None, foreign_key="tipoacidente.id"
+        default=None, foreign_key='tipoacidente.id'
     )
     incendio_florestal: bool | None = None
     contexto_violento: ContextoViolentoEnum | None = None
@@ -222,7 +191,7 @@ class InternamentoBase(SQLModel):
     intubacao_OT: IntubacaoOTEnum | None = None
     VMI_dias: int | None = None
     VNI: bool | None = None
-    doente_id: int | None = Field(foreign_key="doente.id")
+    doente_id: int | None = Field(foreign_key='doente.id')
 
     @field_validator(
         'data_entrada', 'data_alta', 'data_queimadura', mode='before'
@@ -243,37 +212,78 @@ class Internamento(InternamentoBase, table=True):
     id: int = Field(default=None, primary_key=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={"server_default": func.now()}
+        sa_column_kwargs={'server_default': func.now()},
     )
     last_modified: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column_kwargs={
-            "server_default": func.now(),
-            "onupdate": func.now()
-        }
+            'server_default': func.now(),
+            'onupdate': func.now(),
+        },
     )
 
     # Relationships
-    doente: Doente = Relationship(back_populates="internamentos")
+    doente: Doente = Relationship(back_populates='internamentos')
     tipo_acidente_ref: TipoAcidente | None = Relationship(
-        back_populates="internamentos"
+        back_populates='internamentos'
     )
     agente_queimadura_ref: AgenteQueimadura | None = Relationship(
-        back_populates="internamentos"
+        back_populates='internamentos'
     )
     mecanismo_queimadura_ref: MecanismoQueimadura | None = Relationship(
-        back_populates="internamentos"
+        back_populates='internamentos'
     )
     origem_entrada_ref: OrigemDestino | None = Relationship(
-        back_populates="internamentos_origem",
+        back_populates='internamentos_origem',
         sa_relationship_kwargs={
-            "foreign_keys": "[Internamento.origem_entrada]"
-        }
+            'foreign_keys': '[Internamento.origem_entrada]'
+        },
     )
     destino_alta_ref: OrigemDestino | None = Relationship(
-        back_populates="internamentos_destino",
-        sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
+        back_populates='internamentos_destino',
+        sa_relationship_kwargs={'foreign_keys': '[Internamento.destino_alta]'},
     )
-    queimaduras: list["Queimadura"] = Relationship(
-        back_populates="internamento"
+    queimaduras: list['Queimadura'] = Relationship(
+        back_populates='internamento'
+    )
+
+
+class LocalAnatomicoBase(SQLModel):
+    local_anatomico: str
+    regiao_anatomica: str | None = None
+
+
+class LocalAnatomicoCreate(LocalAnatomicoBase):
+    pass
+
+
+class LocalAnatomico(LocalAnatomicoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    queimaduras: list['Queimadura'] = Relationship(
+        back_populates='local_anatomico_ref'
+    )
+
+
+class QueimaduraBase(SQLModel):
+    internamento_id: int = Field(foreign_key='internamento.id')
+    local_anatomico: int | None = Field(
+        default=None, foreign_key='localanatomico.id'
+    )
+    grau_maximo: GrauMaximoEnum | None = None
+    notas: str | None = None
+
+
+class QueimaduraCreate(QueimaduraBase):
+    pass
+
+
+class Queimadura(QueimaduraBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    internamento: Internamento = Relationship(back_populates='queimaduras')
+    local_anatomico_ref: LocalAnatomico | None = Relationship(
+        back_populates='queimaduras'
     )

@@ -1,12 +1,18 @@
-from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
 
 
 class SexoEnum(str, Enum):
-    M = "M"
-    F = "F"
+    M = 'M'
+    F = 'F'
+
+
+class GrauMaximoEnum(str, Enum):
+    PRIMEIRO = 'PRIMEIRO'
+    SEGUNDO = 'SEGUNDO'
+    TERCEIRO = 'TERCEIRO'
+    QUARTO = 'QUARTO'
 
 
 class DoenteBase(BaseModel):
@@ -96,16 +102,22 @@ class OrigemDestinoWithID(OrigemDestinoBase):
     id: int
 
 
-class GrauMaximoEnum(str, Enum):
-    PRIMEIRO = "PRIMEIRO"
-    SEGUNDO = "SEGUNDO"
-    TERCEIRO = "TERCEIRO"
-    QUARTO = "QUARTO"
+class LocalAnatomicoBase(BaseModel):
+    local_anatomico: str
+    regiao_anatomica: str | None = None
+
+
+class LocalAnatomicoCreate(LocalAnatomicoBase):
+    pass
+
+
+class LocalAnatomicoWithID(LocalAnatomicoBase):
+    id: int
 
 
 class QueimaduraBase(BaseModel):
     internamento_id: int
-    local_anatomico: str | None = None  # Changed from int to str
+    local_anatomico: int | None = None
     grau_maximo: GrauMaximoEnum | None = None
     notas: str | None = None
 
@@ -116,11 +128,10 @@ class QueimaduraCreate(QueimaduraBase):
 
 class QueimaduraWithID(QueimaduraBase):
     id: int
-    created_at: datetime | None = None
-    last_modified: datetime | None = None
 
 
 class QueimaduraUpdate(BaseModel):
-    local_anatomico: str | None = None  # Changed from int to str
+    internamento_id: int | None = None
+    local_anatomico: int | None = None
     grau_maximo: GrauMaximoEnum | None = None
     notas: str | None = None

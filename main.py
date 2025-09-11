@@ -1,6 +1,6 @@
 def main():
-    print("Hello from mydb!")
+    print('Hello from mydb!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

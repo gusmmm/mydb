@@ -7,7 +7,16 @@ from pathlib import Path
 
 from alembic import context
 
-from src.models.models import Doente, Internamento  # Import your models here
+from src.models.models import (  # Import all models here
+    AgenteQueimadura,
+    Doente,
+    Internamento,
+    LocalAnatomico,
+    MecanismoQueimadura,
+    OrigemDestino,
+    Queimadura,
+    TipoAcidente,
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

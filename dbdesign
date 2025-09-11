@@ -67,8 +67,8 @@ Table origemDestino {
   int_ext enum [note: "('Interno', 'Externo', 'Outro')"]
   descricao varchar
 }
-
-Table queimaduras {
+// implemented
+Table queimadura {
   id int [pk]
   internamento_id int [not null]
   local_anatomico int
@@ -137,7 +137,7 @@ Table medicacao {
   classe_terapeutica varchar
   codigo varchar
 }
-
+// implemented
 Table localAnatomico {
   id int [pk]
   local_anatomico varchar
@@ -180,7 +180,7 @@ Ref: "origemDestino"."id" < "internamento"."origem_entrada"
 
 Ref: "origemDestino"."id" < "internamento"."destino_alta"
 
-Ref: "internamento"."id" < "queimaduras"."internamento_id"
+Ref: "internamento"."id" < "queimadura"."internamento_id"
 
 Ref: "internamento"."id" < "traumas"."internamento_id"
 
