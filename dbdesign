@@ -75,12 +75,24 @@ Table queimadura {
   grau_maximo enum
   notas varchar
 }
+// implemented
+Table localAnatomico {
+  id int [pk]
+  local_anatomico varchar
+  regiao_anatomica varchar
+}
 
 Table trauma {
   id int [pk]
   internamento_id int [not null]
   tipo_local int
   cirurgia_urgente bool
+}
+
+Table traumaTipo {
+  id int [pk]
+  local varchar
+  tipo varchar
 }
 
 Table infecao {
@@ -136,18 +148,6 @@ Table medicacao {
   nome_medicacao varchar
   classe_terapeutica varchar
   codigo varchar
-}
-// implemented
-Table localAnatomico {
-  id int [pk]
-  local_anatomico varchar
-  regiao_anatomica varchar
-}
-
-Table traumaTipo {
-  id int [pk]
-  local varchar
-  tipo varchar
 }
 
 Table agenteInfeccioso {
