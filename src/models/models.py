@@ -90,6 +90,13 @@ class IntExtEnum(str, Enum):
     OUTRO = "OUTRO"
 
 
+class GrauMaximoEnum(str, Enum):
+    PRIMEIRO = "PRIMEIRO"
+    SEGUNDO = "SEGUNDO"
+    TERCEIRO = "TERCEIRO"
+    QUARTO = "QUARTO"
+
+
 class OrigemDestinoBase(SQLModel):
     local: str
     int_ext: IntExtEnum
@@ -116,6 +123,35 @@ class OrigemDestino(OrigemDestinoBase, table=True):
         back_populates="destino_alta_ref",
         sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
     )
+
+
+class QueimaduraBase(SQLModel):
+    internamento_id: int = Field(foreign_key="internamento.id")
+    local_anatomico: str | None = None  # Anatomical location as text
+    grau_maximo: GrauMaximoEnum | None = None
+    notas: str | None = None
+
+
+class QueimaduraCreate(QueimaduraBase):
+    pass
+
+
+class Queimadura(QueimaduraBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={"server_default": func.now()}
+    )
+    last_modified: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "server_default": func.now(),
+            "onupdate": func.now()
+        }
+    )
+
+    # Relationships
+    internamento: "Internamento" = Relationship(back_populates="queimaduras")
 
 
 class DoenteBase(SQLModel):
@@ -237,4 +273,7 @@ class Internamento(InternamentoBase, table=True):
     destino_alta_ref: OrigemDestino | None = Relationship(
         back_populates="internamentos_destino",
         sa_relationship_kwargs={"foreign_keys": "[Internamento.destino_alta]"}
+    )
+    queimaduras: list["Queimadura"] = Relationship(
+        back_populates="internamento"
     )

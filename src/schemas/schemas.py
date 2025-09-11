@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -93,3 +94,33 @@ class OrigemDestinoCreate(OrigemDestinoBase):
 
 class OrigemDestinoWithID(OrigemDestinoBase):
     id: int
+
+
+class GrauMaximoEnum(str, Enum):
+    PRIMEIRO = "PRIMEIRO"
+    SEGUNDO = "SEGUNDO"
+    TERCEIRO = "TERCEIRO"
+    QUARTO = "QUARTO"
+
+
+class QueimaduraBase(BaseModel):
+    internamento_id: int
+    local_anatomico: str | None = None  # Changed from int to str
+    grau_maximo: GrauMaximoEnum | None = None
+    notas: str | None = None
+
+
+class QueimaduraCreate(QueimaduraBase):
+    pass
+
+
+class QueimaduraWithID(QueimaduraBase):
+    id: int
+    created_at: datetime | None = None
+    last_modified: datetime | None = None
+
+
+class QueimaduraUpdate(BaseModel):
+    local_anatomico: str | None = None  # Changed from int to str
+    grau_maximo: GrauMaximoEnum | None = None
+    notas: str | None = None

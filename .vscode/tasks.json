@@ -566,6 +566,207 @@
 			"type": "shell",
 			"command": "uv run pytest tests/test_origemdestino.py -v",
 			"group": "test"
+		},
+		{
+			"label": "Create Migration for Queimaduras",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"add queimaduras table and foreign key relationship\"",
+			"group": "build"
+		},
+		{
+			"label": "Check Queimaduras Table Schema",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(queimadura)')); print('Queimadura columns:', [row for row in result]); result = conn.execute(text('SELECT name FROM sqlite_master WHERE type=\\\"table\\\" ORDER BY name')); tables = [row[0] for row in result]; print('\\nAll tables:', tables); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Create Queimadura 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 1, \"local_anatomico\": \"Braço esquerdo\", \"grau_maximo\": \"SEGUNDO\", \"notas\": \"Queimadura de segundo grau no braço esquerdo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create Migration for Local Anatomico Type Change",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"change queimadura local_anatomico from integer to varchar\"",
+			"group": "build"
+		},
+		{
+			"label": "Create Queimadura 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 1, \"local_anatomico\": \"Braço esquerdo\", \"grau_maximo\": \"SEGUNDO\", \"notas\": \"Queimadura de segundo grau no braço esquerdo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Check Queimadura Schema After Migration",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(queimadura)')); print('Queimadura columns after migration:', [row for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Downgrade to Previous Migration",
+			"type": "shell",
+			"command": "uv run alembic downgrade -1",
+			"group": "build"
+		},
+		{
+			"label": "Apply Fixed Migration",
+			"type": "shell",
+			"command": "uv run alembic upgrade head",
+			"group": "build"
+		},
+		{
+			"label": "Verify Column Type Change",
+			"type": "shell",
+			"command": "uv run python -c \"from src.db import engine; from sqlalchemy import text; conn = engine.connect(); result = conn.execute(text('PRAGMA table_info(queimadura)')); print('Queimadura columns after migration:', [row for row in result]); conn.close()\"",
+			"group": "test"
+		},
+		{
+			"label": "Test Queimadura Creation After Migration",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 1, \"local_anatomico\": \"Braço esquerdo\", \"grau_maximo\": \"SEGUNDO\", \"notas\": \"Queimadura de segundo grau no braço esquerdo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Check Available Internamentos",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/internamentos'",
+			"group": "test"
+		},
+		{
+			"label": "Test Queimadura Creation After Schema Fix",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 1, \"local_anatomico\": \"Braço esquerdo\", \"grau_maximo\": \"SEGUNDO\", \"notas\": \"Queimadura de segundo grau no braço esquerdo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create Queimadura 2",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 4, \"local_anatomico\": \"Tórax anterior\", \"grau_maximo\": \"TERCEIRO\", \"notas\": \"Queimadura profunda na região torácica\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create Queimadura 3",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 6, \"local_anatomico\": \"Perna direita\", \"grau_maximo\": \"QUARTO\", \"notas\": \"Queimadura profunda com necrose\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Get All Queimaduras",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/queimaduras'",
+			"group": "test"
+		},
+		{
+			"label": "Get Queimaduras for Internamento 1",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/internamentos/1/queimaduras'",
+			"group": "test"
+		},
+		{
+			"label": "Run Queimaduras Tests",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Replace Test File",
+			"type": "shell",
+			"command": "rm tests/test_queimaduras.py && mv tests/test_queimaduras_fixed.py tests/test_queimaduras.py",
+			"group": "build"
+		},
+		{
+			"label": "Test Single Queimadura Function",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py::test_create_queimadura -v",
+			"group": "test"
+		},
+		{
+			"label": "Final Linting Check Queimaduras",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix",
+			"group": "test"
+		},
+		{
+			"label": "Fix Linting Issues",
+			"type": "shell",
+			"command": "uv run ruff check --fix",
+			"group": "test"
+		},
+		{
+			"label": "Replace Test File",
+			"type": "shell",
+			"command": "rm /home/gusmmm/Desktop/mydb/tests/test_queimaduras.py && mv /home/gusmmm/Desktop/mydb/tests/test_queimaduras_clean.py /home/gusmmm/Desktop/mydb/tests/test_queimaduras.py",
+			"group": "build"
+		},
+		{
+			"label": "Fix Test File Name",
+			"type": "shell",
+			"command": "mv tests/test_queimaduras_clean.py tests/test_queimaduras.py",
+			"group": "build"
+		},
+		{
+			"label": "Remove old test file",
+			"type": "shell",
+			"command": "rm tests/test_queimaduras.py",
+			"group": "build"
+		},
+		{
+			"label": "Fix linting with unsafe fixes",
+			"type": "shell",
+			"command": "uv run ruff check --fix --unsafe-fixes",
+			"group": "test"
+		},
+		{
+			"label": "Test Queimaduras API",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/queimaduras'",
+			"group": "test"
+		},
+		{
+			"label": "Clean up test files",
+			"type": "shell",
+			"command": "rm tests/test_queimaduras*.py"
+		},
+		{
+			"label": "Final Linting Check",
+			"type": "shell",
+			"command": "uv run ruff check"
+		},
+		{
+			"label": "Test Audit Fields",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py::test_queimadura_audit_fields -v"
+		},
+		{
+			"label": "Test All Queimaduras",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py -v"
+		},
+		{
+			"label": "Test Audit Fields API",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/queimaduras' -H 'Content-Type: application/json' -d '{\"internamento_id\": 1, \"local_anatomico\": \"Test Audit\", \"grau_maximo\": \"PRIMEIRO\", \"notas\": \"Test audit fields\"}'"
+		},
+		{
+			"label": "Test Fixed Required Fields Test",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py::test_queimadura_required_fields -v"
+		},
+		{
+			"label": "Final Queimaduras Test Run",
+			"type": "shell",
+			"command": "uv run pytest tests/test_queimaduras.py -v"
+		},
+		{
+			"label": "Final Linting Check",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix"
+		},
+		{
+			"label": "Fix Final Linting Issue",
+			"type": "shell",
+			"command": "uv run ruff check --fix"
 		}
 	]
 }

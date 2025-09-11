@@ -60,12 +60,12 @@ Table mecanismoQueimadura {
   mecanismo_queimadura varchar
   nota varchar
 }
-
+// implemented
 Table origemDestino {
   id int [pk]
   local varchar [not null]
   int_ext enum [note: "('Interno', 'Externo', 'Outro')"]
-  descricao varchat
+  descricao varchar
 }
 
 Table queimaduras {

@@ -17,11 +17,18 @@ from src.models.models import (
     MecanismoQueimaduraCreate,
     OrigemDestino,
     OrigemDestinoCreate,
+    Queimadura,
+    QueimaduraCreate,
     SexoEnum,
     TipoAcidente,
     TipoAcidenteCreate,
 )
-from src.schemas.schemas import DoentePatch, DoenteUpdate
+from src.schemas.schemas import (
+    DoentePatch,
+    DoenteUpdate,
+    QueimaduraUpdate,
+    QueimaduraWithID,
+)
 
 
 @asynccontextmanager
@@ -479,3 +486,129 @@ def create_origem_destino(
 
     ic(f"Created origem/destino with id: {origem_bd.id}")
     return origem_bd
+
+
+# Queimaduras endpoints
+@app.get("/queimaduras")
+def get_all_queimaduras(
+    session: Session = Depends(get_session)
+) -> list[Queimadura]:
+    """Get all queimaduras."""
+    ic("Getting all queimaduras")
+    statement = select(Queimadura)
+    queimaduras = session.exec(statement).all()
+    ic(f"Found {len(queimaduras)} queimaduras")
+    return queimaduras
+
+
+@app.get("/queimaduras/{queimadura_id}")
+def get_queimadura_by_id(
+    queimadura_id: int,
+    session: Session = Depends(get_session)
+) -> Queimadura:
+    """Get a specific queimadura by ID."""
+    ic(f"Getting queimadura with id: {queimadura_id}")
+    queimadura = session.get(Queimadura, queimadura_id)
+    if not queimadura:
+        ic(f"Queimadura {queimadura_id} not found")
+        raise HTTPException(status_code=404, detail="Queimadura not found")
+    ic(f"Found queimadura for internamento: {queimadura.internamento_id}")
+    return queimadura
+
+
+@app.get("/internamentos/{internamento_id}/queimaduras")
+def get_queimaduras_by_internamento(
+    internamento_id: int,
+    session: Session = Depends(get_session)
+) -> list[Queimadura]:
+    """Get all queimaduras for a specific internamento."""
+    ic(f"Getting queimaduras for internamento: {internamento_id}")
+
+    # First check if internamento exists
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        ic(f"Internamento {internamento_id} not found")
+        raise HTTPException(status_code=404, detail="Internamento not found")
+
+    statement = select(Queimadura).where(
+        Queimadura.internamento_id == internamento_id
+    )
+    queimaduras = session.exec(statement).all()
+    ic(
+        f"Found {len(queimaduras)} queimaduras for "
+        f"internamento {internamento_id}"
+    )
+    return queimaduras
+
+
+@app.post("/queimaduras", status_code=201)
+def create_queimadura(
+    queimadura: QueimaduraCreate,
+    session: Session = Depends(get_session)
+) -> QueimaduraWithID:
+    """Create a new queimadura."""
+    ic("Creating new queimadura for internamento: " +
+       f"{queimadura.internamento_id}")
+
+    # Check if internamento exists
+    internamento = session.get(Internamento, queimadura.internamento_id)
+    if not internamento:
+        ic(f"Internamento {queimadura.internamento_id} not found")
+        raise HTTPException(
+            status_code=404, detail="Internamento not found"
+        )
+
+    queimadura_bd = Queimadura(**queimadura.model_dump())
+    session.add(queimadura_bd)
+    session.commit()
+    session.refresh(queimadura_bd)
+
+    ic(f"Created queimadura with id: {queimadura_bd.id}")
+    return QueimaduraWithID(**queimadura_bd.model_dump())
+
+
+@app.put("/queimaduras/{queimadura_id}")
+def update_queimadura(
+    queimadura_id: int,
+    queimadura_update: QueimaduraUpdate,
+    session: Session = Depends(get_session)
+) -> QueimaduraWithID:
+    """Update a queimadura."""
+    ic(f"Updating queimadura with id: {queimadura_id}")
+
+    queimadura = session.get(Queimadura, queimadura_id)
+    if not queimadura:
+        ic(f"Queimadura {queimadura_id} not found")
+        raise HTTPException(status_code=404, detail="Queimadura not found")
+
+    # Update only the fields that are provided
+    update_data = queimadura_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(queimadura, field, value)
+
+    session.add(queimadura)
+    session.commit()
+    session.refresh(queimadura)
+
+    ic(f"Updated queimadura with id: {queimadura.id}")
+    return QueimaduraWithID(**queimadura.model_dump())
+
+
+@app.delete("/queimaduras/{queimadura_id}")
+def delete_queimadura(
+    queimadura_id: int,
+    session: Session = Depends(get_session)
+) -> dict[str, str]:
+    """Delete a queimadura."""
+    ic(f"Deleting queimadura with id: {queimadura_id}")
+
+    queimadura = session.get(Queimadura, queimadura_id)
+    if not queimadura:
+        ic(f"Queimadura {queimadura_id} not found")
+        raise HTTPException(status_code=404, detail="Queimadura not found")
+
+    session.delete(queimadura)
+    session.commit()
+
+    ic(f"Deleted queimadura with id: {queimadura_id}")
+    return {"message": "Queimadura deleted successfully"}
