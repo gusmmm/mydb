@@ -66,3 +66,16 @@ class AgenteQueimaduraCreate(AgenteQueimaduraBase):
 
 class AgenteQueimaduraWithID(AgenteQueimaduraBase):
     id: int
+
+
+class MecanismoQueimaduraBase(BaseModel):
+    mecanismo_queimadura: str
+    nota: str
+
+
+class MecanismoQueimaduraCreate(MecanismoQueimaduraBase):
+    pass
+
+
+class MecanismoQueimaduraWithID(MecanismoQueimaduraBase):
+    id: int

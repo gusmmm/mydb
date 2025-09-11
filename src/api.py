@@ -13,6 +13,8 @@ from src.models.models import (
     DoenteCreate,
     Internamento,
     InternamentoCreate,
+    MecanismoQueimadura,
+    MecanismoQueimaduraCreate,
     SexoEnum,
     TipoAcidente,
     TipoAcidenteCreate,
@@ -379,3 +381,51 @@ def create_agente_queimadura(
 
     ic(f"Created agente de queimadura with id: {agente_bd.id}")
     return agente_bd
+
+
+# MecanismoQueimadura endpoints
+@app.get("/mecanismos_queimadura")
+def read_mecanismos_queimadura(
+    session: Session = Depends(get_session)
+) -> list[MecanismoQueimadura]:
+    """Get all mecanismos de queimadura."""
+    ic("Getting all mecanismos de queimadura")
+    mecanismos = session.exec(select(MecanismoQueimadura)).all()
+    ic(f"Found {len(mecanismos)} mecanismos de queimadura")
+    return list(mecanismos)
+
+
+@app.get("/mecanismos_queimadura/{mecanismo_id}")
+def read_mecanismo_queimadura(
+    mecanismo_id: int, session: Session = Depends(get_session)
+) -> MecanismoQueimadura:
+    """Get a specific mecanismo de queimadura by ID."""
+    ic(f"Getting mecanismo de queimadura with id: {mecanismo_id}")
+    mecanismo = session.get(MecanismoQueimadura, mecanismo_id)
+    if not mecanismo:
+        ic(f"Mecanismo de queimadura {mecanismo_id} not found")
+        raise HTTPException(
+            status_code=404, detail="Mecanismo de queimadura not found"
+        )
+    ic(f"Found mecanismo de queimadura: {mecanismo.mecanismo_queimadura}")
+    return mecanismo
+
+
+@app.post("/mecanismos_queimadura", status_code=201)
+def create_mecanismo_queimadura(
+    mecanismo: MecanismoQueimaduraCreate,
+    session: Session = Depends(get_session)
+) -> MecanismoQueimadura:
+    """Create a new mecanismo de queimadura."""
+    ic(
+        f"Creating new mecanismo de queimadura: "
+        f"{mecanismo.mecanismo_queimadura}"
+    )
+
+    mecanismo_bd = MecanismoQueimadura(**mecanismo.model_dump())
+    session.add(mecanismo_bd)
+    session.commit()
+    session.refresh(mecanismo_bd)
+
+    ic(f"Created mecanismo de queimadura with id: {mecanismo_bd.id}")
+    return mecanismo_bd

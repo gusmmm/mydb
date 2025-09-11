@@ -362,6 +362,90 @@
 			"type": "shell",
 			"command": "rm test_database.py",
 			"group": "build"
+		},
+		{
+			"label": "Create Migration for MecanismoQueimadura",
+			"type": "shell",
+			"command": "uv run alembic revision -m \"add mecanismoqueimadura table and foreign key relationship\"",
+			"group": "build"
+		},
+		{
+			"label": "Create MecanismoQueimadura 1",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/mecanismos_queimadura' -H 'Content-Type: application/json' -d '{\"mecanismo_queimadura\": \"Condução\", \"nota\": \"Transmissão de calor por contacto directo\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create MecanismoQueimadura 2",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/mecanismos_queimadura' -H 'Content-Type: application/json' -d '{\"mecanismo_queimadura\": \"Convecção\", \"nota\": \"Transmissão de calor através de fluidos em movimento\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Create MecanismoQueimadura 3",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/mecanismos_queimadura' -H 'Content-Type: application/json' -d '{\"mecanismo_queimadura\": \"Radiação\", \"nota\": \"Transmissão de calor através de ondas electromagnéticas\"}'",
+			"group": "test"
+		},
+		{
+			"label": "Get All MecanismoQueimadura",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/mecanismos_queimadura'",
+			"group": "test"
+		},
+		{
+			"label": "Get MecanismoQueimadura by ID",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/mecanismos_queimadura/2'",
+			"group": "test"
+		},
+		{
+			"label": "Test Internamento with MecanismoQueimadura Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 22222, \"doente_id\": 1, \"data_entrada\": \"2025-09-11\", \"ASCQ_total\": 20, \"lesao_inalatoria\": \"SIM\", \"tipo_acidente\": 1, \"agente_queimadura\": 2, \"mecanismo_queimadura\": 1}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Invalid MecanismoQueimadura Foreign Key",
+			"type": "shell",
+			"command": "curl -X POST 'http://127.0.0.1:8001/internamentos' -H 'Content-Type: application/json' -d '{\"numero_internamento\": 11111, \"doente_id\": 1, \"data_entrada\": \"2025-09-11\", \"ASCQ_total\": 15, \"lesao_inalatoria\": \"NAO\", \"mecanismo_queimadura\": 999}'",
+			"group": "test"
+		},
+		{
+			"label": "Test Non-existent MecanismoQueimadura",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/mecanismos_queimadura/999'",
+			"group": "test"
+		},
+		{
+			"label": "Run MecanismoQueimadura Tests",
+			"type": "shell",
+			"command": "uv run pytest tests/test_mecanismoqueimadura.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Final Linting Check MecanismoQueimadura",
+			"type": "shell",
+			"command": "uv run ruff check --no-fix",
+			"group": "test"
+		},
+		{
+			"label": "Clean up test database script",
+			"type": "shell",
+			"command": "rm test_database.py",
+			"group": "build"
+		},
+		{
+			"label": "Final MecanismoQueimadura Test Run",
+			"type": "shell",
+			"command": "uv run pytest tests/test_mecanismoqueimadura.py -v",
+			"group": "test"
+		},
+		{
+			"label": "Final API Verification",
+			"type": "shell",
+			"command": "curl -X GET 'http://127.0.0.1:8001/mecanismos_queimadura' | jq .",
+			"group": "test"
 		}
 	]
 }

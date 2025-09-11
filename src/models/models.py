@@ -66,6 +66,24 @@ class AgenteQueimadura(AgenteQueimaduraBase, table=True):
     )
 
 
+class MecanismoQueimaduraBase(SQLModel):
+    mecanismo_queimadura: str
+    nota: str
+
+
+class MecanismoQueimaduraCreate(MecanismoQueimaduraBase):
+    pass
+
+
+class MecanismoQueimadura(MecanismoQueimaduraBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    internamentos: list["Internamento"] = Relationship(
+        back_populates="mecanismo_queimadura_ref"
+    )
+
+
 class DoenteBase(SQLModel):
     nome: str
     numero_processo: int = Field(unique=True)
@@ -112,7 +130,9 @@ class InternamentoBase(SQLModel):
     destino_alta: int | None = None
     ASCQ_total: int | None = None
     lesao_inalatoria: LesaoInalatorialEnum | None = None
-    mecanismo_queimadura: int | None = None
+    mecanismo_queimadura: int | None = Field(
+        default=None, foreign_key="mecanismoqueimadura.id"
+    )
     agente_queimadura: int | None = Field(
         default=None, foreign_key="agentequeimadura.id"
     )
@@ -165,5 +185,8 @@ class Internamento(InternamentoBase, table=True):
         back_populates="internamentos"
     )
     agente_queimadura_ref: AgenteQueimadura | None = Relationship(
+        back_populates="internamentos"
+    )
+    mecanismo_queimadura_ref: MecanismoQueimadura | None = Relationship(
         back_populates="internamentos"
     )
