@@ -76,14 +76,14 @@ Table queimadura {
   notas varchar
 }
 
-Table traumas {
+Table trauma {
   id int [pk]
   internamento_id int [not null]
   tipo_local int
   cirurgia_urgente bool
 }
 
-Table infecoes {
+Table infecao {
   id int [pk]
   internamento_id int [not null]
   agente int
@@ -91,14 +91,14 @@ Table infecoes {
   nota varchar
 }
 
-Table Internamento_Antibioticos {
+Table Internamento_Antibiotico {
   id int [pk]
   internamento_id int [not null]
   antibiotico int
   indicacao int
 }
 
-Table Internamento_Procedimentos {
+Table Internamento_Procedimento {
   id int [pk]
   internamento_id int [not null]
   procedimento int
@@ -110,7 +110,7 @@ Table procedimento {
   tipo_procedimento varchar
 }
 
-Table Doente_Patologias {
+Table Doente_Patologia {
   id int [pk]
   doente_id int [not null]
   patologia int
@@ -124,7 +124,7 @@ Table patologia {
   codigo varchar
 }
 
-Table Doente_Medicacoes {
+Table Doente_Medicacao {
   id int [pk]
   doente_id int [not null]
   medicacao int
@@ -182,38 +182,38 @@ Ref: "origemDestino"."id" < "internamento"."destino_alta"
 
 Ref: "internamento"."id" < "queimadura"."internamento_id"
 
-Ref: "internamento"."id" < "traumas"."internamento_id"
+Ref: "internamento"."id" < "trauma"."internamento_id"
 
-Ref: "internamento"."id" < "infecoes"."internamento_id"
+Ref: "internamento"."id" < "infecao"."internamento_id"
 
-Ref: "internamento"."id" < "Internamento_Antibioticos"."internamento_id"
+Ref: "internamento"."id" < "Internamento_Antibiotico"."internamento_id"
 
-Ref: "internamento"."id" < "Internamento_Procedimentos"."internamento_id"
+Ref: "internamento"."id" < "Internamento_Procedimento"."internamento_id"
 
-Ref: "doente"."id" < "Doente_Patologias"."doente_id"
+Ref: "doente"."id" < "Doente_Patologia"."doente_id"
 
-Ref: "doente"."id" < "Doente_Medicacoes"."doente_id"
+Ref: "doente"."id" < "Doente_Medicacao"."doente_id"
 
 Ref: "mecanismoQueimadura"."id" < "internamento"."mecanismo_queimadura"
 
 Ref: "agenteQueimadura"."id" < "internamento"."agente_queimadura"
 
-Ref: "procedimento"."id" < "Internamento_Procedimentos"."procedimento"
+Ref: "procedimento"."id" < "Internamento_Procedimento"."procedimento"
 
 Ref: "tipoAcidente"."id" < "internamento"."tipo_acidente"
 
-Ref: "medicacao"."id" < "Doente_Medicacoes"."medicacao"
+Ref: "medicacao"."id" < "Doente_Medicacao"."medicacao"
 
 Ref: "localAnatomico"."id" < "queimaduras"."local_anatomico"
 
-Ref: "traumaTipo"."id" < "traumas"."tipo_local"
+Ref: "traumaTipo"."id" < "trauma"."tipo_local"
 
-Ref: "agenteInfeccioso"."id" < "infecoes"."agente"
+Ref: "agenteInfeccioso"."id" < "infecao"."agente"
 
-Ref: "tipoInfeccao"."id" < "infecoes"."local_tipo_infecao"
+Ref: "tipoInfeccao"."id" < "infecao"."local_tipo_infecao"
 
-Ref: "antibiotico"."id" < "Internamento_Antibioticos"."antibiotico"
+Ref: "antibiotico"."id" < "Internamento_Antibiotico"."antibiotico"
 
-Ref: "indicacaoAntibiotico"."id" < "Internamento_Antibioticos"."indicacao"
+Ref: "indicacaoAntibiotico"."id" < "Internamento_Antibiotico"."indicacao"
 
-Ref: "patologia"."id" < "Doente_Patologias"."patologia"
+Ref: "patologia"."id" < "Doente_Patologia"."patologia"
