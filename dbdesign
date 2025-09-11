@@ -54,7 +54,7 @@ Table agenteQueimadura {
   agente_queimadura varchar
   nota varchar
 }
-
+// implemented
 Table mecanismoQueimadura {
   id int [pk]
   mecanismo_queimadura varchar

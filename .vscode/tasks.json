@@ -446,6 +446,12 @@
 			"type": "shell",
 			"command": "curl -X GET 'http://127.0.0.1:8001/mecanismos_queimadura' | jq .",
 			"group": "test"
+		},
+		{
+			"label": "Test MecanismoQueimadura with Fixed Constants",
+			"type": "shell",
+			"command": "uv run pytest tests/test_mecanismoqueimadura.py -v",
+			"group": "test"
 		}
 	]
 }

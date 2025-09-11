@@ -17,6 +17,9 @@ HTTP_201_CREATED = 201
 HTTP_404_NOT_FOUND = 404
 HTTP_422_UNPROCESSABLE_ENTITY = 422
 
+# Test constants
+INVALID_ID = 999  # Non-existent ID for testing invalid foreign keys
+
 # Start tracemalloc to track memory allocations
 tracemalloc.start()
 
@@ -123,7 +126,7 @@ def test_get_mecanismo_queimadura_by_id(client: TestClient):
 
 def test_get_mecanismo_queimadura_not_found(client: TestClient):
     """Test getting a non-existent mecanismo queimadura."""
-    response = client.get("/mecanismos_queimadura/999")
+    response = client.get(f"/mecanismos_queimadura/{INVALID_ID}")
     assert response.status_code == HTTP_404_NOT_FOUND
     assert response.json() == {"detail": "Mecanismo de queimadura not found"}
 
@@ -327,13 +330,13 @@ def test_internamento_with_invalid_mecanismo_queimadura_fk(
             "data_entrada": "2025-09-11",
             "ASCQ_total": 20,
             "lesao_inalatoria": "NAO",
-            "mecanismo_queimadura": 999  # Non-existent ID
+            "mecanismo_queimadura": INVALID_ID  # Non-existent ID
         }
     )
     assert internamento_response.status_code == HTTP_201_CREATED
     data = internamento_response.json()
     # Value should be stored even if invalid
-    assert data["mecanismo_queimadura"] == 999
+    assert data["mecanismo_queimadura"] == INVALID_ID
 
 
 def test_get_empty_mecanismos_queimadura_list(client: TestClient):
