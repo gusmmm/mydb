@@ -214,3 +214,46 @@ class InfecaoCreate(InfecaoBase):
 
 class InfecaoWithID(InfecaoBase):
     id: int
+
+
+# Antibiotico Schemas
+class AntibioticoBase(BaseModel):
+    nome_antibiotico: str
+    classe_antibiotico: str | None = None
+    codigo: str | None = None
+
+
+class AntibioticoCreate(AntibioticoBase):
+    pass
+
+
+class AntibioticoWithID(AntibioticoBase):
+    id: int
+
+
+# IndicacaoAntibiotico Schemas
+class IndicacaoAntibioticoBase(BaseModel):
+    indicacao: str
+
+
+class IndicacaoAntibioticoCreate(IndicacaoAntibioticoBase):
+    pass
+
+
+class IndicacaoAntibioticoWithID(IndicacaoAntibioticoBase):
+    id: int
+
+
+# InternamentoAntibiotico Schemas
+class InternamentoAntibioticoBase(BaseModel):
+    internamento_id: int
+    antibiotico: int | None = None
+    indicacao: int | None = None
+
+
+class InternamentoAntibioticoCreate(InternamentoAntibioticoBase):
+    pass
+
+
+class InternamentoAntibioticoWithID(InternamentoAntibioticoBase):
+    id: int

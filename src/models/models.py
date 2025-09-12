@@ -248,6 +248,9 @@ class Internamento(InternamentoBase, table=True):
     )
     traumas: list['Trauma'] = Relationship(back_populates='internamento')
     infecoes: list['Infecao'] = Relationship(back_populates='internamento')
+    internamento_antibioticos: list['InternamentoAntibiotico'] = Relationship(
+        back_populates='internamento'
+    )
 
 
 class LocalAnatomicoBase(SQLModel):
@@ -403,3 +406,72 @@ class Infecao(InfecaoBase, table=True):
         back_populates='infecoes'
     )
     tipo_infecao: TipoInfecao | None = Relationship(back_populates='infecoes')
+
+
+# Antibiotic tables
+class AntibioticoBase(SQLModel):
+    nome_antibiotico: str
+    classe_antibiotico: str | None = None
+    codigo: str | None = None
+
+
+class AntibioticoCreate(AntibioticoBase):
+    pass
+
+
+class Antibiotico(AntibioticoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    internamento_antibioticos: list['InternamentoAntibiotico'] = Relationship(
+        back_populates='antibiotico_rel'
+    )
+
+
+class IndicacaoAntibioticoBase(SQLModel):
+    indicacao: str
+
+
+class IndicacaoAntibioticoCreate(IndicacaoAntibioticoBase):
+    pass
+
+
+class IndicacaoAntibiotico(IndicacaoAntibioticoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    internamento_antibioticos: list['InternamentoAntibiotico'] = Relationship(
+        back_populates='indicacao_antibiotico_rel'
+    )
+
+
+class InternamentoAntibioticoBase(SQLModel):
+    internamento_id: int
+    antibiotico: int | None = None
+    indicacao: int | None = None
+
+
+class InternamentoAntibioticoCreate(InternamentoAntibioticoBase):
+    pass
+
+
+class InternamentoAntibiotico(InternamentoAntibioticoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    internamento_id: int = Field(foreign_key='internamento.id')
+    antibiotico: int | None = Field(
+        default=None, foreign_key='antibiotico.id'
+    )
+    indicacao: int | None = Field(
+        default=None, foreign_key='indicacaoantibiotico.id'
+    )
+
+    # Relationships
+    internamento: Internamento = Relationship(
+        back_populates='internamento_antibioticos'
+    )
+    antibiotico_rel: Antibiotico | None = Relationship(
+        back_populates='internamento_antibioticos'
+    )
+    indicacao_antibiotico_rel: IndicacaoAntibiotico | None = Relationship(
+        back_populates='internamento_antibioticos'
+    )

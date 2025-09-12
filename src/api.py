@@ -11,11 +11,17 @@ from src.models.models import (
     AgenteInfecciosoCreate,
     AgenteQueimadura,
     AgenteQueimaduraCreate,
+    Antibiotico,
+    AntibioticoCreate,
     Doente,
     DoenteCreate,
+    IndicacaoAntibiotico,
+    IndicacaoAntibioticoCreate,
     Infecao,
     InfecaoCreate,
     Internamento,
+    InternamentoAntibiotico,
+    InternamentoAntibioticoCreate,
     InternamentoCreate,
     LocalAnatomico,
     LocalAnatomicoCreate,
@@ -37,9 +43,12 @@ from src.models.models import (
 )
 from src.schemas.schemas import (
     AgenteInfecciosoWithID,
+    AntibioticoWithID,
     DoentePatch,
     DoenteUpdate,
+    IndicacaoAntibioticoWithID,
     InfecaoWithID,
+    InternamentoAntibioticoWithID,
     LocalAnatomicoWithID,
     QueimaduraUpdate,
     QueimaduraWithID,
@@ -973,3 +982,210 @@ def get_infeccoes_by_internamento(
     ).all()
     ic(f'Found {len(infeccoes)} infeccoes for internamento {internamento_id}')
     return infeccoes
+
+
+# Antibiotico endpoints
+@app.post('/antibioticos', response_model=AntibioticoWithID)
+def create_antibiotico(
+    antibiotico: AntibioticoCreate, session: Session = Depends(get_session)
+):
+    ic(f'Creating antibiotico: {antibiotico.nome_antibiotico}')
+    antibiotico_bd = Antibiotico.model_validate(antibiotico)
+    session.add(antibiotico_bd)
+    session.commit()
+    session.refresh(antibiotico_bd)
+    ic(f'Created antibiotico with id: {antibiotico_bd.id}')
+    return antibiotico_bd
+
+
+@app.get('/antibioticos', response_model=list[AntibioticoWithID])
+def get_all_antibioticos(session: Session = Depends(get_session)):
+    ic('Getting all antibioticos')
+    antibioticos = session.exec(select(Antibiotico)).all()
+    ic(f'Found {len(antibioticos)} antibioticos')
+    return antibioticos
+
+
+@app.get('/antibioticos/{antibiotico_id}', response_model=AntibioticoWithID)
+def get_antibiotico(
+    antibiotico_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting antibiotico with id: {antibiotico_id}')
+    antibiotico = session.get(Antibiotico, antibiotico_id)
+    if not antibiotico:
+        ic(f'Antibiotico {antibiotico_id} not found')
+        raise HTTPException(status_code=404, detail='Antibiotico not found')
+    ic(f'Found antibiotico: {antibiotico.nome_antibiotico}')
+    return antibiotico
+
+
+# IndicacaoAntibiotico endpoints
+@app.post('/indicacoes_antibiotico', response_model=IndicacaoAntibioticoWithID)
+def create_indicacao_antibiotico(
+    indicacao: IndicacaoAntibioticoCreate,
+    session: Session = Depends(get_session),
+):
+    ic(f'Creating indicacao antibiotico: {indicacao.indicacao}')
+    indicacao_bd = IndicacaoAntibiotico.model_validate(indicacao)
+    session.add(indicacao_bd)
+    session.commit()
+    session.refresh(indicacao_bd)
+    ic(f'Created indicacao antibiotico with id: {indicacao_bd.id}')
+    return indicacao_bd
+
+
+@app.get(
+    '/indicacoes_antibiotico', response_model=list[IndicacaoAntibioticoWithID]
+)
+def get_all_indicacoes_antibiotico(session: Session = Depends(get_session)):
+    ic('Getting all indicacoes antibiotico')
+    indicacoes = session.exec(select(IndicacaoAntibiotico)).all()
+    ic(f'Found {len(indicacoes)} indicacoes antibiotico')
+    return indicacoes
+
+
+@app.get(
+    '/indicacoes_antibiotico/{indicacao_id}',
+    response_model=IndicacaoAntibioticoWithID,
+)
+def get_indicacao_antibiotico(
+    indicacao_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting indicacao antibiotico with id: {indicacao_id}')
+    indicacao = session.get(IndicacaoAntibiotico, indicacao_id)
+    if not indicacao:
+        ic(f'Indicacao antibiotico {indicacao_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Indicacao antibiotico not found'
+        )
+    ic(f'Found indicacao: {indicacao.indicacao}')
+    return indicacao
+
+
+# InternamentoAntibiotico endpoints
+@app.post(
+    '/internamentos_antibiotico', response_model=InternamentoAntibioticoWithID
+)
+def create_internamento_antibiotico(
+    internamento_antibiotico: InternamentoAntibioticoCreate,
+    session: Session = Depends(get_session),
+):
+    ic(
+        f'Creating internamento antibiotico for internamento: '
+        f'{internamento_antibiotico.internamento_id}'
+    )
+
+    # Validate internamento exists
+    internamento = session.get(
+        Internamento, internamento_antibiotico.internamento_id
+    )
+    if not internamento:
+        ic(
+            f'Internamento {internamento_antibiotico.internamento_id} '
+            f'not found'
+        )
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    # Validate antibiotico exists if provided
+    if internamento_antibiotico.antibiotico:
+        antibiotico = session.get(
+            Antibiotico, internamento_antibiotico.antibiotico
+        )
+        if not antibiotico:
+            ic(f'Antibiotico {internamento_antibiotico.antibiotico} not found')
+            raise HTTPException(
+                status_code=404, detail='Antibiotico not found'
+            )
+
+    # Validate indicacao exists if provided
+    if internamento_antibiotico.indicacao:
+        indicacao = session.get(
+            IndicacaoAntibiotico, internamento_antibiotico.indicacao
+        )
+        if not indicacao:
+            ic(f'Indicacao {internamento_antibiotico.indicacao} not found')
+            raise HTTPException(
+                status_code=404, detail='Indicacao antibiotico not found'
+            )
+
+    internamento_antibiotico_bd = InternamentoAntibiotico.model_validate(
+        internamento_antibiotico
+    )
+    session.add(internamento_antibiotico_bd)
+    session.commit()
+    session.refresh(internamento_antibiotico_bd)
+    ic(
+        f'Created internamento antibiotico with id: '
+        f'{internamento_antibiotico_bd.id}'
+    )
+    return internamento_antibiotico_bd
+
+
+@app.get(
+    '/internamentos_antibiotico',
+    response_model=list[InternamentoAntibioticoWithID],
+)
+def get_all_internamentos_antibiotico(
+    session: Session = Depends(get_session)
+):
+    ic('Getting all internamentos antibiotico')
+    internamentos_antibiotico = session.exec(
+        select(InternamentoAntibiotico)
+    ).all()
+    ic(f'Found {len(internamentos_antibiotico)} internamentos antibiotico')
+    return internamentos_antibiotico
+
+
+@app.get(
+    '/internamentos_antibiotico/{internamento_antibiotico_id}',
+    response_model=InternamentoAntibioticoWithID,
+)
+def get_internamento_antibiotico(
+    internamento_antibiotico_id: int, session: Session = Depends(get_session)
+):
+    ic(
+        f'Getting internamento antibiotico with id: '
+        f'{internamento_antibiotico_id}'
+    )
+    internamento_antibiotico = session.get(
+        InternamentoAntibiotico, internamento_antibiotico_id
+    )
+    if not internamento_antibiotico:
+        ic(f'Internamento antibiotico {internamento_antibiotico_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento antibiotico not found'
+        )
+    ic(f'Found internamento antibiotico for internamento: '
+       f'{internamento_antibiotico.internamento_id}')
+    return internamento_antibiotico
+
+
+@app.get(
+    '/internamentos/{internamento_id}/antibioticos',
+    response_model=list[InternamentoAntibioticoWithID],
+)
+def get_antibioticos_by_internamento(
+    internamento_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting antibioticos for internamento: {internamento_id}')
+
+    # Validate internamento exists
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        ic(f'Internamento {internamento_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    internamentos_antibiotico = session.exec(
+        select(InternamentoAntibiotico).where(
+            InternamentoAntibiotico.internamento_id == internamento_id
+        )
+    ).all()
+    ic(
+        f'Found {len(internamentos_antibiotico)} antibioticos for '
+        f'internamento {internamento_id}'
+    )
+    return internamentos_antibiotico
