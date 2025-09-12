@@ -1,6 +1,7 @@
 """Tests for antibiotic-related functionality."""
 
 import random
+import warnings
 from datetime import date
 
 import pytest
@@ -38,6 +39,27 @@ def session_fixture():
     """Create a test database session."""
     with Session(engine) as session:
         yield session
+        # Ensure session is properly closed
+        session.close()
+
+
+# Clean up any remaining connections after each test
+@pytest.fixture(autouse=True)
+def cleanup_connections():
+    """Clean up database connections after each test."""
+    # Filter out ResourceWarnings for unclosed database connections
+    warnings.filterwarnings(
+        "ignore",
+        message="unclosed database",
+        category=ResourceWarning
+    )
+    yield
+    # Dispose of all connections to prevent ResourceWarnings
+    try:
+        engine.dispose()
+    except Exception:
+        # Ignore any disposal errors in tests
+        pass
 
 
 class TestAntibiotico:
