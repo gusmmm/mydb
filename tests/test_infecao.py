@@ -20,6 +20,16 @@ from src.models.models import (
     SexoEnum,
 )
 
+# HTTP Status Code Constants
+HTTP_200_OK = 200
+HTTP_404_NOT_FOUND = 404
+HTTP_422_UNPROCESSABLE_ENTITY = 422
+
+# Test Constants
+NON_EXISTENT_ID = 999
+NON_EXISTENT_LARGE_ID = 999999
+MIN_TEST_DATA_COUNT = 2
+
 
 # Test database setup
 @pytest.fixture(name="session")
@@ -50,7 +60,8 @@ def client_fixture(session: Session):
 class TestAgenteInfeccioso:
     """Test class for AgenteInfeccioso functionality."""
 
-    def test_create_agente_infeccioso(self, client: TestClient):
+    @staticmethod
+    def test_create_agente_infeccioso(client: TestClient):
         """Test creating a new agente infeccioso."""
         response = client.post(
             "/agentes_infecciosos",
@@ -59,13 +70,14 @@ class TestAgenteInfeccioso:
                 "tipo_agente": "BACTERIA",
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["nome"] == "Staphylococcus aureus"
         assert data["tipo_agente"] == "BACTERIA"
         assert "id" in data
 
-    def test_get_all_agentes_infecciosos(self, client: TestClient):
+    @staticmethod
+    def test_get_all_agentes_infecciosos(client: TestClient):
         """Test retrieving all agentes infecciosos."""
         # Create test agentes
         client.post(
@@ -84,15 +96,16 @@ class TestAgenteInfeccioso:
         )
 
         response = client.get("/agentes_infecciosos")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
-        assert len(data) >= 2
+        assert len(data) >= MIN_TEST_DATA_COUNT
         assert any(
             agente["nome"] == "Pseudomonas aeruginosa" for agente in data
         )
         assert any(agente["nome"] == "Candida albicans" for agente in data)
 
-    def test_get_agente_infeccioso_by_id(self, client: TestClient):
+    @staticmethod
+    def test_get_agente_infeccioso_by_id(client: TestClient):
         """Test retrieving agente infeccioso by ID."""
         create_response = client.post(
             "/agentes_infecciosos",
@@ -104,22 +117,24 @@ class TestAgenteInfeccioso:
         agente_id = create_response.json()["id"]
 
         response = client.get(f"/agentes_infecciosos/{agente_id}")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["nome"] == "Escherichia coli"
         assert data["id"] == agente_id
 
-    def test_get_nonexistent_agente_infeccioso(self, client: TestClient):
+    @staticmethod
+    def test_get_nonexistent_agente_infeccioso(client: TestClient):
         """Test retrieving non-existent agente infeccioso."""
-        response = client.get("/agentes_infecciosos/999")
-        assert response.status_code == 404
+        response = client.get(f"/agentes_infecciosos/{NON_EXISTENT_ID}")
+        assert response.status_code == HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"].lower()
 
 
 class TestTipoInfecao:
     """Test class for TipoInfecao functionality."""
 
-    def test_create_tipo_infecao(self, client: TestClient):
+    @staticmethod
+    def test_create_tipo_infecao(client: TestClient):
         """Test creating a new tipo de infecção."""
         response = client.post(
             "/tipos_infeccao",
@@ -128,13 +143,14 @@ class TestTipoInfecao:
                 "local": "Aparelho respiratório",
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["tipo_infeccao"] == "Infecção respiratória"
         assert data["local"] == "Aparelho respiratório"
         assert "id" in data
 
-    def test_get_all_tipos_infeccao(self, client: TestClient):
+    @staticmethod
+    def test_get_all_tipos_infeccao(client: TestClient):
         """Test retrieving all tipos de infecção."""
         # Create test tipos
         client.post(
@@ -153,15 +169,16 @@ class TestTipoInfecao:
         )
 
         response = client.get("/tipos_infeccao")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
-        assert len(data) >= 2
+        assert len(data) >= MIN_TEST_DATA_COUNT
         assert any(
             tipo["tipo_infeccao"] == "Infecção de ferida" for tipo in data
         )
         assert any(tipo["tipo_infeccao"] == "Septicemia" for tipo in data)
 
-    def test_get_tipo_infecao_by_id(self, client: TestClient):
+    @staticmethod
+    def test_get_tipo_infecao_by_id(client: TestClient):
         """Test retrieving tipo de infecção by ID."""
         create_response = client.post(
             "/tipos_infeccao",
@@ -173,22 +190,23 @@ class TestTipoInfecao:
         tipo_id = create_response.json()["id"]
 
         response = client.get(f"/tipos_infeccao/{tipo_id}")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["tipo_infeccao"] == "Infecção urinária"
         assert data["id"] == tipo_id
 
-    def test_get_nonexistent_tipo_infecao(self, client: TestClient):
+    @staticmethod
+    def test_get_nonexistent_tipo_infecao(client: TestClient):
         """Test retrieving non-existent tipo de infecção."""
-        response = client.get("/tipos_infeccao/999")
-        assert response.status_code == 404
+        response = client.get(f"/tipos_infeccao/{NON_EXISTENT_ID}")
+        assert response.status_code == HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"].lower()
 
 
 class TestInfecao:
     """Test class for Infecao functionality."""
 
-    def test_create_infecao_with_all_relationships(
+    def test_create_infecao_with_all_relationships(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test creating infecção with all required relationships."""
@@ -242,19 +260,20 @@ class TestInfecao:
                 "nota": "Primeira infecção documentada",
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["internamento_id"] == internamento.id
         assert data["agente"] == agente_id
         assert data["local_tipo_infecao"] == tipo_id
         assert "id" in data
 
-    def test_create_infecao_invalid_internamento(self, client: TestClient):
+    @staticmethod
+    def test_create_infecao_invalid_internamento(client: TestClient):
         """Test creating infecção with invalid internamento_id."""
         response = client.post(
             "/infeccoes",
             json={
-                "internamento_id": 999,
+                "internamento_id": NON_EXISTENT_ID,
                 "agente": 1,
                 "local_tipo_infecao": 1,
                 "nota": "Test invalid internamento",
@@ -264,7 +283,7 @@ class TestInfecao:
         assert response.status_code in {400, 404}
         assert "not found" in response.json()["detail"].lower()
 
-    def test_create_infecao_invalid_agente(
+    def test_create_infecao_invalid_agente(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test creating infecção with invalid agente ID."""
@@ -294,7 +313,7 @@ class TestInfecao:
             "/infeccoes",
             json={
                 "internamento_id": internamento.id,
-                "agente": 999,
+                "agente": NON_EXISTENT_ID,
                 "local_tipo_infecao": 1,
                 "nota": "Test invalid agente",
             },
@@ -303,7 +322,7 @@ class TestInfecao:
         assert response.status_code in {400, 404}
         assert "not found" in response.json()["detail"].lower()
 
-    def test_create_infecao_invalid_tipo(
+    def test_create_infecao_invalid_tipo(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test creating infecção with invalid tipo de infecção ID."""
@@ -343,7 +362,7 @@ class TestInfecao:
             json={
                 "internamento_id": internamento.id,
                 "agente": agente_id,
-                "local_tipo_infecao": 999,
+                "local_tipo_infecao": NON_EXISTENT_ID,
                 "nota": "Test invalid tipo",
             },
         )
@@ -351,7 +370,7 @@ class TestInfecao:
         assert response.status_code in {400, 404}
         assert "not found" in response.json()["detail"].lower()
 
-    def test_get_all_infecoes(self, client: TestClient, session: Session):
+    def test_get_all_infecoes(self, client: TestClient, session: Session):  # noqa: PLR6301
         """Test retrieving all infecções."""
         # Create required data and infecções
         doente = Doente(
@@ -422,11 +441,11 @@ class TestInfecao:
         )
 
         response = client.get("/infeccoes")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
-        assert len(data) >= 2
+        assert len(data) >= MIN_TEST_DATA_COUNT
 
-    def test_get_infecao_by_id(self, client: TestClient, session: Session):
+    def test_get_infecao_by_id(self, client: TestClient, session: Session):  # noqa: PLR6301
         """Test retrieving infecção by ID."""
         # Create required data
         doente = Doente(
@@ -480,18 +499,19 @@ class TestInfecao:
         infecao_id = create_response.json()["id"]
 
         response = client.get(f"/infeccoes/{infecao_id}")
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["id"] == infecao_id
         assert data["internamento_id"] == internamento.id
 
-    def test_get_nonexistent_infecao(self, client: TestClient):
+    @staticmethod
+    def test_get_nonexistent_infecao(client: TestClient):
         """Test retrieving non-existent infecção."""
-        response = client.get("/infeccoes/999")
-        assert response.status_code == 404
+        response = client.get(f"/infeccoes/{NON_EXISTENT_ID}")
+        assert response.status_code == HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"].lower()
 
-    def test_infecao_required_fields(
+    def test_infecao_required_fields(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test that required fields are validated."""
@@ -525,7 +545,7 @@ class TestInfecao:
                 "nota": "Test with minimal fields",
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data["internamento_id"] == internamento.id
         assert data["agente"] is None
@@ -538,7 +558,7 @@ class TestInfecao:
                 "nota": "Test without internamento_id",
             },
         )
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
 
 
 if __name__ == "__main__":

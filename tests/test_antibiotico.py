@@ -16,6 +16,16 @@ from src.models.models import (
     SexoEnum,
 )
 
+# HTTP Status Code Constants
+HTTP_200_OK = 200
+HTTP_404_NOT_FOUND = 404
+HTTP_422_UNPROCESSABLE_ENTITY = 422
+
+# Test Constants
+NON_EXISTENT_ID = 999
+NON_EXISTENT_LARGE_ID = 999999
+MIN_TEST_DATA_COUNT = 2
+
 
 @pytest.fixture(name='client')
 def client_fixture():
@@ -33,7 +43,8 @@ def session_fixture():
 class TestAntibiotico:
     """Test class for Antibiotico functionality."""
 
-    def test_create_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_create_antibiotico(client: TestClient):
         """Test creating a new antibiotico."""
         response = client.post(
             '/antibioticos',
@@ -43,21 +54,23 @@ class TestAntibiotico:
                 'codigo': 'PEN001',
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['nome_antibiotico'] == 'Penicilina G'
         assert data['classe_antibiotico'] == 'Beta-lactâmico'
         assert data['codigo'] == 'PEN001'
         assert 'id' in data
 
-    def test_get_all_antibioticos(self, client: TestClient):
+    @staticmethod
+    def test_get_all_antibioticos(client: TestClient):
         """Test retrieving all antibioticos."""
         response = client.get('/antibioticos')
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert isinstance(data, list)
 
-    def test_get_antibiotico_by_id(self, client: TestClient):
+    @staticmethod
+    def test_get_antibiotico_by_id(client: TestClient):
         """Test retrieving antibiotico by ID."""
         create_response = client.post(
             '/antibioticos',
@@ -66,38 +79,42 @@ class TestAntibiotico:
         antibiotico_id = create_response.json()['id']
 
         response = client.get(f'/antibioticos/{antibiotico_id}')
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['nome_antibiotico'] == 'Ciprofloxacina'
 
-    def test_get_nonexistent_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_get_nonexistent_antibiotico(client: TestClient):
         """Test retrieving non-existent antibiotico."""
-        response = client.get('/antibioticos/999')
-        assert response.status_code == 404
+        response = client.get(f'/antibioticos/{NON_EXISTENT_ID}')
+        assert response.status_code == HTTP_404_NOT_FOUND
 
 
 class TestIndicacaoAntibiotico:
     """Test class for IndicacaoAntibiotico functionality."""
 
-    def test_create_indicacao_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_create_indicacao_antibiotico(client: TestClient):
         """Test creating a new indicacao antibiotico."""
         response = client.post(
             '/indicacoes_antibiotico',
             json={'indicacao': 'Profilaxia cirúrgica'},
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['indicacao'] == 'Profilaxia cirúrgica'
         assert 'id' in data
 
-    def test_get_all_indicacoes_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_get_all_indicacoes_antibiotico(client: TestClient):
         """Test retrieving all indicacoes antibiotico."""
         response = client.get('/indicacoes_antibiotico')
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert isinstance(data, list)
 
-    def test_get_indicacao_antibiotico_by_id(self, client: TestClient):
+    @staticmethod
+    def test_get_indicacao_antibiotico_by_id(client: TestClient):
         """Test retrieving indicacao antibiotico by ID."""
         create_response = client.post(
             '/indicacoes_antibiotico',
@@ -106,20 +123,21 @@ class TestIndicacaoAntibiotico:
         indicacao_id = create_response.json()['id']
 
         response = client.get(f'/indicacoes_antibiotico/{indicacao_id}')
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['indicacao'] == 'Profilaxia de endocardite'
 
-    def test_get_nonexistent_indicacao_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_get_nonexistent_indicacao_antibiotico(client: TestClient):
         """Test retrieving non-existent indicacao antibiotico."""
-        response = client.get('/indicacoes_antibiotico/999')
-        assert response.status_code == 404
+        response = client.get(f'/indicacoes_antibiotico/{NON_EXISTENT_ID}')
+        assert response.status_code == HTTP_404_NOT_FOUND
 
 
 class TestInternamentoAntibiotico:
     """Test class for InternamentoAntibiotico functionality."""
 
-    def test_create_internamento_antibiotico_with_relationships(
+    def test_create_internamento_antibiotico_with_relationships(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test creating internamento antibiotico with relationships."""
@@ -137,7 +155,7 @@ class TestInternamentoAntibiotico:
         session.refresh(doente)
 
         internamento = Internamento(
-            numero_internamento=random_num + 1,  # Use different number than patient
+            numero_internamento=random_num + 1,  # Use different number
             doente_id=doente.id,
             data_entrada=date(2025, 9, 12),
             ASCQ_total=20,
@@ -170,14 +188,14 @@ class TestInternamentoAntibiotico:
                 'indicacao': indicacao_id,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['internamento_id'] == internamento.id
         assert data['antibiotico'] == antibiotico_id
         assert data['indicacao'] == indicacao_id
         assert 'id' in data
 
-    def test_create_internamento_antibiotico_minimal(
+    def test_create_internamento_antibiotico_minimal(  # noqa: PLR6301
         self, client: TestClient, session: Session
     ):
         """Test creating internamento antibiotico with minimal data."""
@@ -195,7 +213,7 @@ class TestInternamentoAntibiotico:
         session.refresh(doente)
 
         internamento = Internamento(
-            numero_internamento=random_num + 1,  # Use different number than patient
+            numero_internamento=random_num + 1,  # Use different number
             doente_id=doente.id,
             data_entrada=date(2025, 9, 12),
             ASCQ_total=15,
@@ -210,50 +228,57 @@ class TestInternamentoAntibiotico:
             '/internamentos_antibiotico',
             json={'internamento_id': internamento.id},
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert data['internamento_id'] == internamento.id
         assert data['antibiotico'] is None
         assert data['indicacao'] is None
         assert 'id' in data
 
+    @staticmethod
     def test_create_internamento_antibiotico_invalid_internamento(
-        self, client: TestClient
+        client: TestClient
     ):
         """Test creating internamento antibiotico with invalid internamento."""
         response = client.post(
             '/internamentos_antibiotico',
-            json={'internamento_id': 999999},
+            json={'internamento_id': NON_EXISTENT_LARGE_ID},
         )
-        assert response.status_code == 404
+        assert response.status_code == HTTP_404_NOT_FOUND
 
-    def test_get_all_internamentos_antibiotico(self, client: TestClient):
+    @staticmethod
+    def test_get_all_internamentos_antibiotico(client: TestClient):
         """Test retrieving all internamentos antibiotico."""
         response = client.get('/internamentos_antibiotico')
-        assert response.status_code == 200
+        assert response.status_code == HTTP_200_OK
         data = response.json()
         assert isinstance(data, list)
 
+    @staticmethod
     def test_get_nonexistent_internamento_antibiotico(
-        self, client: TestClient
+        client: TestClient
     ):
         """Test retrieving non-existent internamento antibiotico."""
-        response = client.get('/internamentos_antibiotico/999')
-        assert response.status_code == 404
+        response = client.get(f'/internamentos_antibiotico/{NON_EXISTENT_ID}')
+        assert response.status_code == HTTP_404_NOT_FOUND
 
+    @staticmethod
     def test_get_antibioticos_by_nonexistent_internamento(
-        self, client: TestClient
+        client: TestClient
     ):
         """Test retrieving antibioticos for non-existent internamento."""
-        response = client.get('/internamentos/999999/antibioticos')
-        assert response.status_code == 404
+        response = client.get(
+            f'/internamentos/{NON_EXISTENT_LARGE_ID}/antibioticos'
+        )
+        assert response.status_code == HTTP_404_NOT_FOUND
 
+    @staticmethod
     def test_internamento_antibiotico_validation_error(
-        self, client: TestClient
+        client: TestClient
     ):
         """Test validation error for missing required fields."""
         response = client.post(
             '/internamentos_antibiotico',
             json={'antibiotico': 1},
         )
-        assert response.status_code == 422  # Validation error
+        assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
