@@ -247,6 +247,7 @@ class Internamento(InternamentoBase, table=True):
         back_populates='internamento'
     )
     traumas: list['Trauma'] = Relationship(back_populates='internamento')
+    infecoes: list['Infecao'] = Relationship(back_populates='internamento')
 
 
 class LocalAnatomicoBase(SQLModel):
@@ -338,3 +339,67 @@ class Trauma(TraumaBase, table=True):
     # Relationships
     internamento: Internamento = Relationship(back_populates='traumas')
     trauma_tipo: TraumaTipo | None = Relationship(back_populates='traumas')
+
+
+# AgenteInfeccioso tables
+class AgenteInfecciosoBase(SQLModel):
+    nome: str
+    tipo_agente: str
+
+
+class AgenteInfecciosoCreate(AgenteInfecciosoBase):
+    pass
+
+
+class AgenteInfeccioso(AgenteInfecciosoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    infecoes: list['Infecao'] = Relationship(
+        back_populates='agente_infeccioso'
+    )
+
+
+# TipoInfecao tables
+class TipoInfecaoBase(SQLModel):
+    tipo_infeccao: str
+    local: str
+
+
+class TipoInfecaoCreate(TipoInfecaoBase):
+    pass
+
+
+class TipoInfecao(TipoInfecaoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    infecoes: list['Infecao'] = Relationship(back_populates='tipo_infecao')
+
+
+# Infecao tables
+class InfecaoBase(SQLModel):
+    internamento_id: int
+    agente: int | None = None
+    local_tipo_infecao: int | None = None
+    nota: str | None = None
+
+
+class InfecaoCreate(InfecaoBase):
+    pass
+
+
+class Infecao(InfecaoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    internamento_id: int = Field(foreign_key='internamento.id')
+    agente: int | None = Field(default=None, foreign_key='agenteinfeccioso.id')
+    local_tipo_infecao: int | None = Field(
+        default=None, foreign_key='tipoinfecao.id'
+    )
+
+    # Relationships
+    internamento: Internamento = Relationship(back_populates='infecoes')
+    agente_infeccioso: AgenteInfeccioso | None = Relationship(
+        back_populates='infecoes'
+    )
+    tipo_infecao: TipoInfecao | None = Relationship(back_populates='infecoes')

@@ -7,10 +7,14 @@ from sqlmodel import Session, select
 
 from src.db import get_session, init_db
 from src.models.models import (
+    AgenteInfeccioso,
+    AgenteInfecciosoCreate,
     AgenteQueimadura,
     AgenteQueimaduraCreate,
     Doente,
     DoenteCreate,
+    Infecao,
+    InfecaoCreate,
     Internamento,
     InternamentoCreate,
     LocalAnatomico,
@@ -24,17 +28,22 @@ from src.models.models import (
     SexoEnum,
     TipoAcidente,
     TipoAcidenteCreate,
+    TipoInfecao,
+    TipoInfecaoCreate,
     Trauma,
     TraumaCreate,
     TraumaTipo,
     TraumaTipoCreate,
 )
 from src.schemas.schemas import (
+    AgenteInfecciosoWithID,
     DoentePatch,
     DoenteUpdate,
+    InfecaoWithID,
     LocalAnatomicoWithID,
     QueimaduraUpdate,
     QueimaduraWithID,
+    TipoInfecaoWithID,
     TraumaTipoWithID,
     TraumaWithID,
 )
@@ -799,3 +808,168 @@ def get_traumas_for_internamento(
     ).all()
     ic(f'Found {len(traumas)} traumas for internamento {internamento_id}')
     return traumas
+
+
+# AgenteInfeccioso endpoints
+@app.post('/agentes_infecciosos', response_model=AgenteInfecciosoWithID)
+def create_agente_infeccioso(
+    agente: AgenteInfecciosoCreate, session: Session = Depends(get_session)
+):
+    ic(
+        f'Creating new agente infeccioso: {agente.nome} - {agente.tipo_agente}'
+    )
+
+    agente_bd = AgenteInfeccioso(**agente.model_dump())
+    session.add(agente_bd)
+    session.commit()
+    session.refresh(agente_bd)
+
+    ic(f'Created agente infeccioso with id: {agente_bd.id}')
+    return agente_bd
+
+
+@app.get('/agentes_infecciosos', response_model=list[AgenteInfecciosoWithID])
+def get_all_agentes_infecciosos(session: Session = Depends(get_session)):
+    ic('Getting all agentes infecciosos')
+    agentes = session.exec(select(AgenteInfeccioso)).all()
+    ic(f'Found {len(agentes)} agentes infecciosos')
+    return agentes
+
+
+@app.get(
+    '/agentes_infecciosos/{agente_id}', response_model=AgenteInfecciosoWithID
+)
+def get_agente_infeccioso(
+    agente_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting agente infeccioso with id: {agente_id}')
+    agente = session.get(AgenteInfeccioso, agente_id)
+    if not agente:
+        ic(f'Agente infeccioso {agente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Agente infeccioso not found'
+        )
+    ic(f'Found agente infeccioso: {agente.nome} - {agente.tipo_agente}')
+    return agente
+
+
+# TipoInfecao endpoints
+@app.post('/tipos_infeccao', response_model=TipoInfecaoWithID)
+def create_tipo_infeccao(
+    tipo: TipoInfecaoCreate, session: Session = Depends(get_session)
+):
+    ic(f'Creating new tipo de infeccao: {tipo.tipo_infeccao} - {tipo.local}')
+
+    tipo_bd = TipoInfecao(**tipo.model_dump())
+    session.add(tipo_bd)
+    session.commit()
+    session.refresh(tipo_bd)
+
+    ic(f'Created tipo de infeccao with id: {tipo_bd.id}')
+    return tipo_bd
+
+
+@app.get('/tipos_infeccao', response_model=list[TipoInfecaoWithID])
+def get_all_tipos_infeccao(session: Session = Depends(get_session)):
+    ic('Getting all tipos de infeccao')
+    tipos = session.exec(select(TipoInfecao)).all()
+    ic(f'Found {len(tipos)} tipos de infeccao')
+    return tipos
+
+
+@app.get('/tipos_infeccao/{tipo_id}', response_model=TipoInfecaoWithID)
+def get_tipo_infeccao(tipo_id: int, session: Session = Depends(get_session)):
+    ic(f'Getting tipo de infeccao with id: {tipo_id}')
+    tipo = session.get(TipoInfecao, tipo_id)
+    if not tipo:
+        ic(f'Tipo de infeccao {tipo_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Tipo de infeccao not found'
+        )
+    ic(f'Found tipo de infeccao: {tipo.tipo_infeccao} - {tipo.local}')
+    return tipo
+
+
+# Infecao endpoints
+@app.post('/infeccoes', response_model=InfecaoWithID)
+def create_infecao(
+    infecao: InfecaoCreate, session: Session = Depends(get_session)
+):
+    ic(f'Creating new infeccao for internamento: {infecao.internamento_id}')
+
+    # Validate internamento exists
+    internamento = session.get(Internamento, infecao.internamento_id)
+    if not internamento:
+        ic(f'Internamento {infecao.internamento_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    # Validate agente infeccioso if provided
+    if infecao.agente:
+        agente = session.get(AgenteInfeccioso, infecao.agente)
+        if not agente:
+            ic(f'Agente infeccioso {infecao.agente} not found')
+            raise HTTPException(
+                status_code=404, detail='Agente infeccioso not found'
+            )
+
+    # Validate tipo infeccao if provided
+    if infecao.local_tipo_infecao:
+        tipo = session.get(TipoInfecao, infecao.local_tipo_infecao)
+        if not tipo:
+            ic(f'Tipo de infeccao {infecao.local_tipo_infecao} not found')
+            raise HTTPException(
+                status_code=404, detail='Tipo de infeccao not found'
+            )
+
+    infecao_bd = Infecao(**infecao.model_dump())
+    session.add(infecao_bd)
+    session.commit()
+    session.refresh(infecao_bd)
+
+    ic(f'Created infeccao with id: {infecao_bd.id}')
+    return infecao_bd
+
+
+@app.get('/infeccoes', response_model=list[InfecaoWithID])
+def get_all_infeccoes(session: Session = Depends(get_session)):
+    ic('Getting all infeccoes')
+    infeccoes = session.exec(select(Infecao)).all()
+    ic(f'Found {len(infeccoes)} infeccoes')
+    return infeccoes
+
+
+@app.get('/infeccoes/{infecao_id}', response_model=InfecaoWithID)
+def get_infecao(infecao_id: int, session: Session = Depends(get_session)):
+    ic(f'Getting infeccao with id: {infecao_id}')
+    infecao = session.get(Infecao, infecao_id)
+    if not infecao:
+        ic(f'Infeccao {infecao_id} not found')
+        raise HTTPException(status_code=404, detail='Infeccao not found')
+    ic(f'Found infeccao for internamento: {infecao.internamento_id}')
+    return infecao
+
+
+@app.get(
+    '/internamentos/{internamento_id}/infeccoes',
+    response_model=list[InfecaoWithID],
+)
+def get_infeccoes_by_internamento(
+    internamento_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting infeccoes for internamento: {internamento_id}')
+
+    # Validate internamento exists
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        ic(f'Internamento {internamento_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    infeccoes = session.exec(
+        select(Infecao).where(Infecao.internamento_id == internamento_id)
+    ).all()
+    ic(f'Found {len(infeccoes)} infeccoes for internamento {internamento_id}')
+    return infeccoes

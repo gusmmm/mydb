@@ -170,3 +170,47 @@ class TraumaUpdate(BaseModel):
     internamento_id: int | None = None
     tipo_local: int | None = None
     cirurgia_urgente: bool | None = None
+
+
+# AgenteInfeccioso Schemas
+class AgenteInfecciosoBase(BaseModel):
+    nome: str
+    tipo_agente: str
+
+
+class AgenteInfecciosoCreate(AgenteInfecciosoBase):
+    pass
+
+
+class AgenteInfecciosoWithID(AgenteInfecciosoBase):
+    id: int
+
+
+# TipoInfecao Schemas
+class TipoInfecaoBase(BaseModel):
+    tipo_infeccao: str
+    local: str
+
+
+class TipoInfecaoCreate(TipoInfecaoBase):
+    pass
+
+
+class TipoInfecaoWithID(TipoInfecaoBase):
+    id: int
+
+
+# Infecao Schemas
+class InfecaoBase(BaseModel):
+    internamento_id: int
+    agente: int | None = None
+    local_tipo_infecao: int | None = None
+    nota: str | None = None
+
+
+class InfecaoCreate(InfecaoBase):
+    pass
+
+
+class InfecaoWithID(InfecaoBase):
+    id: int
