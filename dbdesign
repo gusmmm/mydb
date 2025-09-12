@@ -114,18 +114,19 @@ Table tipoInfeccao {
   tipo_infeccao varchar
   local varchar
 }
-
+// implemented
 Table antibiotico {
   id int [pk]
   nome_antibiotico varchar
   classe_antibiotico varchar
   codigo varchar  
 }
-
+// implemented
 Table indicacaoAntibiotico {
   id int [pk]
   indicacao varchar
 }
+// implemented
 Table Internamento_Antibiotico {
   id int [pk]
   internamento_id int [not null]
