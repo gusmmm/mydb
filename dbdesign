@@ -94,7 +94,7 @@ Table traumaTipo {
   local varchar
   tipo varchar
 }
-
+// implemented
 Table infecao {
   id int [pk]
   internamento_id int [not null]
@@ -102,19 +102,30 @@ Table infecao {
   local_tipo_infecao int
   nota varchar
 }
-
+// implemented
 Table agenteInfeccioso {
   id int [pk]
   nome varchar
   tipo_agente varchar
 }
-
+// implemented
 Table tipoInfeccao {
   id int [pk]
   tipo_infeccao varchar
   local varchar
 }
 
+Table antibiotico {
+  id int [pk]
+  nome_antibiotico varchar
+  classe_antibiotico varchar
+  codigo varchar  
+}
+
+Table indicacaoAntibiotico {
+  id int [pk]
+  indicacao varchar
+}
 Table Internamento_Antibiotico {
   id int [pk]
   internamento_id int [not null]
@@ -162,18 +173,6 @@ Table medicacao {
   codigo varchar
 }
 
-
-Table antibiotico {
-  id int [pk]
-  nome_antibiotico varchar
-  classe_antibiotico varchar
-  codigo varchar  
-}
-
-Table indicacaoAntibiotico {
-  id int [pk]
-  indicacao varchar
-}
 
 Ref: "doente"."id" < "internamento"."doente_id"
 
