@@ -246,6 +246,7 @@ class Internamento(InternamentoBase, table=True):
     queimaduras: list['Queimadura'] = Relationship(
         back_populates='internamento'
     )
+    traumas: list['Trauma'] = Relationship(back_populates='internamento')
 
 
 class LocalAnatomicoBase(SQLModel):
@@ -287,3 +288,53 @@ class Queimadura(QueimaduraBase, table=True):
     local_anatomico_ref: LocalAnatomico | None = Relationship(
         back_populates='queimaduras'
     )
+
+
+# TraumaTipo Model (Lookup Table)
+class TraumaTipoBase(SQLModel):
+    local: str
+    tipo: str
+
+
+class TraumaTipoCreate(TraumaTipoBase):
+    pass
+
+
+class TraumaTipo(TraumaTipoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+    last_updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={'onupdate': func.now()},
+    )
+
+    # Relationships
+    traumas: list['Trauma'] = Relationship(back_populates='trauma_tipo')
+
+
+# Trauma Model
+class TraumaBase(SQLModel):
+    internamento_id: int = Field(foreign_key='internamento.id')
+    tipo_local: int | None = Field(default=None, foreign_key='traumatipo.id')
+    cirurgia_urgente: bool | None = None
+
+
+class TraumaCreate(TraumaBase):
+    pass
+
+
+class Trauma(TraumaBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+    last_updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={'onupdate': func.now()},
+    )
+
+    # Relationships
+    internamento: Internamento = Relationship(back_populates='traumas')
+    trauma_tipo: TraumaTipo | None = Relationship(back_populates='traumas')

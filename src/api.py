@@ -24,6 +24,10 @@ from src.models.models import (
     SexoEnum,
     TipoAcidente,
     TipoAcidenteCreate,
+    Trauma,
+    TraumaCreate,
+    TraumaTipo,
+    TraumaTipoCreate,
 )
 from src.schemas.schemas import (
     DoentePatch,
@@ -31,6 +35,8 @@ from src.schemas.schemas import (
     LocalAnatomicoWithID,
     QueimaduraUpdate,
     QueimaduraWithID,
+    TraumaTipoWithID,
+    TraumaWithID,
 )
 
 
@@ -659,3 +665,137 @@ def create_local_anatomico(
 
     ic(f'Created local anatómico with id: {local_bd.id}')
     return local_bd
+
+
+# ============================================================================
+# TraumaTipo Endpoints (Lookup Table)
+# ============================================================================
+
+
+@app.get('/tipos_trauma')
+def get_all_tipos_trauma(
+    session: Session = Depends(get_session),
+) -> list[TraumaTipoWithID]:
+    """Get all tipos de trauma."""
+    ic('Getting all tipos de trauma')
+    tipos_trauma = session.exec(select(TraumaTipo)).all()
+    ic(f'Found {len(tipos_trauma)} tipos de trauma')
+    return tipos_trauma
+
+
+@app.get('/tipos_trauma/{tipo_trauma_id}')
+def get_tipo_trauma(
+    tipo_trauma_id: int, session: Session = Depends(get_session)
+) -> TraumaTipoWithID:
+    """Get a specific tipo de trauma by ID."""
+    ic(f'Getting tipo de trauma with id: {tipo_trauma_id}')
+    tipo_trauma = session.get(TraumaTipo, tipo_trauma_id)
+    if not tipo_trauma:
+        ic(f'Tipo de trauma {tipo_trauma_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Tipo de trauma not found'
+        )
+    ic(f'Found tipo de trauma: {tipo_trauma.local} - {tipo_trauma.tipo}')
+    return tipo_trauma
+
+
+@app.post('/tipos_trauma')
+def create_tipo_trauma(
+    tipo_trauma: TraumaTipoCreate, session: Session = Depends(get_session)
+) -> TraumaTipoWithID:
+    """Create a new tipo de trauma."""
+    ic(f'Creating new tipo de trauma: {tipo_trauma.local} - '
+       f'{tipo_trauma.tipo}')
+
+    tipo_trauma_bd = TraumaTipo(**tipo_trauma.model_dump())
+    session.add(tipo_trauma_bd)
+    session.commit()
+    session.refresh(tipo_trauma_bd)
+
+    ic(f'Created tipo de trauma with id: {tipo_trauma_bd.id}')
+    return tipo_trauma_bd
+
+
+# ============================================================================
+# Trauma Endpoints
+# ============================================================================
+
+
+@app.get('/traumas')
+def get_all_traumas(
+    session: Session = Depends(get_session),
+) -> list[TraumaWithID]:
+    """Get all traumas."""
+    ic('Getting all traumas')
+    traumas = session.exec(select(Trauma)).all()
+    ic(f'Found {len(traumas)} traumas')
+    return traumas
+
+
+@app.get('/traumas/{trauma_id}')
+def get_trauma(
+    trauma_id: int, session: Session = Depends(get_session)
+) -> TraumaWithID:
+    """Get a specific trauma by ID."""
+    ic(f'Getting trauma with id: {trauma_id}')
+    trauma = session.get(Trauma, trauma_id)
+    if not trauma:
+        ic(f'Trauma {trauma_id} not found')
+        raise HTTPException(status_code=404, detail='Trauma not found')
+    ic(f'Found trauma for internamento: {trauma.internamento_id}')
+    return trauma
+
+
+@app.post('/traumas')
+def create_trauma(
+    trauma: TraumaCreate, session: Session = Depends(get_session)
+) -> TraumaWithID:
+    """Create a new trauma."""
+    ic(f'Creating new trauma for internamento: {trauma.internamento_id}')
+
+    # Validate that internamento exists
+    internamento_db = session.exec(
+        select(Internamento).where(Internamento.id == trauma.internamento_id)
+    ).first()
+    if not internamento_db:
+        ic(f'Internamento {trauma.internamento_id} not found')
+        raise HTTPException(status_code=404, detail='Internamento not found')
+
+    # Validate that tipo_local exists if provided
+    if trauma.tipo_local:
+        tipo_trauma_db = session.get(TraumaTipo, trauma.tipo_local)
+        if not tipo_trauma_db:
+            ic(f'Tipo de trauma {trauma.tipo_local} not found')
+            raise HTTPException(
+                status_code=404, detail='Tipo de trauma not found'
+            )
+
+    trauma_bd = Trauma(**trauma.model_dump())
+    session.add(trauma_bd)
+    session.commit()
+    session.refresh(trauma_bd)
+
+    ic(f'Created trauma with id: {trauma_bd.id}')
+    return trauma_bd
+
+
+@app.get('/internamentos/{internamento_id}/traumas')
+def get_traumas_for_internamento(
+    internamento_id: int, session: Session = Depends(get_session)
+) -> list[TraumaWithID]:
+    """Get all traumas for a specific internamento."""
+    ic(f'Getting traumas for internamento: {internamento_id}')
+
+    # Validate that internamento exists
+    internamento_db = session.exec(
+        select(Internamento).where(Internamento.id == internamento_id)
+    ).first()
+    if not internamento_db:
+        ic(f'Internamento {internamento_id} not found')
+        raise HTTPException(status_code=404, detail='Internamento not found')
+
+    traumas = session.exec(
+        select(Trauma).where(Trauma.internamento_id == internamento_id)
+    ).all()
+    ic(f'Found {len(traumas)} traumas for internamento {internamento_id}')
+    return traumas

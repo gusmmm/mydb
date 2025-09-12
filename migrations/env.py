@@ -16,6 +16,8 @@ from src.models.models import (  # Import all models here
     OrigemDestino,
     Queimadura,
     TipoAcidente,
+    TraumaTipo,
+    Trauma,
 )
 
 # this is the Alembic Config object, which provides

@@ -135,3 +135,38 @@ class QueimaduraUpdate(BaseModel):
     local_anatomico: int | None = None
     grau_maximo: GrauMaximoEnum | None = None
     notas: str | None = None
+
+
+# TraumaTipo Schemas
+class TraumaTipoBase(BaseModel):
+    local: str
+    tipo: str
+
+
+class TraumaTipoCreate(TraumaTipoBase):
+    pass
+
+
+class TraumaTipoWithID(TraumaTipoBase):
+    id: int
+
+
+# Trauma Schemas
+class TraumaBase(BaseModel):
+    internamento_id: int
+    tipo_local: int | None = None
+    cirurgia_urgente: bool | None = None
+
+
+class TraumaCreate(TraumaBase):
+    pass
+
+
+class TraumaWithID(TraumaBase):
+    id: int
+
+
+class TraumaUpdate(BaseModel):
+    internamento_id: int | None = None
+    tipo_local: int | None = None
+    cirurgia_urgente: bool | None = None
