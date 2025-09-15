@@ -285,3 +285,33 @@ class InternamentoProcedimentoCreate(InternamentoProcedimentoBase):
 
 class InternamentoProcedimentoWithID(InternamentoProcedimentoBase):
     id: int
+
+
+# Patologia Schemas
+class PatologiaBase(BaseModel):
+    nome_patologia: str
+    classe_patologia: str | None = None
+    codigo: str | None = None
+
+
+class PatologiaCreate(PatologiaBase):
+    pass
+
+
+class PatologiaWithID(PatologiaBase):
+    id: int
+
+
+# DoentePatologia Schemas
+class DoentePatologiaBase(BaseModel):
+    doente_id: int
+    patologia: int | None = None
+    nota: str | None = None
+
+
+class DoentePatologiaCreate(DoentePatologiaBase):
+    pass
+
+
+class DoentePatologiaWithID(DoentePatologiaBase):
+    id: int

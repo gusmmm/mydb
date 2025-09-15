@@ -15,6 +15,8 @@ from src.models.models import (
     AntibioticoCreate,
     Doente,
     DoenteCreate,
+    DoentePatologia,
+    DoentePatologiaCreate,
     IndicacaoAntibiotico,
     IndicacaoAntibioticoCreate,
     Infecao,
@@ -31,6 +33,8 @@ from src.models.models import (
     MecanismoQueimaduraCreate,
     OrigemDestino,
     OrigemDestinoCreate,
+    Patologia,
+    PatologiaCreate,
     Procedimento,
     ProcedimentoCreate,
     Queimadura,
@@ -49,12 +53,14 @@ from src.schemas.schemas import (
     AgenteInfecciosoWithID,
     AntibioticoWithID,
     DoentePatch,
+    DoentePatologiaWithID,
     DoenteUpdate,
     IndicacaoAntibioticoWithID,
     InfecaoWithID,
     InternamentoAntibioticoWithID,
     InternamentoProcedimentoWithID,
     LocalAnatomicoWithID,
+    PatologiaWithID,
     ProcedimentoWithID,
     QueimaduraUpdate,
     QueimaduraWithID,
@@ -1346,3 +1352,151 @@ def get_procedimentos_by_internamento(
         f'internamento {internamento_id}'
     )
     return internamentos_procedimento
+
+
+# Patologia endpoints
+@app.post('/patologias', response_model=PatologiaWithID)
+def create_patologia(
+    patologia: PatologiaCreate, session: Session = Depends(get_session)
+):
+    """Create a new patologia."""
+    ic(f'Creating new patologia: {patologia.nome_patologia}')
+
+    patologia_bd = Patologia(**patologia.model_dump())
+    session.add(patologia_bd)
+    session.commit()
+    session.refresh(patologia_bd)
+
+    ic(f'Created patologia with id: {patologia_bd.id}')
+    return patologia_bd
+
+
+@app.get('/patologias', response_model=list[PatologiaWithID])
+def get_all_patologias(session: Session = Depends(get_session)):
+    """Get all patologias."""
+    ic('Getting all patologias')
+
+    patologias = session.exec(select(Patologia)).all()
+    ic(f'Found {len(patologias)} patologias')
+    return patologias
+
+
+@app.get('/patologias/{patologia_id}', response_model=PatologiaWithID)
+def get_patologia_by_id(
+    patologia_id: int, session: Session = Depends(get_session)
+):
+    """Get a specific patologia by ID."""
+    ic(f'Getting patologia with id: {patologia_id}')
+
+    patologia = session.get(Patologia, patologia_id)
+    if not patologia:
+        ic(f'Patologia {patologia_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Patologia not found'
+        )
+
+    ic(f'Found patologia: {patologia.nome_patologia}')
+    return patologia
+
+
+# DoentePatologia endpoints
+@app.post(
+    '/doentes_patologia',
+    response_model=DoentePatologiaWithID
+)
+def create_doente_patologia(
+    doente_patologia: DoentePatologiaCreate,
+    session: Session = Depends(get_session)
+):
+    """Create a new doente-patologia relationship."""
+    ic(f'Creating doente patologia for doente: {doente_patologia.doente_id}')
+
+    # Validate doente exists
+    doente = session.get(Doente, doente_patologia.doente_id)
+    if not doente:
+        doente_id = doente_patologia.doente_id
+        ic(f'Doente {doente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Doente not found'
+        )
+
+    # Validate patologia exists if provided
+    if doente_patologia.patologia:
+        patologia = session.get(Patologia, doente_patologia.patologia)
+        if not patologia:
+            patologia_id = doente_patologia.patologia
+            ic(f'Patologia {patologia_id} not found')
+            raise HTTPException(
+                status_code=404, detail='Patologia not found'
+            )
+
+    doente_patologia_bd = DoentePatologia(**doente_patologia.model_dump())
+    session.add(doente_patologia_bd)
+    session.commit()
+    session.refresh(doente_patologia_bd)
+
+    ic(f'Created doente patologia with id: {doente_patologia_bd.id}')
+    return doente_patologia_bd
+
+
+@app.get('/doentes_patologia', response_model=list[DoentePatologiaWithID])
+def get_all_doentes_patologia(session: Session = Depends(get_session)):
+    """Get all doente-patologia relationships."""
+    ic('Getting all doente patologia relationships')
+
+    doentes_patologia = session.exec(select(DoentePatologia)).all()
+    ic(f'Found {len(doentes_patologia)} doente patologia relationships')
+    return doentes_patologia
+
+
+@app.get(
+    '/doentes_patologia/{doente_patologia_id}',
+    response_model=DoentePatologiaWithID
+)
+def get_doente_patologia_by_id(
+    doente_patologia_id: int, session: Session = Depends(get_session)
+):
+    """Get a specific doente-patologia relationship by ID."""
+    ic(f'Getting doente patologia with id: {doente_patologia_id}')
+
+    doente_patologia = session.get(DoentePatologia, doente_patologia_id)
+    if not doente_patologia:
+        item_id = doente_patologia_id
+        msg = f'Doente patologia {item_id} not found'
+        ic(msg)
+        raise HTTPException(
+            status_code=404, detail='Doente patologia not found'
+        )
+
+    ic(f'Found doente patologia for doente: {doente_patologia.doente_id}')
+    return doente_patologia
+
+
+@app.get(
+    '/doentes/{doente_id}/patologias',
+    response_model=list[DoentePatologiaWithID]
+)
+def get_patologias_by_doente(
+    doente_id: int, session: Session = Depends(get_session)
+):
+    """Get all patologias for a specific doente."""
+    ic(f'Getting patologias for doente: {doente_id}')
+
+    # Validate doente exists
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f'Doente {doente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Doente not found'
+        )
+
+    doentes_patologia = session.exec(
+        select(DoentePatologia).where(
+            DoentePatologia.doente_id == doente_id
+        )
+    ).all()
+    ic(
+        f'Found {len(doentes_patologia)} patologias for '
+        f'doente {doente_id}'
+    )
+    return doentes_patologia
