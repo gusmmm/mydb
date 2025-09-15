@@ -15,6 +15,8 @@ from src.models.models import (
     AntibioticoCreate,
     Doente,
     DoenteCreate,
+    DoenteMedicacao,
+    DoenteMedicacaoCreate,
     DoentePatologia,
     DoentePatologiaCreate,
     IndicacaoAntibiotico,
@@ -31,6 +33,8 @@ from src.models.models import (
     LocalAnatomicoCreate,
     MecanismoQueimadura,
     MecanismoQueimaduraCreate,
+    Medicacao,
+    MedicacaoCreate,
     OrigemDestino,
     OrigemDestinoCreate,
     Patologia,
@@ -52,6 +56,7 @@ from src.models.models import (
 from src.schemas.schemas import (
     AgenteInfecciosoWithID,
     AntibioticoWithID,
+    DoenteMedicacaoWithID,
     DoentePatch,
     DoentePatologiaWithID,
     DoenteUpdate,
@@ -60,6 +65,7 @@ from src.schemas.schemas import (
     InternamentoAntibioticoWithID,
     InternamentoProcedimentoWithID,
     LocalAnatomicoWithID,
+    MedicacaoWithID,
     PatologiaWithID,
     ProcedimentoWithID,
     QueimaduraUpdate,
@@ -1500,3 +1506,149 @@ def get_patologias_by_doente(
         f'doente {doente_id}'
     )
     return doentes_patologia
+
+
+# Medicacao endpoints
+@app.post('/medicacoes', response_model=MedicacaoWithID)
+def create_medicacao(
+    medicacao: MedicacaoCreate, session: Session = Depends(get_session)
+):
+    """Create a new medicacao."""
+    ic(f'Creating new medicacao: {medicacao.nome_medicacao}')
+
+    medicacao_bd = Medicacao(**medicacao.model_dump())
+    session.add(medicacao_bd)
+    session.commit()
+    session.refresh(medicacao_bd)
+
+    ic(f'Created medicacao with id: {medicacao_bd.id}')
+    return medicacao_bd
+
+
+@app.get('/medicacoes', response_model=list[MedicacaoWithID])
+def get_all_medicacoes(session: Session = Depends(get_session)):
+    """Get all medicacoes."""
+    ic('Getting all medicacoes')
+
+    medicacoes = session.exec(select(Medicacao)).all()
+    ic(f'Found {len(medicacoes)} medicacoes')
+    return medicacoes
+
+
+@app.get('/medicacoes/{medicacao_id}', response_model=MedicacaoWithID)
+def get_medicacao_by_id(
+    medicacao_id: int, session: Session = Depends(get_session)
+):
+    """Get a specific medicacao by ID."""
+    ic(f'Getting medicacao with id: {medicacao_id}')
+
+    medicacao = session.get(Medicacao, medicacao_id)
+    if not medicacao:
+        item_id = medicacao_id
+        ic(f'Medicacao {item_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Medicacao not found'
+        )
+
+    ic(f'Found medicacao: {medicacao.nome_medicacao}')
+    return medicacao
+
+
+# DoenteMedicacao endpoints
+@app.post(
+    '/doentes_medicacao',
+    response_model=DoenteMedicacaoWithID
+)
+def create_doente_medicacao(
+    doente_medicacao: DoenteMedicacaoCreate,
+    session: Session = Depends(get_session)
+):
+    """Create a new doente-medicacao relationship."""
+    ic(f'Creating doente medicacao for doente: {doente_medicacao.doente_id}')
+
+    # Validate doente exists
+    doente = session.get(Doente, doente_medicacao.doente_id)
+    if not doente:
+        ic(f'Doente {doente_medicacao.doente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Doente not found'
+        )
+
+    # Validate medicacao exists (if provided)
+    if doente_medicacao.medicacao is not None:
+        medicacao = session.get(Medicacao, doente_medicacao.medicacao)
+        if not medicacao:
+            ic(f'Medicacao {doente_medicacao.medicacao} not found')
+            raise HTTPException(
+                status_code=404, detail='Medicacao not found'
+            )
+
+    doente_medicacao_bd = DoenteMedicacao(**doente_medicacao.model_dump())
+    session.add(doente_medicacao_bd)
+    session.commit()
+    session.refresh(doente_medicacao_bd)
+
+    ic(f'Created doente medicacao with id: {doente_medicacao_bd.id}')
+    return doente_medicacao_bd
+
+
+@app.get('/doentes_medicacao', response_model=list[DoenteMedicacaoWithID])
+def get_all_doentes_medicacao(session: Session = Depends(get_session)):
+    """Get all doente-medicacao relationships."""
+    ic('Getting all doente medicacao relationships')
+
+    doentes_medicacao = session.exec(select(DoenteMedicacao)).all()
+    ic(f'Found {len(doentes_medicacao)} doente medicacao relationships')
+    return doentes_medicacao
+
+
+@app.get(
+    '/doentes_medicacao/{doente_medicacao_id}',
+    response_model=DoenteMedicacaoWithID
+)
+def get_doente_medicacao_by_id(
+    doente_medicacao_id: int, session: Session = Depends(get_session)
+):
+    """Get a specific doente-medicacao relationship by ID."""
+    ic(f'Getting doente medicacao with id: {doente_medicacao_id}')
+
+    doente_medicacao = session.get(DoenteMedicacao, doente_medicacao_id)
+    if not doente_medicacao:
+        item_id = doente_medicacao_id
+        ic(f'Doente medicacao {item_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Doente medicacao not found'
+        )
+
+    ic(f'Found doente medicacao for doente: {doente_medicacao.doente_id}')
+    return doente_medicacao
+
+
+@app.get(
+    '/doentes/{doente_id}/medicacoes',
+    response_model=list[DoenteMedicacaoWithID]
+)
+def get_medicacoes_by_doente(
+    doente_id: int, session: Session = Depends(get_session)
+):
+    """Get all medicacoes for a specific doente."""
+    ic(f'Getting medicacoes for doente: {doente_id}')
+
+    # Validate doente exists
+    doente = session.get(Doente, doente_id)
+    if not doente:
+        ic(f'Doente {doente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Doente not found'
+        )
+
+    doentes_medicacao = session.exec(
+        select(DoenteMedicacao).where(
+            DoenteMedicacao.doente_id == doente_id
+        )
+    ).all()
+    ic(
+        f'Found {len(doentes_medicacao)} medicacoes for '
+        f'doente {doente_id}'
+    )
+    return doentes_medicacao

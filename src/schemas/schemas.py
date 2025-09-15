@@ -315,3 +315,33 @@ class DoentePatologiaCreate(DoentePatologiaBase):
 
 class DoentePatologiaWithID(DoentePatologiaBase):
     id: int
+
+
+# Medicacao Schemas
+class MedicacaoBase(BaseModel):
+    nome_medicacao: str
+    classe_terapeutica: str | None = None
+    codigo: str | None = None
+
+
+class MedicacaoCreate(MedicacaoBase):
+    pass
+
+
+class MedicacaoWithID(MedicacaoBase):
+    id: int
+
+
+# DoenteMedicacao Schemas
+class DoenteMedicacaoBase(BaseModel):
+    doente_id: int
+    medicacao: int | None = None
+    nota: str | None = None
+
+
+class DoenteMedicacaoCreate(DoenteMedicacaoBase):
+    pass
+
+
+class DoenteMedicacaoWithID(DoenteMedicacaoBase):
+    id: int

@@ -161,6 +161,9 @@ class Doente(DoenteBase, table=True):
     doente_patologias: list['DoentePatologia'] = Relationship(
         back_populates='doente'
     )
+    doente_medicacoes: list['DoenteMedicacao'] = Relationship(
+        back_populates='doente'
+    )
 
 
 class InternamentoBase(SQLModel):
@@ -584,4 +587,63 @@ class DoentePatologia(DoentePatologiaBase, table=True):
     doente: 'Doente' = Relationship(back_populates='doente_patologias')
     patologia_rel: Patologia | None = Relationship(
         back_populates='doente_patologias'
+    )
+
+
+# Medicacao models
+class MedicacaoBase(SQLModel):
+    nome_medicacao: str
+    classe_terapeutica: str | None = None
+    codigo: str | None = None
+
+
+class MedicacaoCreate(MedicacaoBase):
+    pass
+
+
+class Medicacao(MedicacaoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+    last_modified: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={'onupdate': func.now()}
+    )
+
+    # Relationships
+    doente_medicacoes: list['DoenteMedicacao'] = Relationship(
+        back_populates='medicacao_rel'
+    )
+
+
+# DoenteMedicacao models
+class DoenteMedicacaoBase(SQLModel):
+    doente_id: int
+    medicacao: int | None = None
+    nota: str | None = None
+
+
+class DoenteMedicacaoCreate(DoenteMedicacaoBase):
+    pass
+
+
+class DoenteMedicacao(DoenteMedicacaoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    doente_id: int = Field(foreign_key='doente.id')
+    medicacao: int | None = Field(
+        default=None, foreign_key='medicacao.id'
+    )
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+    last_modified: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={'onupdate': func.now()}
+    )
+
+    # Relationships
+    doente: 'Doente' = Relationship(back_populates='doente_medicacoes')
+    medicacao_rel: Medicacao | None = Relationship(
+        back_populates='doente_medicacoes'
     )

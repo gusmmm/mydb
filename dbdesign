@@ -159,14 +159,14 @@ Table patologia {
   classe_patologia varchar
   codigo varchar
 }
-
+//implemented
 Table Doente_Medicacao {
   id int [pk]
   doente_id int [not null]
   medicacao int
   nota varchar
 }
-
+//implemented
 Table medicacao {
   id int [pk]
   nome_medicacao varchar
