@@ -23,12 +23,16 @@ from src.models.models import (
     InternamentoAntibiotico,
     InternamentoAntibioticoCreate,
     InternamentoCreate,
+    InternamentoProcedimento,
+    InternamentoProcedimentoCreate,
     LocalAnatomico,
     LocalAnatomicoCreate,
     MecanismoQueimadura,
     MecanismoQueimaduraCreate,
     OrigemDestino,
     OrigemDestinoCreate,
+    Procedimento,
+    ProcedimentoCreate,
     Queimadura,
     QueimaduraCreate,
     SexoEnum,
@@ -49,7 +53,9 @@ from src.schemas.schemas import (
     IndicacaoAntibioticoWithID,
     InfecaoWithID,
     InternamentoAntibioticoWithID,
+    InternamentoProcedimentoWithID,
     LocalAnatomicoWithID,
+    ProcedimentoWithID,
     QueimaduraUpdate,
     QueimaduraWithID,
     TipoInfecaoWithID,
@@ -1189,3 +1195,154 @@ def get_antibioticos_by_internamento(
         f'internamento {internamento_id}'
     )
     return internamentos_antibiotico
+
+
+# Procedimento endpoints
+@app.post('/procedimentos', response_model=ProcedimentoWithID)
+def create_procedimento(
+    procedimento: ProcedimentoCreate, session: Session = Depends(get_session)
+):
+    ic(f'Creating procedimento: {procedimento.nome_procedimento}')
+    db_procedimento = Procedimento.model_validate(procedimento)
+    session.add(db_procedimento)
+    session.commit()
+    session.refresh(db_procedimento)
+    ic(f'Created procedimento with id: {db_procedimento.id}')
+    return db_procedimento
+
+
+@app.get('/procedimentos', response_model=list[ProcedimentoWithID])
+def get_procedimentos(session: Session = Depends(get_session)):
+    ic('Getting all procedimentos')
+    procedimentos = session.exec(select(Procedimento)).all()
+    ic(f'Found {len(procedimentos)} procedimentos')
+    return procedimentos
+
+
+@app.get('/procedimentos/{procedimento_id}', response_model=ProcedimentoWithID)
+def get_procedimento(
+    procedimento_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting procedimento with id: {procedimento_id}')
+    procedimento = session.get(Procedimento, procedimento_id)
+    if not procedimento:
+        ic(f'Procedimento {procedimento_id} not found')
+        raise HTTPException(status_code=404, detail='Procedimento not found')
+    ic(f'Found procedimento: {procedimento.nome_procedimento}')
+    return procedimento
+
+
+# InternamentoProcedimento endpoints
+@app.post(
+    '/internamentos_procedimento',
+    response_model=InternamentoProcedimentoWithID
+)
+def create_internamento_procedimento(
+    internamento_procedimento: InternamentoProcedimentoCreate,
+    session: Session = Depends(get_session),
+):
+    ic(
+        f'Creating internamento procedimento for internamento: '
+        f'{internamento_procedimento.internamento_id}'
+    )
+
+    # Validate internamento exists
+    internamento = session.get(
+        Internamento, internamento_procedimento.internamento_id
+    )
+    if not internamento:
+        internamento_id = internamento_procedimento.internamento_id
+        ic(f'Internamento {internamento_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    # Validate procedimento exists if provided
+    if internamento_procedimento.procedimento:
+        procedimento = session.get(
+            Procedimento, internamento_procedimento.procedimento
+        )
+        if not procedimento:
+            procedimento_id = internamento_procedimento.procedimento
+            ic(f'Procedimento {procedimento_id} not found')
+            raise HTTPException(
+                status_code=404, detail='Procedimento not found'
+            )
+
+    db_internamento_procedimento = InternamentoProcedimento.model_validate(
+        internamento_procedimento
+    )
+    session.add(db_internamento_procedimento)
+    session.commit()
+    session.refresh(db_internamento_procedimento)
+    ic(f'Created internamento procedimento with id: '
+       f'{db_internamento_procedimento.id}')
+    return db_internamento_procedimento
+
+
+@app.get(
+    '/internamentos_procedimento',
+    response_model=list[InternamentoProcedimentoWithID],
+)
+def get_internamentos_procedimento(session: Session = Depends(get_session)):
+    ic('Getting all internamentos procedimento')
+    internamentos_procedimento = session.exec(
+        select(InternamentoProcedimento)
+    ).all()
+    ic(f'Found {len(internamentos_procedimento)} internamentos procedimento')
+    return internamentos_procedimento
+
+
+@app.get(
+    '/internamentos_procedimento/{internamento_procedimento_id}',
+    response_model=InternamentoProcedimentoWithID,
+)
+def get_internamento_procedimento(
+    internamento_procedimento_id: int, session: Session = Depends(get_session)
+):
+    ic(
+        f'Getting internamento procedimento with id: '
+        f'{internamento_procedimento_id}'
+    )
+    internamento_procedimento = session.get(
+        InternamentoProcedimento, internamento_procedimento_id
+    )
+    if not internamento_procedimento:
+        item_id = internamento_procedimento_id
+        msg = f'Internamento procedimento {item_id} not found'
+        ic(msg)
+        raise HTTPException(
+            status_code=404, detail='Internamento procedimento not found'
+        )
+    ic(f'Found internamento procedimento for internamento: '
+       f'{internamento_procedimento.internamento_id}')
+    return internamento_procedimento
+
+
+@app.get(
+    '/internamentos/{internamento_id}/procedimentos',
+    response_model=list[InternamentoProcedimentoWithID],
+)
+def get_procedimentos_by_internamento(
+    internamento_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Getting procedimentos for internamento: {internamento_id}')
+
+    # Validate internamento exists
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        ic(f'Internamento {internamento_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Internamento not found'
+        )
+
+    internamentos_procedimento = session.exec(
+        select(InternamentoProcedimento).where(
+            InternamentoProcedimento.internamento_id == internamento_id
+        )
+    ).all()
+    ic(
+        f'Found {len(internamentos_procedimento)} procedimentos for '
+        f'internamento {internamento_id}'
+    )
+    return internamentos_procedimento

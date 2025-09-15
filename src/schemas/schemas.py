@@ -257,3 +257,31 @@ class InternamentoAntibioticoCreate(InternamentoAntibioticoBase):
 
 class InternamentoAntibioticoWithID(InternamentoAntibioticoBase):
     id: int
+
+
+# Procedimento Schemas
+class ProcedimentoBase(BaseModel):
+    nome_procedimento: str
+    tipo_procedimento: str | None = None
+
+
+class ProcedimentoCreate(ProcedimentoBase):
+    pass
+
+
+class ProcedimentoWithID(ProcedimentoBase):
+    id: int
+
+
+# InternamentoProcedimento Schemas
+class InternamentoProcedimentoBase(BaseModel):
+    internamento_id: int
+    procedimento: int | None = None
+
+
+class InternamentoProcedimentoCreate(InternamentoProcedimentoBase):
+    pass
+
+
+class InternamentoProcedimentoWithID(InternamentoProcedimentoBase):
+    id: int

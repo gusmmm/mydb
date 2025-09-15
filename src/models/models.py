@@ -251,6 +251,9 @@ class Internamento(InternamentoBase, table=True):
     internamento_antibioticos: list['InternamentoAntibiotico'] = Relationship(
         back_populates='internamento'
     )
+    internamento_procedimentos: list[
+        'InternamentoProcedimento'
+    ] = Relationship(back_populates='internamento')
 
 
 class LocalAnatomicoBase(SQLModel):
@@ -474,4 +477,49 @@ class InternamentoAntibiotico(InternamentoAntibioticoBase, table=True):
     )
     indicacao_antibiotico_rel: IndicacaoAntibiotico | None = Relationship(
         back_populates='internamento_antibioticos'
+    )
+
+
+# Procedimento models
+class ProcedimentoBase(SQLModel):
+    nome_procedimento: str
+    tipo_procedimento: str | None = None
+
+
+class ProcedimentoCreate(ProcedimentoBase):
+    pass
+
+
+class Procedimento(ProcedimentoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+
+    # Relationships
+    internamento_procedimentos: list[
+        'InternamentoProcedimento'
+    ] = Relationship(back_populates='procedimento_rel')
+
+
+# InternamentoProcedimento models
+class InternamentoProcedimentoBase(SQLModel):
+    internamento_id: int
+    procedimento: int | None = None
+
+
+class InternamentoProcedimentoCreate(InternamentoProcedimentoBase):
+    pass
+
+
+class InternamentoProcedimento(InternamentoProcedimentoBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    internamento_id: int = Field(foreign_key='internamento.id')
+    procedimento: int | None = Field(
+        default=None, foreign_key='procedimento.id'
+    )
+
+    # Relationships
+    internamento: Internamento = Relationship(
+        back_populates='internamento_procedimentos'
+    )
+    procedimento_rel: Procedimento | None = Relationship(
+        back_populates='internamento_procedimentos'
     )

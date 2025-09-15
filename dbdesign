@@ -133,13 +133,13 @@ Table Internamento_Antibiotico {
   antibiotico int
   indicacao int
 }
-
+//implemented
 Table Internamento_Procedimento {
   id int [pk]
   internamento_id int [not null]
   procedimento int
 }
-
+//implemented
 Table procedimento {
   id int [pk]
   nome_procedimento varchar
