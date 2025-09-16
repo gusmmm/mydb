@@ -1,337 +1,442 @@
-ƒ©timestamp¸2025-09-16T09:43:39.210Z§messageÙO[D]  2025-09-16T10:43:39.204649  0:00:00.005391 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:39.213Z§messageÙ‡[D]  2025-09-16T10:43:39.207948  0:00:00.005448 POST    [204] /anchor/b19c5656-ab07-46e2-b360-d8abc3cfa174/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:40.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31211, 1, scrot: no image grabbed: Resource temporarily unavailable
+ƒ©timestamp¸2025-09-16T10:48:26.177Z§messageÙ^[D]  2025-09-16T11:48:26.175058  0:00:00.002050 GET     [200] /.well-known/version: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:26.251Z§messageÙ|[D]  2025-09-16T11:48:26.249601  0:00:00.002142 GET     [200] /applications/358e67e4-444d-4175-a294-1d9af5c6aa93: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:27.190Z§messageÙZ[D]  2025-09-16T11:48:27.187641  0:00:00.002877 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:28.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 78947, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:40.874Z§messageÙZ[D]  2025-09-16T10:43:40.871562  0:00:00.002829 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:40.991Z§messageÙY[D]  2025-09-16T10:43:40.982731  0:00:00.008754 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:41.014Z§messageÙY[D]  2025-09-16T10:43:41.006432  0:00:00.007496 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:41.018Z§messageÙ‡[D]  2025-09-16T10:43:41.010790  0:00:00.008069 POST    [204] /anchor/b19c5656-ab07-46e2-b360-d8abc3cfa174/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:41.024Z§messageÙ‡[D]  2025-09-16T10:43:41.020775  0:00:00.003990 POST    [204] /anchor/b19c5656-ab07-46e2-b360-d8abc3cfa174/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:42.002Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31330, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:28.446Z§messageÙZ[D]  2025-09-16T11:48:28.444010  0:00:00.002395 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:30.014Z§messageÙZ[D]  2025-09-16T11:48:30.011375  0:00:00.002871 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:30.015Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 78962, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:42.081Z§messageÙZ[D]  2025-09-16T10:43:42.077821  0:00:00.003165 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:42.773Z§messageÙZ[D]  2025-09-16T10:43:42.770202  0:00:00.002820 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:42.791Z§messageÙˆ[D]  2025-09-16T10:43:42.786792  0:00:00.004792 POST    [204] /website/fdba21b2-768b-4c8a-8590-522d6961f619/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:42.957Z§messageÙZ[D]  2025-09-16T10:43:42.954800  0:00:00.002786 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:43.390Z§messageÙO[D]  2025-09-16T10:43:43.386241  0:00:00.004323 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:43.394Z§messageÙO[D]  2025-09-16T10:43:43.386926  0:00:00.007552 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:44.000Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31372, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:30.027Z§messageÙˆ[D]  2025-09-16T11:48:30.023454  0:00:00.004352 POST    [204] /website/fdba21b2-768b-4c8a-8590-522d6961f619/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:30.211Z§messageÙZ[D]  2025-09-16T11:48:30.208185  0:00:00.002960 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:31.074Z§messageÙZ[D]  2025-09-16T11:48:31.072211  0:00:00.001847 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:32.022Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 78976, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:45.189Z§messageÙY[D]  2025-09-16T10:43:45.182307  0:00:00.006646 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:45.196Z§messageÙO[D]  2025-09-16T10:43:45.191728  0:00:00.004170 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:45.202Z§messageÙY[D]  2025-09-16T10:43:45.192204  0:00:00.010514 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:45.207Z§messageÙO[D]  2025-09-16T10:43:45.192574  0:00:00.014399 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:45.211Z§messageÙ‡[D]  2025-09-16T10:43:45.197985  0:00:00.013511 POST    [204] /anchor/4847810a-bf59-4ae8-a03f-e44e2973f9e9/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.011Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31550, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:32.356Z§messageÙœ[D]  2025-09-16T11:48:32.356575  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T10:48:32Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T10:48:33.149Z§messageÙZ[D]  2025-09-16T11:48:33.147576  0:00:00.002312 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:34.024Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79007, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.824Z§messageÙY[D]  2025-09-16T10:43:46.816392  0:00:00.007932 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.840Z§messageÙ‡[D]  2025-09-16T10:43:46.834189  0:00:00.006610 POST    [204] /anchor/b19c5656-ab07-46e2-b360-d8abc3cfa174/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.852Z§messageÙY[D]  2025-09-16T10:43:46.835551  0:00:00.016787 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.855Z§messageÙ‡[D]  2025-09-16T10:43:46.839101  0:00:00.016618 POST    [204] /anchor/4847810a-bf59-4ae8-a03f-e44e2973f9e9/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:46.861Z§messageÙ‡[D]  2025-09-16T10:43:46.857768  0:00:00.003944 POST    [204] /anchor/4847810a-bf59-4ae8-a03f-e44e2973f9e9/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:48.004Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31667, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:36.023Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79036, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:50.009Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31680, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:38.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79049, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:52.008Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31694, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:40.013Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79063, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:52.482Z§messageÙY[D]  2025-09-16T10:43:52.477406  0:00:00.004667 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:52.488Z§messageÙY[D]  2025-09-16T10:43:52.477999  0:00:00.010322 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:52.492Z§messageÙ‡[D]  2025-09-16T10:43:52.488851  0:00:00.003838 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:52.497Z§messageÙ‡[D]  2025-09-16T10:43:52.494324  0:00:00.003099 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:43:54.015Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31712, 1, scrot: no image grabbed: Resource temporarily unavailable
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:42.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79075, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:56.060Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31747, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:43.897Z§messageÙZ[D]  2025-09-16T11:48:43.894001  0:00:00.002977 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:44.014Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79105, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:43:58.052Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31777, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:46.019Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79136, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:00.052Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31794, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:48.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79149, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:01.084Z§messageÙœ[D]  2025-09-16T10:44:01.084684  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:44:01Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:44:02.059Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31813, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:50.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79162, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:04.048Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31830, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:51.042Z§messageÙZ[D]  2025-09-16T11:48:51.040403  0:00:00.002354 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:48:52.012Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79176, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:06.049Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31848, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:54.015Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79209, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:08.051Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31907, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:56.023Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79241, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:10.061Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31954, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:58.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79260, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:12.064Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31971, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:48:59.498Z§messageÙZ[D]  2025-09-16T11:48:59.496218  0:00:00.001800 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:00.026Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79270, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:14.051Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 31984, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:02.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79282, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:16.051Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32032, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:02.356Z§messageÙœ[D]  2025-09-16T11:49:02.356894  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T10:49:02Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T10:49:03.631Z§messageÙZ[D]  2025-09-16T11:49:03.628682  0:00:00.002550 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:04.007Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79313, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:18.057Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32092, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:06.022Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79347, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:20.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32102, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:08.012Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79357, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:22.041Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32121, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:10.014Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79371, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:24.070Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32541, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:11.136Z§messageÙZ[D]  2025-09-16T11:49:11.133330  0:00:00.002769 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:12.010Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79384, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:26.059Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32572, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:14.010Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79414, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:26.286Z§messageÙO[D]  2025-09-16T10:44:26.283210  0:00:00.003563 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:26.354Z§messageÙY[D]  2025-09-16T10:44:26.347229  0:00:00.007188 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:26.385Z§messageÙ‡[D]  2025-09-16T10:44:26.381218  0:00:00.004193 POST    [204] /anchor/0f9f156f-70fa-4dbf-9d01-1707f3f72f0f/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:28.064Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32626, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:15.326Z§messageÙZ[D]  2025-09-16T11:49:15.324368  0:00:00.002179 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:16.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79445, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:28.514Z§messageÙO[D]  2025-09-16T10:44:28.510008  0:00:00.004805 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:28.577Z§messageÙY[D]  2025-09-16T10:44:28.569596  0:00:00.007363 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:28.606Z§messageÙ‡[D]  2025-09-16T10:44:28.600533  0:00:00.005449 POST    [204] /anchor/abfbeb58-d44b-4046-9a4a-a89c52c8085e/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:30.056Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32653, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:18.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79448, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:31.084Z§messageÙœ[D]  2025-09-16T10:44:31.084591  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:44:31Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:44:31.376Z§messageÙO[D]  2025-09-16T10:44:31.371165  0:00:00.004723 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.063Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32699, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:19.039Z§messageÙZ[D]  2025-09-16T11:49:19.035640  0:00:00.003330 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:20.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79460, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.345Z§messageÙY[D]  2025-09-16T10:44:32.331956  0:00:00.013133 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.354Z§messageÙY[D]  2025-09-16T10:44:32.346974  0:00:00.007318 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.362Z§messageÙY[D]  2025-09-16T10:44:32.347655  0:00:00.014438 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.367Z§messageÙ‡[D]  2025-09-16T10:44:32.352591  0:00:00.015152 POST    [204] /anchor/4847810a-bf59-4ae8-a03f-e44e2973f9e9/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.373Z§messageÙ‡[D]  2025-09-16T10:44:32.363487  0:00:00.009565 POST    [204] /anchor/74b47e9a-2f22-459b-b171-9b969d20feda/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:32.377Z§messageÙ‡[D]  2025-09-16T10:44:32.371076  0:00:00.006000 POST    [204] /anchor/74b47e9a-2f22-459b-b171-9b969d20feda/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:34.060Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32757, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:20.806Z§messageÙZ[D]  2025-09-16T11:49:20.803599  0:00:00.002392 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:22.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79473, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:36.061Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32781, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:22.119Z§messageÙZ[D]  2025-09-16T11:49:22.116583  0:00:00.002844 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:23.039Z§messageÙZ[D]  2025-09-16T11:49:23.036307  0:00:00.002806 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:24.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79503, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:38.052Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32831, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:24.762Z§messageÙZ[D]  2025-09-16T11:49:24.759800  0:00:00.002700 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:26.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79533, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:40.067Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32843, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:28.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79546, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:42.057Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32862, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:30.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79560, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:44.063Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32886, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:32.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79578, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:46.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32905, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:32.355Z§messageÙœ[D]  2025-09-16T11:49:32.355336  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T10:49:32Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T10:49:34.019Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79608, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.132Z§messageÙY[D]  2025-09-16T10:44:47.123895  0:00:00.008663 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.143Z§messageÙ‡[D]  2025-09-16T10:44:47.138733  0:00:00.004174 POST    [204] /anchor/74b47e9a-2f22-459b-b171-9b969d20feda/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.726Z§messageÙY[D]  2025-09-16T10:44:47.720479  0:00:00.006030 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.733Z§messageÙY[D]  2025-09-16T10:44:47.721180  0:00:00.012345 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.739Z§messageÙ‡[D]  2025-09-16T10:44:47.735258  0:00:00.004377 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:47.745Z§messageÙ‡[D]  2025-09-16T10:44:47.741277  0:00:00.003933 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:48.049Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 32972, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:36.012Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79637, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:50.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33005, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:38.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79650, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:52.057Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33029, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:40.014Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79662, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:54.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33062, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:42.014Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79674, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:55.953Z§messageÙO[D]  2025-09-16T10:44:55.949761  0:00:00.003406 GET     [200] /user: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.065Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33110, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:44.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79703, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.379Z§messageÙY[D]  2025-09-16T10:44:56.374021  0:00:00.005261 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.447Z§messageÙ‡[D]  2025-09-16T10:44:56.442268  0:00:00.004765 POST    [204] /anchor/6758e844-0737-4160-a2da-67cedfbcd288/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.706Z§messageÙt[D]  2025-09-16T10:44:56.569296  0:00:00.136953 POST    [200] /discovery/discover/assets?automatic=false: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.754Z§messageÙt[D]  2025-09-16T10:44:56.752691  0:00:00.001405 POST    [200] /discovery/discover/assets?automatic=false: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:56.760Z§messageÙt[D]  2025-09-16T10:44:56.759398  0:00:00.001251 POST    [200] /discovery/discover/assets?automatic=false: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:44:58.053Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33234, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:46.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79733, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:45:00.058Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33255, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:48.013Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79745, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:45:01.084Z§messageÙœ[D]  2025-09-16T10:45:01.084089  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:45:01Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:45:02.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33274, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:48.137Z§messageÙZ[D]  2025-09-16T11:49:48.135387  0:00:00.002192 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:49:50.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79762, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤infoƒ©timestamp¸2025-09-16T09:45:03.334Z§messageÙY[D]  2025-09-16T10:45:03.327713  0:00:00.006853 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:45:03.345Z§messageÙ‡[D]  2025-09-16T10:45:03.341015  0:00:00.004170 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:45:04.059Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33291, 1, scrot: scrot can no longer generate new file names.
-The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:52.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79776, 1, scrot: no image grabbed: Resource temporarily unavailable
 , , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
 <asynchronous suspension>
 #1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
 <asynchronous suspension>
 #2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
 <asynchronous suspension>
-¥level¤info
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:54.012Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79806, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:56.013Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79835, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:49:58.012Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79850, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:00.022Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79862, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:02.008Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79877, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:02.355Z§messageÙœ[D]  2025-09-16T11:50:02.355186  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T10:50:02Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T10:50:02.754Z§messageÙZ[D]  2025-09-16T11:50:02.751617  0:00:00.002479 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:04.013Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79911, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:06.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79924, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:07.076Z§messageÙZ[D]  2025-09-16T11:50:07.074521  0:00:00.002187 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:08.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79955, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:10.014Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79966, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:10.585Z§messageÙZ[D]  2025-09-16T11:50:10.582376  0:00:00.002691 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:12.019Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 79978, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:12.339Z§messageÙZ[D]  2025-09-16T11:50:12.337992  0:00:00.001704 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:12.908Z§messageÙZ[D]  2025-09-16T11:50:12.905893  0:00:00.002664 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:14.021Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80010, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:15.967Z§messageÙZ[D]  2025-09-16T11:50:15.965005  0:00:00.001942 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:15.982Z§messageÙˆ[D]  2025-09-16T11:50:15.979015  0:00:00.003822 POST    [204] /website/6417a0e7-8105-4d4e-b007-127a5bfaad72/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:16.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80023, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:16.153Z§messageÙZ[D]  2025-09-16T11:50:16.151290  0:00:00.002586 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:18.016Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80072, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:18.557Z§messageÙZ[D]  2025-09-16T11:50:18.553672  0:00:00.004080 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:18.575Z§messageÙZ[D]  2025-09-16T11:50:18.571548  0:00:00.003655 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:18.595Z§messageÙZ[D]  2025-09-16T11:50:18.593378  0:00:00.002451 POST    [200] /websites/exists: port:39302¥level¤infoƒ©timestamp¸2025-09-16T10:50:20.019Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80085, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:22.017Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80098, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:24.007Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80128, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:26.020Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80140, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:28.015Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80171, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:30.018Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80183, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:32.019Z§messageÚ™[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 80195, 1, scrot: no image grabbed: Resource temporarily unavailable
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T10:50:32.353Z§messageÙœ[D]  2025-09-16T11:50:32.353658  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T10:50:32Z","version":"1.0.0"}¥level¤info
