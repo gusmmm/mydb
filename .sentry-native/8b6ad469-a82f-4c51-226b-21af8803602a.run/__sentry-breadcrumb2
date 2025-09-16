@@ -1,0 +1,401 @@
+ƒ©timestamp¸2025-09-16T09:45:06.042Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33304, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:08.065Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33395, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:10.058Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33419, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:10.090Z§messageÙY[D]  2025-09-16T10:45:10.086322  0:00:00.004452 POST    [200] /anchors/create: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:45:10.099Z§messageÙ‡[D]  2025-09-16T10:45:10.095557  0:00:00.004278 POST    [204] /anchor/74aaaa04-be4b-4a5a-b20a-8561308e638c/scores/increment: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:45:12.071Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33433, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:14.067Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33460, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:16.046Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33532, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:18.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33591, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:20.052Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33616, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:22.061Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33630, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:24.047Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33648, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:26.068Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33694, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:28.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33751, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:30.053Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33762, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:31.085Z§messageÙœ[D]  2025-09-16T10:45:31.085022  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:45:31Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:45:32.056Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33765, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:34.056Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33783, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:36.041Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33798, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:38.066Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33849, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:40.061Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33864, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:42.058Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33876, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:44.065Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33893, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:46.051Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 33943, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:48.056Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34031, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:50.050Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34182, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:52.053Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34232, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:54.047Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34288, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:56.068Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34372, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:45:58.059Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34475, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:00.064Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34529, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:01.083Z§messageÙœ[D]  2025-09-16T10:46:01.083744  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:46:01Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:46:02.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34589, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:04.057Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34656, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:06.061Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34720, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:08.068Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34774, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:10.055Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34862, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:12.059Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34923, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:14.069Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34954, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:16.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 34990, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:18.697Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35024, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:18.710Z§messageÙt[D]  2025-09-16T10:46:17.686031  0:00:01.024575 GET     [200] /assets?transferables=false&suggested=true: port:39302¥level¤infoƒ©timestamp¸2025-09-16T09:46:20.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35090, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:22.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35106, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:24.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35120, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:26.060Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35137, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:28.054Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35169, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:30.058Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35204, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:31.083Z§messageÙœ[D]  2025-09-16T10:46:31.083166  InternalSubscriptionsWebsocketManager: Received: {"event_type":"ping","timestamp":"2025-09-16T09:46:31Z","version":"1.0.0"}¥level¤infoƒ©timestamp¸2025-09-16T09:46:32.064Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35216, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:34.066Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35228, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:36.062Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35247, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:37.798Z§messageÙX[38;5;12m[I][0m  AssetLoaderIsolate: Shutting down due to inactivity after 20 seconds.¥level¤infoƒ©timestamp¸2025-09-16T09:46:38.055Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35279, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:40.067Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35315, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:42.063Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35328, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤infoƒ©timestamp¸2025-09-16T09:46:44.067Z§messageÚñ[38;5;12m[I][0m  Error in the wpe isolate: error: Exception: Failed to take screenshot 35341, 1, scrot: scrot can no longer generate new file names.
+The last attempt is /home/gusmmm/Documents/com.pieces.os/production/Support/tempImage_998.png
+, , stack: #0      FocusedWindowScreenshotsLinux.getFocusedWindowScreenshot (package:os_server/utilities/workflow_mapping/focused_window_screenshot_linux.dart:54)
+<asynchronous suspension>
+#1      WorkflowMapperIsolate.isolateScreenshot (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:523)
+<asynchronous suspension>
+#2      WorkflowMapperIsolate.requestDecodedData.<anonymous closure> (package:ml_facade/src/workflow_mapping/workflow_mapping_isolate.dart:302)
+<asynchronous suspension>
+¥level¤info

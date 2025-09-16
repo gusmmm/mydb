@@ -176,6 +176,7 @@ class TraumaUpdate(BaseModel):
 class AgenteInfecciosoBase(BaseModel):
     nome: str
     tipo_agente: str
+    codigo_snomedct: str | None = None
 
 
 class AgenteInfecciosoCreate(AgenteInfecciosoBase):

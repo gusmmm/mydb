@@ -41,7 +41,7 @@
 - use sqlmodel for the database models. The models should be in the src/models/ directory.
 - use alembic for database migrations. The alembic configuration file is in the root directory.
 
-## after implementing a feature
+## after implementing a feature - tests and linting
 - create tests in the ./tests folder for the feature you implemented.
 - run a linting check using 'task lint'. Fix any linting errors.
 - run the tests using 'task test'. Make sure all tests pass.
