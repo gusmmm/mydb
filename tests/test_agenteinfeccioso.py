@@ -34,6 +34,7 @@ def test_create_agente_infeccioso_without_codigo():
     assert data["nome"] == payload["nome"]
     assert data["tipo_agente"] == payload["tipo_agente"]
     assert data.get("codigo_snomedct") is None
+    assert data.get("subtipo_agent") is None
 
 
 def test_create_agente_infeccioso_with_codigo():
@@ -46,6 +47,23 @@ def test_create_agente_infeccioso_with_codigo():
     assert resp.status_code == HTTP_OK, resp.text
     data = resp.json()
     assert data["codigo_snomedct"] == payload["codigo_snomedct"]
+    assert data.get("subtipo_agent") is None
+
+
+def test_create_agente_infeccioso_with_subtipo_agent():
+    payload = {
+        "nome": "Candida albicans",
+        "tipo_agente": "Fungus",
+        "codigo_snomedct": "20748006",
+        "subtipo_agent": "Opportunistic pathogen"
+    }
+    resp = client.post("/agentes_infecciosos", json=payload)
+    assert resp.status_code == HTTP_OK, resp.text
+    data = resp.json()
+    assert data["nome"] == payload["nome"]
+    assert data["tipo_agente"] == payload["tipo_agente"]
+    assert data["codigo_snomedct"] == payload["codigo_snomedct"]
+    assert data["subtipo_agent"] == payload["subtipo_agent"]
 
 
 def test_list_agentes_infecciosos_contains_codigo_field():
@@ -54,14 +72,16 @@ def test_list_agentes_infecciosos_contains_codigo_field():
     data = resp.json()
     assert isinstance(data, list)
     assert any("codigo_snomedct" in item for item in data)
+    assert any("subtipo_agent" in item for item in data)
 
 
 def test_get_single_agente_infeccioso():
-    # Create one with code
+    # Create one with code and subtipo_agent
     payload = {
         "nome": "Pseudomonas aeruginosa",
         "tipo_agente": "Bacteria",
         "codigo_snomedct": "267036007",
+        "subtipo_agent": "Gram-negative rod"
     }
     create_resp = client.post("/agentes_infecciosos", json=payload)
     assert create_resp.status_code == HTTP_OK
@@ -71,3 +91,4 @@ def test_get_single_agente_infeccioso():
     assert get_resp.status_code == HTTP_OK
     data = get_resp.json()
     assert data["codigo_snomedct"] == payload["codigo_snomedct"]
+    assert data["subtipo_agent"] == payload["subtipo_agent"]

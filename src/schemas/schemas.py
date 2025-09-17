@@ -177,6 +177,7 @@ class AgenteInfecciosoBase(BaseModel):
     nome: str
     tipo_agente: str
     codigo_snomedct: str | None = None
+    subtipo_agent: str | None = None
 
 
 class AgenteInfecciosoCreate(AgenteInfecciosoBase):
