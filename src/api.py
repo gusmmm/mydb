@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from datetime import date
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from icecream import ic
 from sqlmodel import Session, select
 
@@ -84,6 +85,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:5174"],  # Vite default ports
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get('/')
@@ -916,6 +926,29 @@ def update_agente_infeccioso(
         f'{agente.tipo_agente}'
     )
     return agente
+
+
+@app.delete('/agentes_infecciosos/{agente_id}')
+def delete_agente_infeccioso(
+    agente_id: int, session: Session = Depends(get_session)
+):
+    ic(f'Deleting agente infeccioso with id: {agente_id}')
+
+    # Get the existing agente
+    agente = session.get(AgenteInfeccioso, agente_id)
+    if not agente:
+        ic(f'Agente infeccioso {agente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Agente infeccioso not found'
+        )
+
+    ic(f'Found agente to delete: {agente.nome} - {agente.tipo_agente}')
+    
+    session.delete(agente)
+    session.commit()
+
+    ic(f'Successfully deleted agente infeccioso: {agente.nome}')
+    return {'message': 'Agente infeccioso deleted successfully'}
 
 
 # TipoInfecao endpoints

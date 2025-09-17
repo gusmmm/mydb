@@ -172,3 +172,33 @@ def test_patch_agente_infeccioso_empty_update():
     data = patch_resp.json()
     assert data["nome"] == create_payload["nome"]
     assert data["tipo_agente"] == create_payload["tipo_agente"]
+
+
+def test_delete_agente_infeccioso():
+    # First create an agent
+    create_payload = {
+        "nome": "Agent to Delete",
+        "tipo_agente": "Test Type"
+    }
+    create_resp = client.post("/agentes_infecciosos", json=create_payload)
+    assert create_resp.status_code == HTTP_OK
+    agente_id = create_resp.json()["id"]
+    
+    # Delete the agent
+    delete_resp = client.delete(f"/agentes_infecciosos/{agente_id}")
+    assert delete_resp.status_code == HTTP_OK
+    
+    data = delete_resp.json()
+    assert "message" in data
+    assert "deleted successfully" in data["message"]
+    
+    # Verify the agent is gone
+    get_resp = client.get(f"/agentes_infecciosos/{agente_id}")
+    assert get_resp.status_code == 404
+
+
+def test_delete_agente_infeccioso_not_found():
+    # Try to delete non-existent agent
+    delete_resp = client.delete("/agentes_infecciosos/999999")
+    assert delete_resp.status_code == 404
+    assert "not found" in delete_resp.json()["detail"].lower()

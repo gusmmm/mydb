@@ -45,3 +45,11 @@
 - create tests in the ./tests folder for the feature you implemented.
 - run a linting check using 'task lint'. Fix any linting errors.
 - run the tests using 'task test'. Make sure all tests pass.
+
+## frontend
+- the frontend code is in a separate project. The frontend is in the 'frontend/' directory.
+- the frontend tech stack will use Vue.js 3 with Vite.
+- use Pinia for state management.
+- use Vue Router for routing.
+- use PrimeVue or Vuetify for the UI Component Library.
+- use fastapi backend as the API server.

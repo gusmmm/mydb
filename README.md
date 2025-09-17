@@ -1,170 +1,264 @@
-# MyDB - Local Database Management System
+# MyDB - Medical Database Management System
 
-A FastAPI-based REST API for managing medical patient records (doentes) and hospitalizations (internamentos) using SQLModel and SQLite.
+A full-stack web application for managing medical patient records with a FastAPI backend and Vue.js frontend.
 
-## Overview
+## 🏥 Overview
 
-This project implements a medical database management system with the following core entities:
-- **Doentes** (Patients): Basic patient information including name, process number, birth date, gender, and address
-- **Internamentos** (Hospitalizations): Hospitalization records linked to patients
+MyDB is a comprehensive medical database management system that provides:
+- **Backend API**: FastAPI-based REST API with SQLModel and SQLite
+- **Frontend Web Interface**: Vue.js 3 application with PrimeVue UI components
+- **Database Management**: Full CRUD operations for medical lookup tables
+- **Interactive UI**: Data tables with inline editing, forms, and real-time updates
 
-## Technology Stack
+## 🛠️ Technology Stack
 
-- **Backend**: FastAPI with async support
+### Backend
+- **Framework**: FastAPI with async support
 - **Database**: SQLite with SQLModel ORM
 - **Validation**: Pydantic V2
-- **Environment**: Python 3.13+ with uv package management
-- **Debugging**: icecream for enhanced logging
+- **Package Management**: uv
 - **Testing**: pytest with coverage
 - **Linting**: ruff
+- **Debugging**: icecream
+- **Migrations**: Alembic
 
-## Project Structure
+### Frontend
+- **Framework**: Vue.js 3 with Composition API
+- **Build Tool**: Vite
+- **Language**: TypeScript
+- **UI Library**: PrimeVue 4
+- **State Management**: Pinia
+- **HTTP Client**: Axios
+- **Icons**: PrimeIcons
+- **Routing**: Vue Router
+
+## 📁 Project Structure
 
 ```
 mydb/
-├── src/
-│   ├── api.py              # FastAPI application and routes
-│   ├── db.py               # Database connection and initialization
-│   ├── models/
-│   │   └── models.py       # SQLModel database models
-│   └── schemas/
-│       └── schemas.py      # Pydantic schemas (future)
-├── tests/                  # Test files
-├── migrations/             # Alembic database migrations
-├── .env                    # Environment variables
-├── dbdesign                # Database design specification
-└── pyproject.toml          # Project configuration
+├── src/                    # Backend source code
+│   ├── api.py             # FastAPI application and routes
+│   ├── db.py              # Database connection and initialization
+│   ├── models/            # SQLModel database models
+│   └── schemas/           # Pydantic schemas
+├── frontend/              # Vue.js frontend application
+│   ├── src/
+│   │   ├── components/    # Vue components
+│   │   ├── stores/        # Pinia stores
+│   │   ├── services/      # API service layer
+│   │   ├── views/         # Page components
+│   │   └── router/        # Vue Router configuration
+│   ├── package.json       # Frontend dependencies
+│   └── vite.config.ts     # Vite configuration
+├── tests/                 # Backend tests
+├── migrations/            # Alembic database migrations
+├── .env                   # Environment variables
+├── dbdesign               # Database design specification
+└── pyproject.toml         # Backend dependencies and configuration
 ```
 
-## Current Implementation
-
-### Database Models
-
-**Doente (Patient)**
-- `id`: Primary key (auto-generated)
-- `nome`: Patient name
-- `numero_processo`: Unique process number
-- `data_nascimento`: Birth date (string format)
-- `sexo`: Gender enum (M/F)
-- `morada`: Address
-- Relationship: One-to-many with Internamento
-
-**Internamento (Hospitalization)**
-- `id`: Primary key (auto-generated)
-- `numero_internamento`: Hospitalization number
-- `data_entrada`: Entry date (optional)
-- `data_alta`: Discharge date (optional)
-- `doente_id`: Foreign key to Doente
-- Relationship: Many-to-one with Doente
-
-### API Endpoints
-
-#### Basic Endpoints
-- `GET /` - Welcome message
-- `GET /about` - API description
-
-#### Doente (Patient) Endpoints
-- `GET /doentes` - List all patients (with optional gender filter)
-  - Query parameter: `sexo` (M/F)
-- `GET /doentes/numero_processo/{numero_processo}` - Get patient by process number
-- `POST /doentes` - Create new patient (with optional internamentos)
-
-## Setup and Usage
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.13+
-- uv package manager
+- **Python 3.13+** with uv package manager
+- **Node.js 22.11+** with npm
+- **Git** for version control
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd mydb
+   ```
+
+2. **Install backend dependencies:**
    ```bash
    uv sync
    ```
 
-3. Set up environment variables in `.env`:
-   ```
-   DATABASE_URL="sqlite:///./mydb.db"
+3. **Install frontend dependencies:**
+   ```bash
+   cd frontend
+   npm install
+   cd ..
    ```
 
-### Running the Application
+4. **Set up environment variables:**
+   ```bash
+   # Create .env file in project root
+   echo 'DATABASE_URL="sqlite:///./mydb.db"' > .env
+   ```
 
+## 🖥️ Running the Application
+
+### Start Backend Server (Port 8001)
 ```bash
-# Start the development server
+# Option 1: Using predefined task
 uv run task run
 
-# The API will be available at http://localhost:8088
+# Option 2: Direct uvicorn command
+uv run uvicorn src.api:app --reload --port 8001
 ```
 
-### API Documentation
-- Swagger UI: http://localhost:8088/docs
-- ReDoc: http://localhost:8088/redoc
-
-### Development Tasks
-
+### Start Frontend Server (Port 5173/5174)
 ```bash
-# Linting
+# Navigate to frontend directory
+cd frontend
+
+# Start development server
+npm run dev
+```
+
+### Access the Application
+- **Frontend Web Interface**: http://localhost:5173 (or 5174)
+- **Backend API**: http://127.0.0.1:8001
+- **API Documentation**: http://127.0.0.1:8001/docs
+- **ReDoc Documentation**: http://127.0.0.1:8001/redoc
+
+## 💻 Using the Web Interface
+
+### Home Dashboard
+- Overview statistics of database tables
+- Quick navigation to different sections
+- Clean, professional layout
+
+### Infectious Agents Management
+Navigate to the "Agentes Infecciosos" tab to:
+- **View Data**: Sortable table with pagination
+- **Add Records**: Click "Add New Agent" button
+- **Edit Inline**: Click any cell to edit directly
+- **Delete Records**: Use trash icon with confirmation
+- **Real-time Updates**: Changes reflected immediately
+
+### Features
+- **Responsive Design**: Works on desktop and mobile
+- **Toast Notifications**: User feedback for all operations
+- **Error Handling**: Graceful error messages and recovery
+- **Loading States**: Visual feedback during API calls
+- **Confirmation Dialogs**: Prevent accidental deletions
+
+## 🗄️ Database Schema
+
+### Core Tables
+- **doente** (Patients): Patient information and demographics
+- **internamento** (Hospitalizations): Hospital admission records
+- **agenteinfeccioso** (Infectious Agents): Bacterial, viral, and fungal pathogens
+
+### Lookup Tables
+- **tipoacidente** (Accident Types): Classification of accidents
+- **agentequeimadura** (Burn Agents): Types of burn-causing agents  
+- **mecanismoqueimadura** (Burn Mechanisms): Heat transfer mechanisms
+- **origemdestino** (Origin/Destination): Patient transfer locations
+- **queimadura** (Burns): Individual burn records
+- **localanatomico** (Anatomical Locations): Body regions
+- **And many more...**
+
+## 🧪 Development Tasks
+
+### Backend Tasks
+```bash
+# Run tests with coverage
+uv run task test
+
+# Linting and formatting
 uv run task lint
 
-# Formatting
-uv run task format
+# Database migrations
+uv run alembic upgrade head
 
-# Testing
-uv run task test
-
-# Run all (lint + test + coverage)
-uv run task test
+# Create new migration
+uv run alembic revision -m "description"
 ```
 
-### Example Usage
-
-**Create a Patient:**
+### Frontend Tasks
 ```bash
-POST http://localhost:8088/doentes
-Content-Type: application/json
+cd frontend
 
-{
-    "nome": "João Silva",
-    "numero_processo": 12345,
-    "data_nascimento": "1990-01-01",
-    "sexo": "M",
-    "morada": "Rua Example, 123"
-}
+# Development server
+npm run dev
+
+# Type checking
+npm run type-check
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-**Get All Patients:**
+## 📡 API Examples
+
+### Get All Infectious Agents
 ```bash
-GET http://localhost:8088/doentes
+curl -X GET "http://127.0.0.1:8001/agentes_infecciosos"
 ```
 
-**Get Patient by Process Number:**
+### Create New Infectious Agent
 ```bash
-GET http://localhost:8088/doentes/numero_processo/12345
+curl -X POST "http://127.0.0.1:8001/agentes_infecciosos" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "Staphylococcus aureus",
+    "tipo_agente": "Bacteria",
+    "codigo_snomedct": "3092008",
+    "subtipo_agent": "Gram-positive cocci"
+  }'
 ```
 
-**Filter Patients by Gender:**
+### Update Infectious Agent
 ```bash
-GET http://localhost:8088/doentes?sexo=F
+curl -X PUT "http://127.0.0.1:8001/agentes_infecciosos/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "Updated Agent Name",
+    "tipo_agente": "Updated Type"
+  }'
 ```
 
-## Database Design
+### Delete Infectious Agent
+```bash
+curl -X DELETE "http://127.0.0.1:8001/agentes_infecciosos/1"
+```
 
-The database follows the specification in the `dbdesign` file, implementing a medical records system with patients and hospitalizations. The current implementation covers the core `doente` and `internamento` tables with their basic relationships.
+## 🔧 Development Features
 
-## Development Notes
+### Backend Features
+- **Automatic Database Creation**: Tables created on startup
+- **CORS Configuration**: Frontend-backend communication enabled
+- **Error Handling**: Comprehensive HTTP status codes
+- **Type Safety**: SQLModel ensures type-safe database operations
+- **Audit Fields**: Automatic created_at and updated_at timestamps
+- **Validation**: Pydantic models for request/response validation
 
-- Database tables are automatically created on application startup
-- The API uses icecream for enhanced debugging output
-- All endpoints include proper error handling and HTTP status codes
-- The system uses SQLModel for type-safe database operations
-- Foreign key relationships are properly established between entities
+### Frontend Features
+- **TypeScript Support**: Full type safety throughout the application
+- **Reactive State Management**: Pinia stores with computed properties
+- **Component Library**: PrimeVue components for consistent UI
+- **Hot Module Replacement**: Instant updates during development
+- **Vue DevTools**: Enhanced debugging capabilities
+- **Route-based Code Splitting**: Optimized bundle sizes
 
-## Future Enhancements
+## 📚 Additional Resources
 
-Based on the database design, future implementations may include:
-- Additional hospitalization fields (burn-related medical data)
-- Lookup tables (tipoAcidente, agenteQueimadura, etc.)
-- Update and delete operations
-- Advanced filtering and pagination
-- Alembic migrations for schema changes
+- **Database Design**: See `dbdesign` file for complete schema specification
+- **API Documentation**: Available at http://127.0.0.1:8001/docs when backend is running
+- **Vue.js Documentation**: https://vuejs.org/
+- **PrimeVue Components**: https://primevue.org/
+- **FastAPI Documentation**: https://fastapi.tiangolo.com/
+
+## 🚧 Future Enhancements
+
+- **Additional Lookup Tables**: Extend frontend to manage all database tables
+- **Advanced Filtering**: Search and filter capabilities across all tables
+- **Data Export**: CSV/Excel export functionality
+- **User Authentication**: Login and role-based access control
+- **Bulk Operations**: Mass import/export of data
+- **Audit Trail**: Track all data changes
+- **Mobile App**: Native mobile application
+- **Reporting**: Dashboard with charts and analytics
+
+---
+
+**Ready to use!** Start both servers and navigate to http://localhost:5173 to begin managing your medical database. 🎉
