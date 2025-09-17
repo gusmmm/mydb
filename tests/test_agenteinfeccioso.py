@@ -92,3 +92,83 @@ def test_get_single_agente_infeccioso():
     data = get_resp.json()
     assert data["codigo_snomedct"] == payload["codigo_snomedct"]
     assert data["subtipo_agent"] == payload["subtipo_agent"]
+
+
+def test_patch_agente_infeccioso():
+    # First create an agent
+    create_payload = {
+        "nome": "Test Agent",
+        "tipo_agente": "Bacteria"
+    }
+    create_resp = client.post("/agentes_infecciosos", json=create_payload)
+    assert create_resp.status_code == HTTP_OK
+    agente_id = create_resp.json()["id"]
+    
+    # Test partial update
+    update_payload = {
+        "subtipo_agent": "Updated Subtype",
+        "codigo_snomedct": "123456789"
+    }
+    patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
+    assert patch_resp.status_code == HTTP_OK, patch_resp.text
+    
+    data = patch_resp.json()
+    assert data["nome"] == create_payload["nome"]  # Unchanged
+    assert data["tipo_agente"] == create_payload["tipo_agente"]  # Unchanged
+    assert data["subtipo_agent"] == update_payload["subtipo_agent"]  # Updated
+    assert data["codigo_snomedct"] == update_payload["codigo_snomedct"]  # Updated
+    
+
+def test_patch_agente_infeccioso_single_field():
+    # First create an agent
+    create_payload = {
+        "nome": "Another Test Agent",
+        "tipo_agente": "Fungus",
+        "subtipo_agent": "Original Subtype"
+    }
+    create_resp = client.post("/agentes_infecciosos", json=create_payload)
+    assert create_resp.status_code == HTTP_OK
+    agente_id = create_resp.json()["id"]
+    
+    # Test updating only one field
+    update_payload = {
+        "codigo_snomedct": "987654321"
+    }
+    patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
+    assert patch_resp.status_code == HTTP_OK, patch_resp.text
+    
+    data = patch_resp.json()
+    assert data["nome"] == create_payload["nome"]  # Unchanged
+    assert data["tipo_agente"] == create_payload["tipo_agente"]  # Unchanged
+    assert data["subtipo_agent"] == create_payload["subtipo_agent"]  # Unchanged
+    assert data["codigo_snomedct"] == update_payload["codigo_snomedct"]  # Updated
+
+
+def test_patch_agente_infeccioso_not_found():
+    # Test updating non-existent agent
+    update_payload = {
+        "subtipo_agent": "Should Fail"
+    }
+    patch_resp = client.patch("/agentes_infecciosos/999999", json=update_payload)
+    assert patch_resp.status_code == 404
+    assert "not found" in patch_resp.json()["detail"].lower()
+
+
+def test_patch_agente_infeccioso_empty_update():
+    # First create an agent
+    create_payload = {
+        "nome": "Empty Update Test",
+        "tipo_agente": "Virus"
+    }
+    create_resp = client.post("/agentes_infecciosos", json=create_payload)
+    assert create_resp.status_code == HTTP_OK
+    agente_id = create_resp.json()["id"]
+    
+    # Test empty update (should return unchanged)
+    update_payload = {}
+    patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
+    assert patch_resp.status_code == HTTP_OK, patch_resp.text
+    
+    data = patch_resp.json()
+    assert data["nome"] == create_payload["nome"]
+    assert data["tipo_agente"] == create_payload["tipo_agente"]

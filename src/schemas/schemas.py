@@ -184,6 +184,13 @@ class AgenteInfecciosoCreate(AgenteInfecciosoBase):
     pass
 
 
+class AgenteInfecciosoUpdate(BaseModel):
+    nome: str | None = None
+    tipo_agente: str | None = None
+    codigo_snomedct: str | None = None
+    subtipo_agent: str | None = None
+
+
 class AgenteInfecciosoWithID(AgenteInfecciosoBase):
     id: int
 

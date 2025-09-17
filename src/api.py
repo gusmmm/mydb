@@ -54,6 +54,7 @@ from src.models.models import (
     TraumaTipoCreate,
 )
 from src.schemas.schemas import (
+    AgenteInfecciosoUpdate,
     AgenteInfecciosoWithID,
     AntibioticoWithID,
     DoenteMedicacaoWithID,
@@ -877,6 +878,43 @@ def get_agente_infeccioso(
             status_code=404, detail='Agente infeccioso not found'
         )
     ic(f'Found agente infeccioso: {agente.nome} - {agente.tipo_agente}')
+    return agente
+
+
+@app.patch(
+    '/agentes_infecciosos/{agente_id}', response_model=AgenteInfecciosoWithID
+)
+def update_agente_infeccioso(
+    agente_id: int,
+    agente_update: AgenteInfecciosoUpdate,
+    session: Session = Depends(get_session)
+):
+    ic(f'Updating agente infeccioso with id: {agente_id}')
+
+    # Get the existing agente
+    agente = session.get(AgenteInfeccioso, agente_id)
+    if not agente:
+        ic(f'Agente infeccioso {agente_id} not found')
+        raise HTTPException(
+            status_code=404, detail='Agente infeccioso not found'
+        )
+
+    # Update only the fields that were provided (not None)
+    update_data = agente_update.model_dump(exclude_unset=True)
+    ic(f'Updating agente {agente_id} with data: {update_data}')
+
+    for key, value in update_data.items():
+        if hasattr(agente, key):
+            setattr(agente, key, value)
+
+    session.add(agente)
+    session.commit()
+    session.refresh(agente)
+
+    ic(
+        f'Successfully updated agente infeccioso: {agente.nome} - '
+        f'{agente.tipo_agente}'
+    )
     return agente
 
 
