@@ -124,7 +124,7 @@ frontend/coverage/
 frontend/.nyc_output/
 
 # Development database files (keep test databases out of repo)
-mydb.db
+#mydb.db
 test_*.db
 *.db-journal
 *.db-shm
