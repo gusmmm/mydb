@@ -9,7 +9,8 @@ const route = useRoute()
 
 const items = [
   { label: 'Home', icon: 'pi pi-home', to: '/', command: () => router.push('/') },
-  { label: 'Agentes Infecciosos', icon: 'pi pi-database', to: '/agentes-infecciosos', command: () => router.push('/agentes-infecciosos') },
+  { label: 'Lookup Tables', icon: 'pi pi-table', to: '/lookup-tables', command: () => router.push('/lookup-tables') },
+  { label: 'Agentes Infecciosos', icon: 'pi pi-sitemap', to: '/agentes-infecciosos', command: () => router.push('/agentes-infecciosos') },
 ]
 
 const activeIndex = ref(0)
@@ -18,8 +19,10 @@ const activeIndex = ref(0)
 watch(() => route.path, (newPath) => {
   if (newPath === '/') {
     activeIndex.value = 0
-  } else if (newPath === '/agentes-infecciosos') {
+  } else if (newPath === '/lookup-tables') {
     activeIndex.value = 1
+  } else if (newPath === '/agentes-infecciosos') {
+    activeIndex.value = 2
   }
 }, { immediate: true })
 </script>
@@ -58,9 +61,9 @@ watch(() => route.path, (newPath) => {
 
 .main-content {
   flex: 1;
-  padding: 1rem 2rem;
-  max-width: 100%;
-  width: 100%;
-  overflow-x: auto;
+  padding: 0;
+  max-width: 100vw;
+  width: 100vw;
+  overflow-x: hidden;
 }
 </style>

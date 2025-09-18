@@ -9,6 +9,23 @@ const api = axios.create({
   },
 })
 
+// Dashboard Statistics Interfaces
+export interface DatabaseStatistics {
+  doentes: number
+  internamentos: number
+  agentesInfecciosos: number
+  tiposAcidente: number
+  agentesQueimadura: number
+  mecanismosQueimadura: number
+  origensDestino: number
+}
+
+export interface RecentActivity {
+  recentDoentes: number
+  recentInternamentos: number
+  lastWeekAdmissions: number
+}
+
 export interface AgenteInfeccioso {
   id: number
   nome: string
@@ -60,6 +77,69 @@ export const agenteInfecciosoService = {
   async delete(id: number): Promise<void> {
     await api.delete(`/agentes_infecciosos/${id}`)
   },
+}
+
+// Dashboard Statistics Service
+export const dashboardService = {
+  // Get database statistics
+  async getStatistics(): Promise<DatabaseStatistics> {
+    try {
+      const [
+        doentesResponse,
+        internamentosResponse,
+        agentesResponse,
+        tiposAcidenteResponse,
+        agentesQueimaduraResponse,
+        mecanismosQueimaduraResponse,
+        origensDestinoResponse
+      ] = await Promise.all([
+        api.get('/doentes'),
+        api.get('/internamentos'),
+        api.get('/agentes_infecciosos'),
+        api.get('/tipos_acidente'),
+        api.get('/agentes_queimadura'),
+        api.get('/mecanismos_queimadura'),
+        api.get('/origens_destino')
+      ])
+
+      return {
+        doentes: doentesResponse.data.length,
+        internamentos: internamentosResponse.data.length,
+        agentesInfecciosos: agentesResponse.data.length,
+        tiposAcidente: tiposAcidenteResponse.data.length,
+        agentesQueimadura: agentesQueimaduraResponse.data.length,
+        mecanismosQueimadura: mecanismosQueimaduraResponse.data.length,
+        origensDestino: origensDestinoResponse.data.length,
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard statistics:', error)
+      throw error
+    }
+  },
+
+  // Get recent activity (simplified for now)
+  async getRecentActivity(): Promise<RecentActivity> {
+    try {
+      const [doentesResponse, internamentosResponse] = await Promise.all([
+        api.get('/doentes'),
+        api.get('/internamentos')
+      ])
+
+      // For now, we'll calculate simple statistics
+      // In a real app, the backend would provide filtered data
+      const doentes = doentesResponse.data
+      const internamentos = internamentosResponse.data
+
+      return {
+        recentDoentes: doentes.length, // Placeholder - would filter by recent
+        recentInternamentos: internamentos.length, // Placeholder - would filter by recent  
+        lastWeekAdmissions: internamentos.length, // Placeholder - would filter by last week
+      }
+    } catch (error) {
+      console.error('Error fetching recent activity:', error)
+      throw error
+    }
+  }
 }
 
 export default api

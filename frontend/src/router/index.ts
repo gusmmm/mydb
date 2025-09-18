@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/lookup-tables',
+      name: 'lookup-tables',
+      component: () => import('../views/LookupTablesView.vue'),
+    },
+    {
       path: '/agentes-infecciosos',
       name: 'agentes-infecciosos',
       component: () => import('../views/AgentesInfecciosView.vue'),
