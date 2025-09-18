@@ -11,6 +11,7 @@ const items = [
   { label: 'Home', icon: 'pi pi-home', to: '/', command: () => router.push('/') },
   { label: 'Lookup Tables', icon: 'pi pi-table', to: '/lookup-tables', command: () => router.push('/lookup-tables') },
   { label: 'Agentes Infecciosos', icon: 'pi pi-sitemap', to: '/agentes-infecciosos', command: () => router.push('/agentes-infecciosos') },
+  { label: 'Patients', icon: 'pi pi-users', to: '/doentes', command: () => router.push('/doentes') },
 ]
 
 const activeIndex = ref(0)
@@ -23,6 +24,8 @@ watch(() => route.path, (newPath) => {
     activeIndex.value = 1
   } else if (newPath === '/agentes-infecciosos') {
     activeIndex.value = 2
+  } else if (newPath === '/doentes') {
+    activeIndex.value = 3
   }
 }, { immediate: true })
 </script>

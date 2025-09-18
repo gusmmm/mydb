@@ -48,6 +48,34 @@ export interface AgenteInfecciosoUpdate {
   subtipo_agent?: string | null
 }
 
+// Patient (Doente) Interfaces
+export interface Doente {
+  id: number
+  nome: string
+  numero_processo: number
+  data_nascimento: string | null
+  sexo: 'M' | 'F'
+  morada: string
+  created_at?: string
+  last_modified?: string
+}
+
+export interface DoenteCreate {
+  nome: string
+  numero_processo: number
+  data_nascimento?: string | null
+  sexo: 'M' | 'F'
+  morada: string
+}
+
+export interface DoenteUpdate {
+  nome?: string
+  numero_processo?: number
+  data_nascimento?: string | null
+  sexo?: 'M' | 'F'
+  morada?: string
+}
+
 export const agenteInfecciosoService = {
   // Get all infectious agents
   async getAll(): Promise<AgenteInfeccioso[]> {
@@ -76,6 +104,50 @@ export const agenteInfecciosoService = {
   // Delete infectious agent
   async delete(id: number): Promise<void> {
     await api.delete(`/agentes_infecciosos/${id}`)
+  },
+}
+
+// Patient (Doente) Service
+export const doenteService = {
+  // Get all patients
+  async getAll(): Promise<Doente[]> {
+    const response = await api.get('/doentes')
+    return response.data
+  },
+
+  // Get patient by ID
+  async getById(id: number): Promise<Doente> {
+    const response = await api.get(`/doentes/${id}`)
+    return response.data
+  },
+
+  // Get patient by numero_processo
+  async getByNumeroProcesso(numeroProcesso: number): Promise<Doente> {
+    const response = await api.get(`/doentes/numero_processo/${numeroProcesso}`)
+    return response.data
+  },
+
+  // Create new patient
+  async create(doente: DoenteCreate): Promise<Doente> {
+    const response = await api.post('/doentes', doente)
+    return response.data
+  },
+
+  // Update patient (PUT - full update)
+  async update(id: number, doente: DoenteCreate): Promise<Doente> {
+    const response = await api.put(`/doentes/${id}`, doente)
+    return response.data
+  },
+
+  // Partial update patient (PATCH)
+  async partialUpdate(id: number, doente: DoenteUpdate): Promise<Doente> {
+    const response = await api.patch(`/doentes/${id}`, doente)
+    return response.data
+  },
+
+  // Delete patient
+  async delete(id: number): Promise<void> {
+    await api.delete(`/doentes/${id}`)
   },
 }
 

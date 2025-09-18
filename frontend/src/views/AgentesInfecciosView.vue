@@ -341,40 +341,52 @@ const resetForm = () => {
 
 <style scoped>
 .agentes-view {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
+  padding: 2rem 4rem;
+  max-width: 100%;
+  width: 100%;
+  background: #f5f7fa;
+  min-height: calc(100vh - 120px);
 }
 
 .header-section {
-  margin-bottom: 1.5rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
 }
 
 .header-section h2 {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .header-section p {
   color: #666;
-  margin-bottom: 1rem;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.1rem;
 }
 
 .actions {
   display: flex;
-  justify-content: flex-start;
   gap: 1rem;
+  align-items: center;
 }
 
 .loading {
-  text-align: center;
-  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
   color: #666;
+  padding: 2rem;
+  justify-content: center;
 }
 
 .loading i {
-  margin-right: 0.5rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .form-grid {
@@ -467,5 +479,26 @@ const resetForm = () => {
 :deep(.editable-table .p-datatable-tbody > tr:hover > td) {
   background-color: #e3f2fd !important;
   color: #1565c0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .agentes-view {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .agentes-view {
+    padding: 1rem;
+  }
+  
+  .header-section {
+    padding: 1.5rem;
+  }
+  
+  .header-section h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>

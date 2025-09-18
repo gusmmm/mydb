@@ -17,6 +17,10 @@ const navigateToLookupTables = () => {
 const navigateToAgentesInfecciosos = () => {
   router.push('/agentes-infecciosos')
 }
+
+const navigateToDoentes = () => {
+  router.push('/doentes')
+}
 </script>
 
 <template>
@@ -139,6 +143,15 @@ const navigateToAgentesInfecciosos = () => {
                 icon="pi pi-sitemap" 
                 @click="navigateToAgentesInfecciosos"
                 severity="secondary"
+                size="large"
+                class="action-btn"
+              />
+              
+              <Button 
+                label="Manage Patients" 
+                icon="pi pi-users" 
+                @click="navigateToDoentes"
+                severity="info"
                 size="large"
                 class="action-btn"
               />
