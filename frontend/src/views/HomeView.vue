@@ -21,6 +21,10 @@ const navigateToAgentesInfecciosos = () => {
 const navigateToDoentes = () => {
   router.push('/doentes')
 }
+
+const navigateToInternamentos = () => {
+  router.push('/internamentos')
+}
 </script>
 
 <template>
@@ -152,6 +156,15 @@ const navigateToDoentes = () => {
                 icon="pi pi-users" 
                 @click="navigateToDoentes"
                 severity="info"
+                size="large"
+                class="action-btn"
+              />
+              
+              <Button 
+                label="Hospitalizations" 
+                icon="pi pi-heart" 
+                @click="navigateToInternamentos"
+                severity="warning"
                 size="large"
                 class="action-btn"
               />

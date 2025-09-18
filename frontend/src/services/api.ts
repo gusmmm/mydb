@@ -76,6 +76,82 @@ export interface DoenteUpdate {
   morada?: string
 }
 
+// Internamento (Hospitalization) Interfaces
+export interface Internamento {
+  id: number
+  numero_internamento: number
+  doente_id: number
+  data_entrada: string
+  data_alta?: string | null
+  data_queimadura?: string | null
+  origem_entrada?: number | null
+  destino_alta?: number | null
+  ASCQ_total: number
+  lesao_inalatoria: 'SIM' | 'NAO' | 'SUSPEITA'
+  mecanismo_queimadura?: number | null
+  agente_queimadura?: number | null
+  tipo_acidente?: number | null
+  incendio_florestal?: boolean | null
+  contexto_violento?: 'SIM' | 'NAO' | 'SUSPEITA' | null
+  suicidio_tentativa?: boolean | null
+  fogueira_queda?: boolean | null
+  lareira_queda?: boolean | null
+  escarotomias_entrada?: boolean | null
+  intubacao_OT?: 'SIM' | 'NAO' | 'OUTRO' | null
+  VMI_dias?: number | null
+  VNI?: boolean | null
+  created_at?: string
+  last_modified?: string
+}
+
+export interface InternamentoCreate {
+  numero_internamento: number
+  doente_id: number
+  data_entrada: string
+  data_alta?: string | null
+  data_queimadura?: string | null
+  origem_entrada?: number | null
+  destino_alta?: number | null
+  ASCQ_total: number
+  lesao_inalatoria: 'SIM' | 'NAO' | 'SUSPEITA'
+  mecanismo_queimadura?: number | null
+  agente_queimadura?: number | null
+  tipo_acidente?: number | null
+  incendio_florestal?: boolean | null
+  contexto_violento?: 'SIM' | 'NAO' | 'SUSPEITA' | null
+  suicidio_tentativa?: boolean | null
+  fogueira_queda?: boolean | null
+  lareira_queda?: boolean | null
+  escarotomias_entrada?: boolean | null
+  intubacao_OT?: 'SIM' | 'NAO' | 'OUTRO' | null
+  VMI_dias?: number | null
+  VNI?: boolean | null
+}
+
+export interface InternamentoUpdate {
+  numero_internamento?: number
+  doente_id?: number
+  data_entrada?: string
+  data_alta?: string | null
+  data_queimadura?: string | null
+  origem_entrada?: number | null
+  destino_alta?: number | null
+  ASCQ_total?: number
+  lesao_inalatoria?: 'SIM' | 'NAO' | 'SUSPEITA'
+  mecanismo_queimadura?: number | null
+  agente_queimadura?: number | null
+  tipo_acidente?: number | null
+  incendio_florestal?: boolean | null
+  contexto_violento?: 'SIM' | 'NAO' | 'SUSPEITA' | null
+  suicidio_tentativa?: boolean | null
+  fogueira_queda?: boolean | null
+  lareira_queda?: boolean | null
+  escarotomias_entrada?: boolean | null
+  intubacao_OT?: 'SIM' | 'NAO' | 'OUTRO' | null
+  VMI_dias?: number | null
+  VNI?: boolean | null
+}
+
 export const agenteInfecciosoService = {
   // Get all infectious agents
   async getAll(): Promise<AgenteInfeccioso[]> {
@@ -148,6 +224,50 @@ export const doenteService = {
   // Delete patient
   async delete(id: number): Promise<void> {
     await api.delete(`/doentes/${id}`)
+  },
+}
+
+// Internamento (Hospitalization) Service
+export const internamentoService = {
+  // Get all hospitalizations
+  async getAll(): Promise<Internamento[]> {
+    const response = await api.get('/internamentos')
+    return response.data
+  },
+
+  // Get hospitalization by ID
+  async getById(id: number): Promise<Internamento> {
+    const response = await api.get(`/internamentos/${id}`)
+    return response.data
+  },
+
+  // Get hospitalization by numero_internamento
+  async getByNumero(numeroInternamento: number): Promise<Internamento> {
+    const response = await api.get(`/internamentos/${numeroInternamento}`)
+    return response.data
+  },
+
+  // Create new hospitalization
+  async create(internamento: InternamentoCreate): Promise<Internamento> {
+    const response = await api.post('/internamentos', internamento)
+    return response.data
+  },
+
+  // Update hospitalization (PUT - full update)
+  async update(id: number, internamento: InternamentoCreate): Promise<Internamento> {
+    const response = await api.put(`/internamentos/${id}`, internamento)
+    return response.data
+  },
+
+  // Partial update hospitalization (PATCH)
+  async partialUpdate(id: number, internamento: InternamentoUpdate): Promise<Internamento> {
+    const response = await api.patch(`/internamentos/${id}`, internamento)
+    return response.data
+  },
+
+  // Delete hospitalization
+  async delete(id: number): Promise<void> {
+    await api.delete(`/internamentos/${id}`)
   },
 }
 

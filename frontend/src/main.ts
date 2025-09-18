@@ -18,6 +18,10 @@ import Toast from 'primevue/toast'
 import ToastService from 'primevue/toastservice'
 import ConfirmDialog from 'primevue/confirmdialog'
 import ConfirmationService from 'primevue/confirmationservice'
+import Tag from 'primevue/tag'
+import Badge from 'primevue/badge'
+import Checkbox from 'primevue/checkbox'
+import Tooltip from 'primevue/tooltip'
 
 import App from './App.vue'
 import router from './router'
@@ -33,6 +37,7 @@ app.use(PrimeVue, {
 })
 app.use(ToastService)
 app.use(ConfirmationService)
+app.directive('tooltip', Tooltip)
 
 // Register PrimeVue Components
 app.component('TabMenu', TabMenu)
@@ -44,5 +49,8 @@ app.component('InputText', InputText)
 app.component('Message', Message)
 app.component('Toast', Toast)
 app.component('ConfirmDialog', ConfirmDialog)
+app.component('Tag', Tag)
+app.component('Badge', Badge)
+app.component('Checkbox', Checkbox)
 
 app.mount('#app')

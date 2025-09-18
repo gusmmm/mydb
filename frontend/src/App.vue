@@ -12,6 +12,7 @@ const items = [
   { label: 'Lookup Tables', icon: 'pi pi-table', to: '/lookup-tables', command: () => router.push('/lookup-tables') },
   { label: 'Agentes Infecciosos', icon: 'pi pi-sitemap', to: '/agentes-infecciosos', command: () => router.push('/agentes-infecciosos') },
   { label: 'Patients', icon: 'pi pi-users', to: '/doentes', command: () => router.push('/doentes') },
+  { label: 'Hospitalizations', icon: 'pi pi-heart', to: '/internamentos', command: () => router.push('/internamentos') },
 ]
 
 const activeIndex = ref(0)
@@ -26,6 +27,8 @@ watch(() => route.path, (newPath) => {
     activeIndex.value = 2
   } else if (newPath === '/doentes') {
     activeIndex.value = 3
+  } else if (newPath === '/internamentos') {
+    activeIndex.value = 4
   }
 }, { immediate: true })
 </script>

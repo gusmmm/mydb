@@ -137,6 +137,42 @@ class QueimaduraUpdate(BaseModel):
     notas: str | None = None
 
 
+# Internamento partial update schema (used by PATCH)
+class InternamentoPatch(BaseModel):
+    numero_internamento: int | None = None
+    doente_id: int | None = None
+
+    # Dates as YYYY-MM-DD strings (validated by pattern)
+    data_entrada: str | None = Field(
+        default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"
+    )
+    data_alta: str | None = Field(
+        default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"
+    )
+    data_queimadura: str | None = Field(
+        default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"
+    )
+
+    origem_entrada: int | None = None
+    destino_alta: int | None = None
+    ASCQ_total: int | None = None
+
+    # Enum-like fields are accepted as strings here and coerced in API
+    lesao_inalatoria: str | None = None
+    mecanismo_queimadura: int | None = None
+    agente_queimadura: int | None = None
+    tipo_acidente: int | None = None
+    incendio_florestal: bool | None = None
+    contexto_violento: str | None = None
+    suicidio_tentativa: bool | None = None
+    fogueira_queda: bool | None = None
+    lareira_queda: bool | None = None
+    escarotomias_entrada: bool | None = None
+    intubacao_OT: str | None = None
+    VMI_dias: int | None = None
+    VNI: bool | None = None
+
+
 # TraumaTipo Schemas
 class TraumaTipoBase(BaseModel):
     local: str

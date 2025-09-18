@@ -68,6 +68,7 @@ from src.schemas.schemas import (
     InternamentoProcedimentoWithID,
     LocalAnatomicoWithID,
     MedicacaoWithID,
+    InternamentoPatch,
     PatologiaWithID,
     ProcedimentoWithID,
     QueimaduraUpdate,
@@ -296,6 +297,78 @@ async def create_internamento(
     ic('Committed internamento successfully', internamento_bd.id)
 
     return internamento_bd
+
+
+@app.put('/internamentos/{internamento_id}')
+async def update_internamento(
+    internamento_id: int,
+    internamento_update: InternamentoCreate,
+    session: Session = Depends(get_session),
+) -> Internamento:
+    """Full update of an internamento (PUT)."""
+    ic(f'Full update of internamento with id: {internamento_id}')
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        raise HTTPException(status_code=404, detail='Internamento not found')
+
+    # Replace all updatable fields
+    data = internamento_update.model_dump()
+    for field, value in data.items():
+        if field in {'data_entrada', 'data_alta', 'data_queimadura'} and isinstance(value, str):
+            setattr(internamento, field, date.fromisoformat(value))
+        else:
+            setattr(internamento, field, value)
+
+    session.add(internamento)
+    session.commit()
+    session.refresh(internamento)
+    ic(f'Successfully updated internamento {internamento_id}')
+    return internamento
+
+
+@app.patch('/internamentos/{internamento_id}')
+async def patch_internamento(
+    internamento_id: int,
+    internamento_patch: InternamentoPatch,
+    session: Session = Depends(get_session),
+) -> Internamento:
+    """Partial update of an internamento (PATCH)."""
+    ic(f'Partial update of internamento with id: {internamento_id}')
+    ic('Patch data:', internamento_patch.model_dump(exclude_unset=True))
+
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        raise HTTPException(status_code=404, detail='Internamento not found')
+
+    update_data = internamento_patch.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        # Convert ISO date strings
+        if field in {'data_entrada', 'data_alta', 'data_queimadura'} and isinstance(value, str):
+            setattr(internamento, field, date.fromisoformat(value))
+        else:
+            setattr(internamento, field, value)
+
+    session.add(internamento)
+    session.commit()
+    session.refresh(internamento)
+    ic(f'Successfully patched internamento {internamento_id}')
+    return internamento
+
+
+@app.delete('/internamentos/{internamento_id}')
+async def delete_internamento(
+    internamento_id: int, session: Session = Depends(get_session)
+) -> dict[str, str]:
+    """Delete an internamento."""
+    ic(f'Deleting internamento with id: {internamento_id}')
+    internamento = session.get(Internamento, internamento_id)
+    if not internamento:
+        raise HTTPException(status_code=404, detail='Internamento not found')
+
+    session.delete(internamento)
+    session.commit()
+    ic(f'Successfully deleted internamento {internamento_id}')
+    return {'message': f'Internamento {internamento_id} deleted successfully'}
 
 
 @app.post('/doentes', status_code=201)
@@ -943,7 +1016,7 @@ def delete_agente_infeccioso(
         )
 
     ic(f'Found agente to delete: {agente.nome} - {agente.tipo_agente}')
-    
+
     session.delete(agente)
     session.commit()
 

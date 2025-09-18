@@ -103,7 +103,7 @@ def test_patch_agente_infeccioso():
     create_resp = client.post("/agentes_infecciosos", json=create_payload)
     assert create_resp.status_code == HTTP_OK
     agente_id = create_resp.json()["id"]
-    
+
     # Test partial update
     update_payload = {
         "subtipo_agent": "Updated Subtype",
@@ -111,13 +111,13 @@ def test_patch_agente_infeccioso():
     }
     patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
     assert patch_resp.status_code == HTTP_OK, patch_resp.text
-    
+
     data = patch_resp.json()
     assert data["nome"] == create_payload["nome"]  # Unchanged
     assert data["tipo_agente"] == create_payload["tipo_agente"]  # Unchanged
     assert data["subtipo_agent"] == update_payload["subtipo_agent"]  # Updated
     assert data["codigo_snomedct"] == update_payload["codigo_snomedct"]  # Updated
-    
+
 
 def test_patch_agente_infeccioso_single_field():
     # First create an agent
@@ -129,14 +129,14 @@ def test_patch_agente_infeccioso_single_field():
     create_resp = client.post("/agentes_infecciosos", json=create_payload)
     assert create_resp.status_code == HTTP_OK
     agente_id = create_resp.json()["id"]
-    
+
     # Test updating only one field
     update_payload = {
         "codigo_snomedct": "987654321"
     }
     patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
     assert patch_resp.status_code == HTTP_OK, patch_resp.text
-    
+
     data = patch_resp.json()
     assert data["nome"] == create_payload["nome"]  # Unchanged
     assert data["tipo_agente"] == create_payload["tipo_agente"]  # Unchanged
@@ -163,12 +163,12 @@ def test_patch_agente_infeccioso_empty_update():
     create_resp = client.post("/agentes_infecciosos", json=create_payload)
     assert create_resp.status_code == HTTP_OK
     agente_id = create_resp.json()["id"]
-    
+
     # Test empty update (should return unchanged)
     update_payload = {}
     patch_resp = client.patch(f"/agentes_infecciosos/{agente_id}", json=update_payload)
     assert patch_resp.status_code == HTTP_OK, patch_resp.text
-    
+
     data = patch_resp.json()
     assert data["nome"] == create_payload["nome"]
     assert data["tipo_agente"] == create_payload["tipo_agente"]
@@ -183,15 +183,15 @@ def test_delete_agente_infeccioso():
     create_resp = client.post("/agentes_infecciosos", json=create_payload)
     assert create_resp.status_code == HTTP_OK
     agente_id = create_resp.json()["id"]
-    
+
     # Delete the agent
     delete_resp = client.delete(f"/agentes_infecciosos/{agente_id}")
     assert delete_resp.status_code == HTTP_OK
-    
+
     data = delete_resp.json()
     assert "message" in data
     assert "deleted successfully" in data["message"]
-    
+
     # Verify the agent is gone
     get_resp = client.get(f"/agentes_infecciosos/{agente_id}")
     assert get_resp.status_code == 404
