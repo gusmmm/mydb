@@ -17,11 +17,12 @@ from rich.layout import Layout
 from rich.align import Align
 from pathlib import Path
 from datetime import datetime
+from typing import Optional, Dict, Any, List
 
 # Initialize Rich console
 console = Console()
 
-def load_data(file_path: str) -> pd.DataFrame:
+def load_data(file_path: str) -> Optional[pd.DataFrame]:
     """Load the CSV file and return a pandas DataFrame"""
     try:
         with Progress(
@@ -32,7 +33,7 @@ def load_data(file_path: str) -> pd.DataFrame:
             task = progress.add_task("Loading CSV data...", total=None)
             df = pd.read_csv(file_path)
             progress.update(task, completed=True)
-        return df
+            return df
     except Exception as e:
         console.print(f"[red]Error loading file: {e}[/red]")
         return None
@@ -62,10 +63,10 @@ def analyze_id_column(df: pd.DataFrame) -> dict:
         console=console
     ) as progress:
         task = progress.add_task("Analyzing ID column...", total=len(df))
-        
-        for idx, row in df.iterrows():
+        # Use enumerate to avoid issues when index is not integer
+        for pos, (_, row) in enumerate(df.iterrows(), start=2):
             id_value = row['ID_str']
-            row_number = idx + 2  # +2 because pandas is 0-indexed and CSV has header
+            row_number = pos  # CSV header starts at row 1, so data starts at 2
             
             # Check for empty values
             if pd.isna(row['ID']) or id_value in ['', 'nan', 'None']:
@@ -162,6 +163,344 @@ def analyze_id_column(df: pd.DataFrame) -> dict:
     }
     
     return results
+
+
+# -------------------------------
+# Processo column analysis
+# -------------------------------
+
+def analyze_processo_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze the 'processo' column with checks: empties, digit-only, length distribution, duplicates.
+
+    Returns a dict with detailed findings and statistics.
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'empty_values': [],  # list of {row, value, ID, nome}
+        'non_digit_values': [],  # list of {row, value, ID, nome}
+        'length_distribution': Counter(),  # length -> count
+        'usual_length': None,
+        'deviant_lengths': [],  # list of {row, value, length, ID, nome}
+        'duplicates': {},  # processo -> {count, rows: [...]}
+        'statistics': {},
+    }
+
+    # Preprocess: ensure column exists
+    if 'processo' not in df.columns:
+        console.print("[red]Column 'processo' not found in CSV![/red]")
+        return results
+
+    # Work on a string version and strip whitespace
+    processo_series = df['processo'].astype(str).str.strip()
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console
+    ) as progress:
+        task = progress.add_task("Analyzing processo column...", total=len(df))
+
+        for pos, (idx, value) in enumerate(processo_series.items(), start=2):
+            raw_value = value
+            row = df.loc[idx]
+
+            # Treat empty and NaN
+            if pd.isna(df.loc[idx, 'processo']) or raw_value in ['', 'nan', 'None']:
+                results['empty_values'].append({
+                    'row': pos,
+                    'value': df.loc[idx, 'processo'],
+                    'ID': row.get('ID', ''),
+                    'nome': row.get('nome', '')
+                })
+                progress.update(task, advance=1)
+                continue
+
+            # Check digits
+            if not raw_value.isdigit():
+                results['non_digit_values'].append({
+                    'row': pos,
+                    'value': df.loc[idx, 'processo'],
+                    'ID': row.get('ID', ''),
+                    'nome': row.get('nome', '')
+                })
+            else:
+                # Length distribution only for valid digits
+                length = len(raw_value)
+                results['length_distribution'][length] += 1
+
+            progress.update(task, advance=1)
+
+    # Determine usual length as the mode among digit-only entries
+    if results['length_distribution']:
+        usual_length = results['length_distribution'].most_common(1)[0][0]
+        results['usual_length'] = usual_length
+
+        # Find deviants: entries whose digit length differs from usual_length
+        for pos, (idx, value) in enumerate(processo_series.items(), start=2):
+            val = value
+            if val.isdigit() and len(val) != usual_length:
+                row = df.loc[idx]
+                results['deviant_lengths'].append({
+                    'row': pos,
+                    'value': df.loc[idx, 'processo'],
+                    'length': len(val),
+                    'ID': row.get('ID', ''),
+                    'nome': row.get('nome', '')
+                })
+
+    # Detect duplicates: they are allowed, but we report them alongside the rows
+    counts = Counter(processo_series)
+    for proc, cnt in counts.items():
+        if proc in ['', 'nan', 'None']:
+            continue
+        if cnt > 1:
+            # Collect rows where this processo appears
+            rows: List[Dict[str, Any]] = []
+            matching = df.index[processo_series == proc]
+            for idx in matching:
+                row = df.loc[idx]
+                # Attempt to compute CSV row number (header=1)
+                # We don't know original order vs index, so approximate via position
+                pos = int(df.index.get_loc(idx)) + 2 if hasattr(df.index, 'get_loc') else 0
+                rows.append({
+                    'row': pos,
+                    'ID': row.get('ID', ''),
+                    'processo': row.get('processo', ''),
+                    'nome': row.get('nome', ''),
+                    'data_ent': row.get('data_ent', ''),
+                    'data_alta': row.get('data_alta', ''),
+                    'sexo': row.get('sexo', ''),
+                    'origem': row.get('origem', ''),
+                })
+            results['duplicates'][proc] = {
+                'count': cnt,
+                'rows': sorted(rows, key=lambda r: r['row'])
+            }
+
+    # Statistics
+    results['statistics'] = {
+        'total_empty': len(results['empty_values']),
+        'total_non_digit': len(results['non_digit_values']),
+        'total_deviants': len(results['deviant_lengths']),
+        'unique_processo': len(counts),
+        'total_duplicates_groups': sum(1 for v in counts.values() if v > 1),
+        'total_duplicated_rows': sum(cnt for cnt in counts.values() if cnt > 1),
+    }
+
+    return results
+
+
+def display_processo_overview(results: Dict[str, Any]):
+    """Display high-level statistics for processo column."""
+    stats = results['statistics']
+    table = Table(title="🧾 Processo - Overview", style="cyan")
+    table.add_column("Metric", style="yellow", width=28)
+    table.add_column("Count", justify="right", style="green", width=10)
+    table.add_column("Notes", style="magenta")
+
+    usual = results.get('usual_length')
+
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Empty Values", stats['total_empty'], "Should be 0"),
+        ("Non-Digit Values", stats['total_non_digit'], "Should be 0"),
+        ("Usual Length", usual if usual is not None else "N/A", "Mode of digit-only lengths"),
+        ("Deviant Length Rows", stats['total_deviants'], "Not matching usual length"),
+        ("Unique 'processo' values", stats['unique_processo'], ""),
+        ("Duplicate groups", stats['total_duplicates_groups'], "Allowed, listed below"),
+        ("Rows in duplicates", stats['total_duplicated_rows'], "Total appearances"),
+    ]
+
+    for metric, count, note in rows:
+        table.add_row(str(metric), str(count), str(note))
+
+    console.print(table)
+
+
+def display_processo_details(results: Dict[str, Any]):
+    """Display detailed findings for processo: empties, non-digits, length distribution, deviants, duplicates."""
+
+    # Empty values
+    if results['empty_values']:
+        console.print("\n[red]❌ Empty 'processo' values:[/red]")
+        t = Table()
+        t.add_column("Row", justify="right", width=6)
+        t.add_column("processo", width=14)
+        t.add_column("ID", width=8)
+        t.add_column("Patient Name", width=40)
+        for e in results['empty_values'][:20]:
+            nome = e['nome'] or ''
+            t.add_row(str(e['row']), str(e['value']), str(e['ID']), nome[:37] + "..." if len(nome) > 40 else nome)
+        if len(results['empty_values']) > 20:
+            t.add_row("...", "...", "...", f"... and {len(results['empty_values'])-20} more")
+        console.print(t)
+    else:
+        console.print("\n[green]✅ No empty 'processo' values.[/green]")
+
+    # Non-digit values
+    if results['non_digit_values']:
+        console.print("\n[red]❌ Non-digit 'processo' values:[/red]")
+        t = Table()
+        t.add_column("Row", justify="right", width=6)
+        t.add_column("processo", width=14)
+        t.add_column("ID", width=8)
+        t.add_column("Patient Name", width=40)
+        for e in results['non_digit_values'][:20]:
+            nome = e['nome'] or ''
+            t.add_row(str(e['row']), str(e['value']), str(e['ID']), nome[:37] + "..." if len(nome) > 40 else nome)
+        if len(results['non_digit_values']) > 20:
+            t.add_row("...", "...", "...", f"... and {len(results['non_digit_values'])-20} more")
+        console.print(t)
+    else:
+        console.print("\n[green]✅ All 'processo' values are digit-only.[/green]")
+
+    # Length distribution
+    console.print("\n[cyan]📏 Length distribution (digit-only entries):[/cyan]")
+    tlen = Table()
+    tlen.add_column("Length", justify="right", width=8)
+    tlen.add_column("Count", justify="right", width=8)
+    tlen.add_column("Percent", justify="right", width=8)
+    total_digits = sum(results['length_distribution'].values()) or 1
+    usual = results.get('usual_length')
+    for length, count in sorted(results['length_distribution'].items(), key=lambda kv: (-kv[1], kv[0])):
+        pct = f"{count/total_digits*100:.1f}%"
+        label = f"{length}"
+        if usual is not None and length == usual:
+            label = f"[green]{label}*[/green]"
+        tlen.add_row(label, str(count), pct)
+    console.print(tlen)
+
+    # Deviants
+    if results['deviant_lengths']:
+        console.print("\n[yellow]⚠️ Entries with deviant length:[/yellow]")
+        t = Table()
+        t.add_column("Row", justify="right", width=6)
+        t.add_column("processo", width=14)
+        t.add_column("Length", justify="right", width=8)
+        t.add_column("ID", width=8)
+        t.add_column("Patient Name", width=40)
+        for e in results['deviant_lengths'][:20]:
+            nome = e['nome'] or ''
+            t.add_row(str(e['row']), str(e['value']), str(e['length']), str(e['ID']), nome[:37] + "..." if len(nome) > 40 else nome)
+        if len(results['deviant_lengths']) > 20:
+            t.add_row("...", "...", "...", "...", f"... and {len(results['deviant_lengths'])-20} more")
+        console.print(t)
+    else:
+        console.print("\n[green]✅ No deviant lengths detected.[/green]")
+
+    # Duplicates
+    if results['duplicates']:
+        console.print("\n[cyan]🔁 Duplicated 'processo' values:[/cyan]")
+        # Summary
+        ts = Table(title="Duplicate groups summary")
+        ts.add_column("processo", width=16)
+        ts.add_column("Count", justify="right", width=8)
+        for proc, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            ts.add_row(str(proc), str(info['count']))
+        console.print(ts)
+
+        # Detailed per-processo rows (limit to first 10 groups)
+        shown = 0
+        for proc, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            if shown >= 10:
+                remaining = len(results['duplicates']) - shown
+                if remaining > 0:
+                    console.print(f"[dim]... and {remaining} more duplicate groups[/dim]")
+                break
+            console.print(f"\n[bold]processo {proc}[/bold] (x{info['count']})")
+            t = Table()
+            t.add_column("Row", justify="right", width=6)
+            t.add_column("ID", width=8)
+            t.add_column("Nome", width=34)
+            t.add_column("data_ent", width=12)
+            t.add_column("data_alta", width=12)
+            t.add_column("Sexo", width=6)
+            t.add_column("Origem", width=22)
+            for r in info['rows'][:20]:
+                nome = r['nome'] or ''
+                t.add_row(str(r['row']), str(r['ID']), nome[:31] + "..." if len(nome) > 34 else nome,
+                          str(r['data_ent']), str(r['data_alta']), str(r['sexo']), str(r['origem'])[:22])
+            if len(info['rows']) > 20:
+                t.add_row("...", "...", f"... and {len(info['rows'])-20} more", "...", "...", "...", "...")
+            console.print(t)
+            shown += 1
+    else:
+        console.print("\n[green]✅ No duplicates for 'processo'.[/green]\n")
+
+
+def save_processo_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    """Save a detailed markdown report for 'processo' analysis into /files/reports/."""
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_processo_analysis_{timestamp}.md"
+
+    stats = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - 'processo' Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Empty values: {stats['total_empty']}")
+    lines.append(f"- Non-digit values: {stats['total_non_digit']}")
+    usual = results.get('usual_length')
+    lines.append(f"- Usual length: {usual if usual is not None else 'N/A'}")
+    lines.append(f"- Deviant length rows: {stats['total_deviants']}")
+    lines.append(f"- Unique 'processo' values: {stats['unique_processo']}")
+    lines.append(f"- Duplicate groups: {stats['total_duplicates_groups']} (rows in duplicates: {stats['total_duplicated_rows']})\n")
+
+    # Length distribution
+    lines.append("### Length Distribution (digit-only)\n")
+    lines.append("| Length | Count | Percent |")
+    lines.append("|--------|-------|---------|")
+    total_digits = sum(results['length_distribution'].values()) or 1
+    for length, count in sorted(results['length_distribution'].items(), key=lambda kv: (-kv[1], kv[0])):
+        pct = f"{count/total_digits*100:.1f}%"
+        lines.append(f"| {length} | {count} | {pct} |")
+
+    # Deviants (first 50)
+    if results['deviant_lengths']:
+        lines.append("\n### Deviant Length Rows (first 50)\n")
+        lines.append("| Row | processo | Length | ID | Name |")
+        lines.append("|-----|----------|--------|----|------|")
+        for e in results['deviant_lengths'][:50]:
+            lines.append(f"| {e['row']} | {e['value']} | {e['length']} | {e['ID']} | {e['nome']} |")
+
+    # Non-digit values (first 50)
+    if results['non_digit_values']:
+        lines.append("\n### Non-digit Values (first 50)\n")
+        lines.append("| Row | processo | ID | Name |")
+        lines.append("|-----|----------|----|------|")
+        for e in results['non_digit_values'][:50]:
+            lines.append(f"| {e['row']} | {e['value']} | {e['ID']} | {e['nome']} |")
+
+    # Duplicates - summary and detail (first 20 groups)
+    if results['duplicates']:
+        lines.append("\n### Duplicate 'processo' Values\n")
+        lines.append("| processo | Count |")
+        lines.append("|----------|-------|")
+        for proc, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            lines.append(f"| {proc} | {info['count']} |")
+
+        # Detailed rows
+        lines.append("\n#### Duplicate Details (first 20 groups, 50 rows each)\n")
+        shown = 0
+        for proc, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            if shown >= 20:
+                break
+            lines.append(f"\n##### processo {proc} (x{info['count']})\n")
+            lines.append("| Row | ID | Name | data_ent | data_alta | Sexo | Origem |")
+            lines.append("|-----|----|------|----------|-----------|------|--------|")
+            for r in info['rows'][:50]:
+                lines.append(f"| {r['row']} | {r['ID']} | {r['nome']} | {r['data_ent']} | {r['data_alta']} | {r['sexo']} | {r['origem']} |")
+            shown += 1
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+
+    console.print(f"\n[green]📄 'processo' report saved to:[/green] {report_file}")
+    return report_file
 
 def create_header():
     """Create a beautiful header for the quality control report"""
@@ -575,12 +914,23 @@ def main():
     
     console.print("="*80)
     
-    # Save detailed report
+    # Save detailed report for ID
     report_file = save_detailed_report(results, csv_file)
     
+    # -------------------------------------------------------
+    # Processo analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🧾 Analyzing column: processo[/bold]")
+    proc_results = analyze_processo_column(df)
+    display_processo_overview(proc_results)
+    display_processo_details(proc_results)
+    proc_report = save_processo_report(proc_results, csv_file)
+
     console.print(f"\n[bold green]✅ Analysis complete![/bold green]")
     console.print(f"[cyan]📊 Analysis time:[/cyan] {analysis_time:.2f} seconds")
-    console.print(f"[cyan]📄 Report location:[/cyan] {report_file}")
+    console.print(f"[cyan]📄 ID report:[/cyan] {report_file}")
+    console.print(f"[cyan]📄 processo report:[/cyan] {proc_report}")
 
 if __name__ == "__main__":
     main()
