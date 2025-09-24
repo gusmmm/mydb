@@ -1891,6 +1891,320 @@ def save_data_nasc_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'data_nasc' report saved to:[/green] {report_file}")
     return report_file
 
+# -------------------------------
+# origem (admission source) analysis
+# -------------------------------
+
+def analyze_origem_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'origem':
+    - check missing/empty
+    - compute full value frequencies (string values)
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'frequencies': Counter(),
+        'distinct_values': [],
+        'statistics': {},
+    }
+
+    if 'origem' not in df.columns:
+        console.print("[red]Column 'origem' not found in CSV![/red]")
+        return results
+
+    series = df['origem'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing origem column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            s = str(val).strip()
+            results['frequencies'][s] += 1
+            progress.update(task, advance=1)
+
+    results['distinct_values'] = sorted(results['frequencies'].items(), key=lambda kv: (-kv[1], kv[0]))
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'distinct_count': len(results['frequencies']),
+    }
+    return results
+
+
+def display_origem_overview(results: Dict[str, Any]):
+    t = Table(title="📥 origem - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=28)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Distinct values", s['distinct_count'], ""),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+    # Show all value frequencies
+    if results['distinct_values']:
+        tf = Table(title="origem value frequencies (all)")
+        tf.add_column("origem", width=34)
+        tf.add_column("Count", justify="right", width=8)
+        for value, cnt in results['distinct_values']:
+            tf.add_row(str(value), str(cnt))
+        console.print(tf)
+
+
+def display_origem_details(results: Dict[str, Any]):
+    # Missing rows (show all)
+    if results['missing']:
+        console.print("\n[red]❌ Missing origem values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing']:
+            tt.add_row(str(e['row']), str(e['ID']))
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing origem values.[/green]")
+
+
+def save_origem_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_origem_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - origem Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Distinct values: {s['distinct_count']}\n")
+
+    # All frequencies
+    if results['distinct_values']:
+        lines.append("### Value Frequencies (all)\n")
+        lines.append("| origem | Count |")
+        lines.append("|--------|-------|")
+        for value, cnt in results['distinct_values']:
+            lines.append(f"| {value} | {cnt} |")
+
+    # Missing rows
+    if results['missing']:
+        lines.append("\n### Missing Rows\n")
+        lines.append("| Row | ID |")
+        lines.append("|-----|----|")
+        for e in results['missing']:
+            lines.append(f"| {e['row']} | {e['ID']} |")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'origem' report saved to:[/green] {report_file}")
+    return report_file
+
+# -------------------------------
+# ASCQ (burn surface area) analysis
+# -------------------------------
+
+def analyze_ASCQ_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'ASCQ':
+    - check missing/empty
+    - validate range: digit between 1 and 100
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'non_digit': [],  # {row, ID, ASCQ}
+        'out_of_range': [],  # {row, ID, ASCQ, value}
+        'valid_values': [],  # {row, ID, ASCQ, value}
+        'statistics': {},
+    }
+
+    if 'ASCQ' not in df.columns:
+        console.print("[red]Column 'ASCQ' not found in CSV![/red]")
+        return results
+
+    series = df['ASCQ'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing ASCQ column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            
+            s = str(val).strip()
+            if not s.isdigit():
+                results['non_digit'].append({'row': pos, 'ID': id_str, 'ASCQ': s})
+            else:
+                num_val = int(s)
+                if not (1 <= num_val <= 100):
+                    results['out_of_range'].append({'row': pos, 'ID': id_str, 'ASCQ': s, 'value': num_val})
+                else:
+                    results['valid_values'].append({'row': pos, 'ID': id_str, 'ASCQ': s, 'value': num_val})
+            progress.update(task, advance=1)
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'total_non_digit': len(results['non_digit']),
+        'total_out_of_range': len(results['out_of_range']),
+        'total_valid': len(results['valid_values']),
+    }
+    
+    # Add value statistics for valid values
+    if results['valid_values']:
+        values = [v['value'] for v in results['valid_values']]
+        values_series = pd.Series(values)
+        results['statistics'].update({
+            'min_value': int(values_series.min()),
+            'max_value': int(values_series.max()),
+            'mean_value': float(round(values_series.mean(), 2)),
+            'median_value': float(values_series.median()),
+        })
+    else:
+        results['statistics'].update({
+            'min_value': None,
+            'max_value': None,
+            'mean_value': None,
+            'median_value': None,
+        })
+    
+    return results
+
+
+def display_ASCQ_overview(results: Dict[str, Any]):
+    t = Table(title="🔥 ASCQ - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=28)
+    t.add_column("Count/Value", justify="right", style="green", width=12)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Non-digit", s['total_non_digit'], "Should be digits only"),
+        ("Out of range (not 1-100)", s['total_out_of_range'], "Must be 1-100"),
+        ("Valid values", s['total_valid'], "Within range 1-100"),
+        ("Min value", s['min_value'], ""),
+        ("Max value", s['max_value'], ""),
+        ("Mean value", s['mean_value'], ""),
+        ("Median value", s['median_value'], ""),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+
+def display_ASCQ_details(results: Dict[str, Any]):
+    # Missing values
+    if results['missing']:
+        console.print("\n[red]❌ Missing ASCQ values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing ASCQ values.[/green]")
+
+    # Non-digit values
+    if results['non_digit']:
+        console.print("\n[red]❌ Non-digit ASCQ values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("ASCQ", width=12)
+        for e in results['non_digit'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['ASCQ']))
+        if len(results['non_digit']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['non_digit'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All ASCQ values are digits.[/green]")
+
+    # Out of range values
+    if results['out_of_range']:
+        console.print("\n[red]❌ ASCQ values out of range (not 1-100):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("ASCQ", width=12)
+        tt.add_column("Value", justify="right", width=8)
+        for e in results['out_of_range'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['ASCQ']), str(e['value']))
+        if len(results['out_of_range']) > 20:
+            tt.add_row("...", "...", "...", f"... and {len(results['out_of_range'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All ASCQ values are within range (1-100).[/green]")
+
+
+def save_ASCQ_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_ASCQ_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - ASCQ Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Non-digit: {s['total_non_digit']}")
+    lines.append(f"- Out of range (not 1-100): {s['total_out_of_range']}")
+    lines.append(f"- Valid values: {s['total_valid']}")
+    
+    if s['total_valid'] > 0:
+        lines.append(f"\n## 📈 Value Statistics (valid values only)\n")
+        lines.append(f"- Min: {s['min_value']}")
+        lines.append(f"- Max: {s['max_value']}")
+        lines.append(f"- Mean: {s['mean_value']}")
+        lines.append(f"- Median: {s['median_value']}")
+
+    # Tables for issues
+    def tbl(rows: List[Dict[str, Any]], headers: List[str], keys: List[str], title: str, limit: int = 100):
+        nonlocal lines
+        if not rows:
+            return
+        lines.append(f"\n### {title}\n")
+        lines.append("| " + " | ".join(headers) + " |")
+        lines.append("| " + " | ".join(["-"*len(h) for h in headers]) + " |")
+        for e in rows[:limit]:
+            values = [str(e.get(k, '')) for k in keys]
+            lines.append("| " + " | ".join(values) + " |")
+        if len(rows) > limit:
+            lines.append("| ... | ... | ... | ... |")
+
+    tbl(results['missing'], ["Row", "ID"], ["row", "ID"], "Missing ASCQ Values (first 100)")
+    tbl(results['non_digit'], ["Row", "ID", "ASCQ"], ["row", "ID", "ASCQ"], "Non-digit ASCQ Values (first 100)")
+    tbl(results['out_of_range'], ["Row", "ID", "ASCQ", "Value"], ["row", "ID", "ASCQ", "value"], "Out-of-range ASCQ Values (first 100)")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'ASCQ' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -2388,6 +2702,28 @@ def main():
     display_data_nasc_details(data_nasc_results)
     data_nasc_report = save_data_nasc_report(data_nasc_results, csv_file)
     console.print(f"[cyan]📄 data_nasc report:[/cyan] {data_nasc_report}")
+
+    # -------------------------------------------------------
+    # origem analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]📥 Analyzing column: origem[/bold]")
+    origem_results = analyze_origem_column(df)
+    display_origem_overview(origem_results)
+    display_origem_details(origem_results)
+    origem_report = save_origem_report(origem_results, csv_file)
+    console.print(f"[cyan]📄 origem report:[/cyan] {origem_report}")
+
+    # -------------------------------------------------------
+    # ASCQ analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🔥 Analyzing column: ASCQ[/bold]")
+    ASCQ_results = analyze_ASCQ_column(df)
+    display_ASCQ_overview(ASCQ_results)
+    display_ASCQ_details(ASCQ_results)
+    ASCQ_report = save_ASCQ_report(ASCQ_results, csv_file)
+    console.print(f"[cyan]📄 ASCQ report:[/cyan] {ASCQ_report}")
 
 if __name__ == "__main__":
     main()
