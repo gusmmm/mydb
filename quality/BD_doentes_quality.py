@@ -2205,6 +2205,130 @@ def save_ASCQ_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'ASCQ' report saved to:[/green] {report_file}")
     return report_file
 
+# -------------------------------
+# ent_VMI (mechanical ventilation at admission) analysis
+# -------------------------------
+
+def analyze_ent_VMI_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'ent_VMI':
+    - check missing/empty
+    - compute value frequencies (expected: 's' for yes, 'n' for no)
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'frequencies': Counter(),
+        'distinct_values': [],
+        'statistics': {},
+    }
+
+    if 'ent_VMI' not in df.columns:
+        console.print("[red]Column 'ent_VMI' not found in CSV![/red]")
+        return results
+
+    series = df['ent_VMI'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing ent_VMI column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            s = str(val).strip()
+            results['frequencies'][s] += 1
+            progress.update(task, advance=1)
+
+    results['distinct_values'] = sorted(results['frequencies'].items(), key=lambda kv: (-kv[1], kv[0]))
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'distinct_count': len(results['frequencies']),
+    }
+    return results
+
+
+def display_ent_VMI_overview(results: Dict[str, Any]):
+    t = Table(title="💬 ent_VMI - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=28)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Distinct values", s['distinct_count'], "Expected: 's' (yes), 'n' (no)"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+    # Show all value frequencies
+    if results['distinct_values']:
+        tf = Table(title="ent_VMI value frequencies (all)")
+        tf.add_column("ent_VMI", width=12)
+        tf.add_column("Count", justify="right", width=8)
+        for value, cnt in results['distinct_values']:
+            tf.add_row(str(value), str(cnt))
+        console.print(tf)
+
+
+def display_ent_VMI_details(results: Dict[str, Any]):
+    # Missing rows
+    if results['missing']:
+        console.print("\n[red]❌ Missing ent_VMI values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing ent_VMI values.[/green]")
+
+
+def save_ent_VMI_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_ent_VMI_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - ent_VMI Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Distinct values: {s['distinct_count']}\n")
+
+    # All frequencies
+    if results['distinct_values']:
+        lines.append("### Value Frequencies (all)\n")
+        lines.append("| ent_VMI | Count |")
+        lines.append("|---------|-------|")
+        for value, cnt in results['distinct_values']:
+            lines.append(f"| {value} | {cnt} |")
+
+    # Missing rows
+    if results['missing']:
+        lines.append("\n### Missing Rows\n")
+        lines.append("| Row | ID |")
+        lines.append("|-----|----|")
+        for e in results['missing']:
+            lines.append(f"| {e['row']} | {e['ID']} |")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'ent_VMI' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -2724,6 +2848,17 @@ def main():
     display_ASCQ_details(ASCQ_results)
     ASCQ_report = save_ASCQ_report(ASCQ_results, csv_file)
     console.print(f"[cyan]📄 ASCQ report:[/cyan] {ASCQ_report}")
+
+    # -------------------------------------------------------
+    # ent_VMI analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]💬 Analyzing column: ent_VMI[/bold]")
+    ent_VMI_results = analyze_ent_VMI_column(df)
+    display_ent_VMI_overview(ent_VMI_results)
+    display_ent_VMI_details(ent_VMI_results)
+    ent_VMI_report = save_ent_VMI_report(ent_VMI_results, csv_file)
+    console.print(f"[cyan]📄 ent_VMI report:[/cyan] {ent_VMI_report}")
 
 if __name__ == "__main__":
     main()
