@@ -16,6 +16,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.layout import Layout
 from rich.align import Align
 from pathlib import Path
+from datetime import datetime
 
 # Initialize Rich console
 console = Console()
@@ -361,8 +362,159 @@ def display_detailed_missing(results: dict):
     else:
         console.print("\n[green]✅ No missing serials found in any year![/green]")
 
+def save_detailed_report(results: dict, csv_file: Path):
+    """Save a detailed markdown report to the reports directory"""
+    
+    # Create reports directory if it doesn't exist
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate timestamp for the report
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_ID_analysis_{timestamp}.md"
+    
+    stats = results['statistics']
+    
+    report_content = f"""# BD_doentes.csv - ID Column Quality Control Report
+
+**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Source File:** {csv_file}
+**Analysis Script:** BD_doentes_quality.py
+
+## 📊 Executive Summary
+
+The quality control analysis of the ID column in BD_doentes.csv reveals the following:
+
+### ✅ **Excellent Data Quality Overall**
+- **{results['total_rows']} total rows** analyzed
+- **{stats['total_empty']} empty values** ({100 - (stats['total_empty']/results['total_rows']*100):.1f}% completeness)
+- **{stats['total_invalid_format']} invalid formats** (all IDs are proper 3 or 4 digit numbers)
+- **{stats['total_duplicates']} duplicate IDs** (perfect uniqueness)
+- **{stats['total_valid']} valid IDs** ({stats['total_valid']/results['total_rows']*100:.1f}% validity rate)
+
+### 📅 **Coverage Analysis**
+- **{stats['years_covered']} years covered**: {', '.join(map(str, sorted(results['year_series'].keys())))}
+- **{stats['total_missing_serials']} missing serial numbers** across all years
+"""
+
+    if stats['total_missing_serials'] > 0:
+        report_content += f"""
+### ⚠️ **Data Issues Found**
+
+#### **Missing Serials by Year**
+"""
+        for year in sorted(results['missing_serials'].keys()):
+            missing = results['missing_serials'][year]
+            if missing:
+                report_content += f"- **Year {year}**: {len(missing)} missing serials ({', '.join(map(str, missing[:10]))}{'...' if len(missing) > 10 else ''})\n"
+
+    report_content += f"""
+### 🔍 **ID Format Distribution**
+- **{stats['total_valid_3_digit']}** ({stats['total_valid_3_digit']/results['total_rows']*100:.1f}%) use 3-digit format (years 2006-2014)
+- **{stats['total_valid_4_digit']}** ({stats['total_valid_4_digit']/results['total_rows']*100:.1f}%) use 4-digit format (years 2021-2025)
+
+### 📋 **Year-by-Year Breakdown**
+
+| Year | Count | Serial Range | Status | Missing Serials |
+|------|-------|--------------|--------|-----------------|
+"""
+
+    for year in sorted(results['year_series'].keys()):
+        entries = results['year_series'][year]
+        count = len(entries)
+        serials = [entry['serial'] for entry in entries]
+        min_serial = min(serials)
+        max_serial = max(serials)
+        missing = results['missing_serials'][year]
+        
+        status = "✅ Complete" if not missing else f"❌ {len(missing)} gaps"
+        missing_str = "0" if not missing else str(len(missing))
+        
+        report_content += f"| {year} | {count} | {min_serial:02d}-{max_serial:02d} | {status} | {missing_str} |\n"
+
+    if results['empty_values']:
+        report_content += f"""
+### 🚫 **Empty Values Found** ({len(results['empty_values'])})
+
+| Row | Patient Name |
+|-----|-------------|
+"""
+        for entry in results['empty_values'][:20]:  # Show first 20
+            report_content += f"| {entry['row']} | {entry['nome']} |\n"
+        
+        if len(results['empty_values']) > 20:
+            report_content += f"| ... | *{len(results['empty_values']) - 20} more entries* |\n"
+
+    if results['invalid_format']:
+        report_content += f"""
+### ❌ **Invalid Format Found** ({len(results['invalid_format'])})
+
+| Row | Invalid ID | Patient Name |
+|-----|-----------|-------------|
+"""
+        for entry in results['invalid_format'][:20]:  # Show first 20
+            report_content += f"| {entry['row']} | {entry['value']} | {entry['nome']} |\n"
+        
+        if len(results['invalid_format']) > 20:
+            report_content += f"| ... | ... | *{len(results['invalid_format']) - 20} more entries* |\n"
+
+    if results['duplicate_ids']:
+        report_content += f"""
+### 🔄 **Duplicate IDs Found** ({len(results['duplicate_ids'])})
+
+| ID | Count |
+|----|-------|
+"""
+        for entry in results['duplicate_ids']:
+            report_content += f"| {entry['id']} | {entry['count']} |\n"
+
+    report_content += f"""
+### 🎯 **Recommendations**
+
+"""
+    
+    if stats['total_empty'] > 0:
+        report_content += f"1. **Fix {stats['total_empty']} empty ID values** - These records cannot be properly identified\n"
+    
+    if stats['total_invalid_format'] > 0:
+        report_content += f"2. **Fix {stats['total_invalid_format']} invalid ID formats** - Ensure all IDs follow 3 or 4 digit format\n"
+    
+    if stats['total_duplicates'] > 0:
+        report_content += f"3. **Resolve {stats['total_duplicates']} duplicate IDs** - Each patient should have unique identifier\n"
+    
+    if stats['total_missing_serials'] > 0:
+        report_content += f"4. **Investigate {stats['total_missing_serials']} missing serial numbers** - Check source systems for missing records\n"
+    
+    if (stats['total_empty'] == 0 and 
+        stats['total_invalid_format'] == 0 and 
+        stats['total_duplicates'] == 0 and 
+        stats['total_missing_serials'] == 0):
+        report_content += "✅ **All ID values are valid and complete!** No action required.\n"
+
+    report_content += f"""
+### 🏥 **Clinical Impact Assessment**
+
+- **Data Quality Score**: {((stats['total_valid'] - stats['total_missing_serials']) / results['total_rows'] * 100):.1f}%
+- **Reliability for Studies**: {"High" if stats['total_missing_serials'] < 50 else "Medium" if stats['total_missing_serials'] < 100 else "Low"}
+- **Trend Analysis Suitability**: {"Excellent" if stats['years_covered'] >= 10 else "Good" if stats['years_covered'] >= 5 else "Limited"}
+
+---
+
+*Report generated by BD_doentes_quality.py v1.0*
+*Analysis completed in {results.get('analysis_time', 'N/A')} seconds*
+"""
+
+    # Save the report
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write(report_content)
+    
+    console.print(f"\n[green]📄 Detailed report saved to:[/green] {report_file}")
+    return report_file
+
 def main():
     """Main function to run the quality control analysis"""
+    
+    start_time = datetime.now()
     
     # Display header
     console.print(create_header())
@@ -387,6 +539,11 @@ def main():
     
     # Analyze ID column
     results = analyze_id_column(df)
+    
+    # Calculate analysis time
+    end_time = datetime.now()
+    analysis_time = (end_time - start_time).total_seconds()
+    results['analysis_time'] = f"{analysis_time:.2f}"
     
     # Display results
     display_overview(results)
@@ -417,6 +574,13 @@ def main():
         console.print("[green]🎉 All ID values are valid and complete![/green]")
     
     console.print("="*80)
+    
+    # Save detailed report
+    report_file = save_detailed_report(results, csv_file)
+    
+    console.print(f"\n[bold green]✅ Analysis complete![/bold green]")
+    console.print(f"[cyan]📊 Analysis time:[/cyan] {analysis_time:.2f} seconds")
+    console.print(f"[cyan]📄 Report location:[/cyan] {report_file}")
 
 if __name__ == "__main__":
     main()
