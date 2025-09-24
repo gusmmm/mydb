@@ -18,9 +18,19 @@ from rich.align import Align
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, Dict, Any, List
+import os
 
 # Initialize Rich console
 console = Console()
+
+# Optional: expected values for 'destino' column.
+# You can override by setting env BD_DOENTES_DESTINO_EXPECTED to a pipe-separated list, e.g.:
+#   export BD_DOENTES_DESTINO_EXPECTED="Domicílio|Outro hospital|SU|Óbito|Enfermaria|UCI"
+def _expected_destino_values() -> Optional[set[str]]:
+    env = os.getenv("BD_DOENTES_DESTINO_EXPECTED", "").strip()
+    if not env:
+        return None
+    return {v.strip().casefold() for v in env.split("|") if v.strip()}
 
 def load_data(file_path: str) -> Optional[pd.DataFrame]:
     """Load the CSV file and return a pandas DataFrame"""
@@ -1238,6 +1248,175 @@ def save_data_alta_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'data_alta' report saved to:[/green] {report_file}")
     return report_file
 
+# -------------------------------
+# destino (discharge destination) analysis
+# -------------------------------
+
+def analyze_destino_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'destino':
+    - check missing/empty
+    - value frequencies (string values)
+    - mark values deviating from expected list (if provided via env)
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'frequencies': Counter(),
+        'distinct_values': [],
+        'deviant_values': [],  # rows with value not in expected set
+        'statistics': {},
+        'expected_set': None,
+    }
+
+    if 'destino' not in df.columns:
+        console.print("[red]Column 'destino' not found in CSV![/red]")
+        return results
+
+    expected = _expected_destino_values()
+    results['expected_set'] = sorted(list(expected)) if expected else None
+
+    series = df['destino'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing destino column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            # normalize to string
+            s = str(val).strip()
+            results['frequencies'][s] += 1
+            if expected is not None:
+                if s.casefold() not in expected:
+                    results['deviant_values'].append({'row': pos, 'ID': id_str, 'destino': s})
+            progress.update(task, advance=1)
+
+    results['distinct_values'] = sorted(results['frequencies'].items(), key=lambda kv: (-kv[1], kv[0]))
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'distinct_count': len(results['frequencies']),
+        'total_deviants': len(results['deviant_values']),
+    }
+    return results
+
+
+def display_destino_overview(results: Dict[str, Any]):
+    t = Table(title="📦 destino - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=30)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Distinct values", s['distinct_count'], ""),
+        ("Deviant values", s['total_deviants'], "Not in expected set" if results.get('expected_set') else "No expected set provided"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+    # Frequencies table (top 20)
+    if results['distinct_values']:
+        tf = Table(title="destino value frequencies (top 20)")
+        tf.add_column("destino", width=30)
+        tf.add_column("Count", justify="right", width=8)
+        for value, cnt in results['distinct_values'][:20]:
+            tf.add_row(str(value), str(cnt))
+        if len(results['distinct_values']) > 20:
+            tf.add_row("...", f"... and {len(results['distinct_values'])-20} more")
+        console.print(tf)
+
+    if results.get('expected_set'):
+        exp = ", ".join(results['expected_set'])
+        console.print(f"[dim]Expected categories: {exp}[/dim]")
+
+
+def display_destino_details(results: Dict[str, Any]):
+    # Missing rows
+    if results['missing']:
+        console.print("\n[red]❌ Missing destino values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing destino values.[/green]")
+
+    # Deviant rows (if expected set provided)
+    if results.get('expected_set') and results['deviant_values']:
+        console.print("\n[yellow]⚠️ Values not in expected categories:[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("destino", width=40)
+        for e in results['deviant_values'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['destino']))
+        if len(results['deviant_values']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['deviant_values'])-20} more")
+        console.print(tt)
+    elif results.get('expected_set'):
+        console.print("\n[green]✅ All destino values are in expected categories.[/green]")
+
+
+def save_destino_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_destino_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - destino Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Distinct values: {s['distinct_count']}")
+    if results.get('expected_set'):
+        lines.append(f"- Deviant values (not in expected): {s['total_deviants']}")
+        lines.append("\n### Expected categories\n")
+        lines.append(", ".join(results['expected_set']) + "\n")
+
+    # Frequencies (top 100 to keep report usable)
+    if results['distinct_values']:
+        lines.append("\n### Value Frequencies (top 100)\n")
+        lines.append("| destino | Count |")
+        lines.append("|---------|-------|")
+        for value, cnt in results['distinct_values'][:100]:
+            lines.append(f"| {value} | {cnt} |")
+
+    # Deviant rows
+    if results.get('expected_set') and results['deviant_values']:
+        lines.append("\n### Deviant Rows (first 100)\n")
+        lines.append("| Row | ID | destino |")
+        lines.append("|-----|----|---------|")
+        for e in results['deviant_values'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} | {e['destino']} |")
+
+    # Missing rows
+    if results['missing']:
+        lines.append("\n### Missing Rows (first 100)\n")
+        lines.append("| Row | ID |")
+        lines.append("|-----|----|")
+        for e in results['missing'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} |")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'destino' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -1700,6 +1879,19 @@ def main():
     console.print(f"[cyan]📄 nome report:[/cyan] {nome_report}")
     console.print(f"[cyan]📄 data_ent report:[/cyan] {data_ent_report}")
     console.print(f"[cyan]📄 data_alta report:[/cyan] {data_alta_report}")
+    
+    # -------------------------------------------------------
+    # destino analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]📦 Analyzing column: destino[/bold]")
+    destino_results = analyze_destino_column(df)
+    display_destino_overview(destino_results)
+    display_destino_details(destino_results)
+    destino_report = save_destino_report(destino_results, csv_file)
+
+    # Final summary
+    console.print(f"[cyan]📄 destino report:[/cyan] {destino_report}")
 
 if __name__ == "__main__":
     main()
