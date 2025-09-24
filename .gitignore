@@ -72,15 +72,16 @@ venv.bak/
 *.p12
 secrets.json
 config.json
+files/
 
 # Database files (development databases)
-# Note: mydb.db is tracked for sync, but other .db files are ignored
 *.sqlite
 *.sqlite3
+*.db
 *.db-journal
 *.db-shm
 *.db-wal
-!mydb.db
+mydb.db
 
 # IDE and editor files
 .vscode/
@@ -125,11 +126,7 @@ frontend/coverage/
 frontend/.nyc_output/
 
 # Development database files (keep test databases out of repo)
-# mydb.db - Main database file (now tracked for sync)
 test_*.db
-*.db-journal
-*.db-shm
-*.db-wal
 
 # Test and temporary files
 test_database.py
