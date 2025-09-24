@@ -271,6 +271,171 @@ export const internamentoService = {
   },
 }
 
+// BD_doentes Analysis Interfaces
+export interface AnalysisOverview {
+  total_records: number
+  total_patients: number
+  year_range: {
+    min_year: number
+    max_year: number
+    years_span: number
+  }
+  data_completeness: {
+    complete_records: number
+    completeness_rate: number
+  }
+  missing_data_summary: Record<string, {
+    missing_count: number
+    missing_percentage: number
+  }>
+}
+
+export interface DemographicAnalysis {
+  gender_distribution: {
+    counts: Record<string, number>
+    percentages: Record<string, number>
+  }
+  age_statistics?: {
+    count: number
+    mean: number
+    median: number
+    std: number
+    min: number
+    max: number
+    quartiles: {
+      q1: number
+      q3: number
+    }
+  }
+  age_distribution?: Record<string, number>
+}
+
+export interface TemporalAnalysis {
+  yearly_admissions?: Record<string, number>
+  monthly_patterns?: Record<string, number>
+  seasonal_distribution?: Record<string, number>
+}
+
+export interface BurnSeverityAnalysis {
+  ascq_statistics?: {
+    count: number
+    mean: number
+    median: number
+    std: number
+    min: number
+    max: number
+  }
+  ascq_distribution?: Record<string, number>
+  baux_statistics?: {
+    count: number
+    mean: number
+    median: number
+    std: number
+    min: number
+    max: number
+  }
+  inhalation_injury?: {
+    counts: Record<string, number>
+    percentages: Record<string, number>
+  }
+  mechanical_ventilation?: {
+    counts: Record<string, number>
+    percentages: Record<string, number>
+  }
+}
+
+export interface EtiologyAnalysis {
+  top_causes?: Record<string, number>
+  top_causes_percentages?: Record<string, number>
+  categorized_causes?: Record<string, number>
+}
+
+export interface OutcomeAnalysis {
+  discharge_destinations?: Record<string, number>
+  mortality_rate?: number
+  time_to_admission?: {
+    count: number
+    mean_days: number
+    median_days: number
+    std_days: number
+    same_day_admissions: number
+    delayed_admissions: number
+  }
+}
+
+export interface ChartData {
+  type: 'bar' | 'line' | 'pie' | 'doughnut' | 'horizontalBar'
+  labels: string[]
+  data: number[]
+  title: string
+}
+
+export interface ComprehensiveAnalysis {
+  overview: AnalysisOverview
+  demographics: DemographicAnalysis
+  temporal_patterns: TemporalAnalysis
+  burn_severity: BurnSeverityAnalysis
+  etiology: EtiologyAnalysis
+  outcomes: OutcomeAnalysis
+  analysis_timestamp: string
+  dataset_info: {
+    file_path: string
+    total_columns: number
+    column_names: string[]
+  }
+}
+
+// BD_doentes Analysis Service
+export const analysisService = {
+  // Get overview statistics
+  async getOverview(): Promise<AnalysisOverview> {
+    const response = await api.get('/analysis/overview')
+    return response.data
+  },
+
+  // Get demographic analysis
+  async getDemographics(): Promise<DemographicAnalysis> {
+    const response = await api.get('/analysis/demographics')
+    return response.data
+  },
+
+  // Get temporal patterns analysis
+  async getTemporal(): Promise<TemporalAnalysis> {
+    const response = await api.get('/analysis/temporal')
+    return response.data
+  },
+
+  // Get burn severity analysis
+  async getBurnSeverity(): Promise<BurnSeverityAnalysis> {
+    const response = await api.get('/analysis/burn-severity')
+    return response.data
+  },
+
+  // Get etiology analysis
+  async getEtiology(): Promise<EtiologyAnalysis> {
+    const response = await api.get('/analysis/etiology')
+    return response.data
+  },
+
+  // Get outcomes analysis
+  async getOutcomes(): Promise<OutcomeAnalysis> {
+    const response = await api.get('/analysis/outcomes')
+    return response.data
+  },
+
+  // Get comprehensive analysis
+  async getComprehensive(): Promise<ComprehensiveAnalysis> {
+    const response = await api.get('/analysis/comprehensive')
+    return response.data
+  },
+
+  // Get chart data
+  async getChartData(chartType: string): Promise<ChartData> {
+    const response = await api.get(`/analysis/chart/${chartType}`)
+    return response.data
+  },
+}
+
 // Dashboard Statistics Service
 export const dashboardService = {
   // Get database statistics

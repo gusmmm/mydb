@@ -7,6 +7,7 @@ from icecream import ic
 from sqlmodel import Session, select
 
 from src.db import get_session, init_db
+from src.analysis import get_analyzer
 from src.models.models import (
     AgenteInfeccioso,
     AgenteInfecciosoCreate,
@@ -1796,3 +1797,111 @@ def get_medicacoes_by_doente(
         f'doente {doente_id}'
     )
     return doentes_medicacao
+
+
+# ===============================================================================
+# BD_doentes Analysis Endpoints
+# ===============================================================================
+
+@app.get('/analysis/overview')
+def get_analysis_overview():
+    """Get comprehensive overview statistics for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_overview_statistics()
+    except Exception as e:
+        ic(f'Error getting overview analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/demographics')  
+def get_demographics_analysis():
+    """Get demographic analysis for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_demographic_analysis()
+    except Exception as e:
+        ic(f'Error getting demographics analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/temporal')
+def get_temporal_analysis():
+    """Get temporal patterns analysis for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_temporal_analysis()
+    except Exception as e:
+        ic(f'Error getting temporal analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/burn-severity')
+def get_burn_severity_analysis():
+    """Get burn severity analysis for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_burn_severity_analysis()
+    except Exception as e:
+        ic(f'Error getting burn severity analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/etiology')
+def get_etiology_analysis():
+    """Get burn etiology analysis for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_etiology_analysis()
+    except Exception as e:
+        ic(f'Error getting etiology analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/outcomes')
+def get_outcomes_analysis():
+    """Get patient outcomes analysis for BD_doentes dataset."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_outcome_analysis()
+    except Exception as e:
+        ic(f'Error getting outcomes analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/comprehensive')
+def get_comprehensive_analysis():
+    """Get all analysis results in one comprehensive report."""
+    try:
+        analyzer = get_analyzer()
+        return analyzer.get_comprehensive_analysis()
+    except Exception as e:
+        ic(f'Error getting comprehensive analysis: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/analysis/chart/{chart_type}')
+def get_chart_data(chart_type: str):
+    """Get specific chart data for frontend visualization.
+    
+    Available chart types:
+    - age_distribution
+    - gender_distribution  
+    - yearly_admissions
+    - monthly_patterns
+    - ascq_distribution
+    - etiology_top10
+    - seasonal_admissions
+    - outcomes_distribution
+    """
+    try:
+        analyzer = get_analyzer()
+        chart_data = analyzer.get_chart_data(chart_type)
+        
+        if 'error' in chart_data:
+            raise HTTPException(status_code=400, detail=chart_data['error'])
+            
+        return chart_data
+    except Exception as e:
+        ic(f'Error getting chart data for {chart_type}: {e}')
+        raise HTTPException(status_code=500, detail=str(e))
