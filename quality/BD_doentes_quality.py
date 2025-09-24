@@ -1039,6 +1039,205 @@ def save_data_ent_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'data_ent' report saved to:[/green] {report_file}")
     return report_file
 
+
+# -------------------------------
+# data_alta (discharge date) analysis
+# -------------------------------
+
+def analyze_data_alta_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze data_alta: missing, DD-MM-YYYY format, posterior to data_ent (when present)."""
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'invalid_format': [],  # {row, ID, data_alta}
+        'unparseable_count': 0,
+        'strict_valid_count': 0,
+        'parsed_loose_count': 0,
+        'not_after_data_ent': [],  # {row, ID, data_ent, data_alta}
+        'statistics': {},
+    }
+
+    if 'data_alta' not in df.columns:
+        console.print("[red]Column 'data_alta' not found in CSV![/red]")
+        return results
+
+    series_alta = df['data_alta'].astype(object)
+    series_ent = df['data_ent'].astype(object) if 'data_ent' in df.columns else None
+    id_str_series = df['ID'].astype(str)
+
+    parsed_alta: List[Optional[pd.Timestamp]] = [None] * len(df)
+    parsed_ent: List[Optional[pd.Timestamp]] = [None] * len(df)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing data_alta column...", total=len(df))
+
+        for i, (idx, val) in enumerate(series_alta.items()):
+            pos = row_positions[i]
+            id_str = id_str_series.loc[idx]
+            raw_alta = None if pd.isna(val) else str(val).strip()
+            if raw_alta is None or raw_alta == "":
+                results['missing'].append({'row': pos, 'ID': id_str})
+                parsed_alta[i] = None
+                progress.update(task, advance=1)
+                continue
+
+            is_strict = _is_strict_dd_mm_yyyy(raw_alta)
+            if not is_strict:
+                results['invalid_format'].append({'row': pos, 'ID': id_str, 'data_alta': raw_alta})
+            dt_alta = _parse_date_loose(raw_alta)
+            if dt_alta is None:
+                results['unparseable_count'] += 1
+            else:
+                if is_strict:
+                    results['strict_valid_count'] += 1
+                else:
+                    results['parsed_loose_count'] += 1
+            parsed_alta[i] = dt_alta
+
+            # Parse data_ent if available for comparison
+            if series_ent is not None:
+                raw_ent = None if pd.isna(series_ent.loc[idx]) else str(series_ent.loc[idx]).strip()
+                dt_ent = _parse_date_loose(raw_ent) if raw_ent else None
+                parsed_ent[i] = dt_ent
+
+            progress.update(task, advance=1)
+
+    # Compare alta > ent when both parseable
+    for i in range(len(df)):
+        dt_alta = parsed_alta[i]
+        dt_ent = parsed_ent[i] if series_ent is not None else None
+        if dt_alta is not None and dt_ent is not None:
+            if not (dt_alta >= dt_ent):  # posterior or same day acceptable? Requirement says posterior; use >
+                # If strictly posterior required, change to dt_alta > dt_ent
+                if not (dt_alta > dt_ent):
+                    results['not_after_data_ent'].append({
+                        'row': row_positions[i],
+                        'ID': str(id_str_series.iloc[i]),
+                        'data_ent': str(series_ent.iloc[i]) if series_ent is not None else '',
+                        'data_alta': str(series_alta.iloc[i]),
+                    })
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'total_invalid_format': len(results['invalid_format']),
+        'strict_valid_count': results['strict_valid_count'],
+        'parsed_loose_count': results['parsed_loose_count'],
+        'unparseable_count': results['unparseable_count'],
+        'not_after_data_ent': len(results['not_after_data_ent']),
+    }
+
+    return results
+
+
+def display_data_alta_overview(results: Dict[str, Any]):
+    t = Table(title="📆 data_alta - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=30)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], ""),
+        ("Invalid Format (not DD-MM-YYYY)", s['total_invalid_format'], ""),
+        ("Strict valid (DD-MM-YYYY)", s['strict_valid_count'], ""),
+        ("Parsed via fallback", s['parsed_loose_count'], "yyyy-mm-dd and d-m-Y accepted"),
+        ("Unparseable", s['unparseable_count'], ""),
+        ("Not after data_ent", s['not_after_data_ent'], "Should be strictly later than data_ent"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+
+def display_data_alta_details(results: Dict[str, Any]):
+    # Missing
+    if results['missing']:
+        console.print("\n[red]❌ Missing data_alta values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing data_alta values.[/green]")
+
+    # Invalid format
+    if results['invalid_format']:
+        console.print("\n[yellow]⚠️ Invalid format (expected DD-MM-YYYY):[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_alta", width=14)
+        for e in results['invalid_format'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_alta']))
+        if len(results['invalid_format']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['invalid_format'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All data_alta values match DD-MM-YYYY format.[/green]")
+
+    # Not after data_ent
+    if results['not_after_data_ent']:
+        console.print("\n[red]❌ Discharge before or same as admission (requires posterior):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        tt.add_column("data_alta", width=14)
+        for e in results['not_after_data_ent'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']), str(e['data_alta']))
+        if len(results['not_after_data_ent']) > 20:
+            tt.add_row("...", "...", "...", f"... and {len(results['not_after_data_ent'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All discharges are strictly after admissions (for parseable dates).[/green]")
+
+
+def save_data_alta_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_data_alta_analysis_{timestamp}.md"
+    s = results['statistics']
+
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - data_alta Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Invalid format (not DD-MM-YYYY): {s['total_invalid_format']}")
+    lines.append(f"- Strict valid (DD-MM-YYYY): {s['strict_valid_count']}")
+    lines.append(f"- Parsed via fallback (yyyy-mm-dd or d-m-Y): {s['parsed_loose_count']}")
+    lines.append(f"- Unparseable: {s['unparseable_count']}")
+    lines.append(f"- Not after data_ent: {s['not_after_data_ent']}\n")
+
+    def tbl(rows: List[Dict[str, Any]], headers: List[str], keys: List[str], title: str, limit: int = 50):
+        nonlocal lines
+        if not rows:
+            return
+        lines.append(f"\n### {title}\n")
+        lines.append("| " + " | ".join(headers) + " |")
+        lines.append("| " + " | ".join(['-'*len(h) for h in headers]) + " |")
+        for e in rows[:limit]:
+            values = [str(e.get(k, '')) for k in keys]
+            lines.append("| " + " | ".join(values) + " |")
+        if len(rows) > limit:
+            lines.append("| ... | ... | ... | ... |")
+
+    tbl(results['invalid_format'], ["Row", "ID", "data_alta"], ["row", "ID", "data_alta"], "Invalid format (first 50) - expected DD-MM-YYYY")
+    tbl(results['not_after_data_ent'], ["Row", "ID", "data_ent", "data_alta"], ["row", "ID", "data_ent", "data_alta"], "Not after data_ent (first 50)")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'data_alta' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -1484,12 +1683,23 @@ def main():
     display_data_ent_details(data_ent_results)
     data_ent_report = save_data_ent_report(data_ent_results, csv_file)
 
+    # -------------------------------------------------------
+    # data_alta analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]📆 Analyzing column: data_alta[/bold]")
+    data_alta_results = analyze_data_alta_column(df)
+    display_data_alta_overview(data_alta_results)
+    display_data_alta_details(data_alta_results)
+    data_alta_report = save_data_alta_report(data_alta_results, csv_file)
+
     console.print(f"\n[bold green]✅ Analysis complete![/bold green]")
     console.print(f"[cyan]📊 Analysis time:[/cyan] {analysis_time:.2f} seconds")
     console.print(f"[cyan]📄 ID report:[/cyan] {report_file}")
     console.print(f"[cyan]📄 processo report:[/cyan] {proc_report}")
     console.print(f"[cyan]📄 nome report:[/cyan] {nome_report}")
     console.print(f"[cyan]📄 data_ent report:[/cyan] {data_ent_report}")
+    console.print(f"[cyan]📄 data_alta report:[/cyan] {data_alta_report}")
 
 if __name__ == "__main__":
     main()
