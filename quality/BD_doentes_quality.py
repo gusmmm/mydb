@@ -731,6 +731,314 @@ def save_nome_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'nome' report saved to:[/green] {report_file}")
     return report_file
 
+
+# -------------------------------
+# data_ent (admission date) analysis
+# -------------------------------
+
+def _id_expected_year(id_str: str) -> Optional[int]:
+    if not isinstance(id_str, str) or not id_str.isdigit():
+        return None
+    if len(id_str) == 3:
+        return 2000 + int(id_str[0])
+    if len(id_str) == 4:
+        yy = int(id_str[:2])
+        return 2000 + yy if 0 <= yy <= 30 else 1900 + yy
+    return None
+
+
+def _is_strict_dd_mm_yyyy(s: str) -> bool:
+    return isinstance(s, str) and re.fullmatch(r"\d{2}-\d{2}-\d{4}", s) is not None
+
+
+def _parse_date_loose(s: str) -> Optional[pd.Timestamp]:
+    """Try to parse date allowing common dd-mm-yyyy variants while preserving correctness.
+    Returns a pandas Timestamp or None.
+    """
+    if not isinstance(s, str) or s.strip() == "":
+        return None
+    st = s.strip()
+    # First try strict dd-mm-yyyy
+    if _is_strict_dd_mm_yyyy(st):
+        try:
+            return pd.to_datetime(st, format="%d-%m-%Y", errors="raise")
+        except Exception:
+            return None
+    # Try yyyy-mm-dd (fallback strict)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", st):
+        try:
+            return pd.to_datetime(st, format="%Y-%m-%d", errors="raise")
+        except Exception:
+            return None
+    # Try d-m-Y with 1-2 digits (fallback)
+    m = re.fullmatch(r"(\d{1,2})-(\d{1,2})-(\d{4})", st)
+    if m:
+        d, mo, y = m.groups()
+        try:
+            return pd.to_datetime(f"{int(d):02d}-{int(mo):02d}-{y}", format="%d-%m-%Y", errors="raise")
+        except Exception:
+            return None
+    return None
+
+
+def analyze_data_ent_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze data_ent column for format, year vs ID, and monotonicity by ID."""
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID, data_ent}
+        'invalid_format': [],  # {row, ID, data_ent}
+        'invalid_date_value': [],  # reserved; currently handled by parser
+        'year_mismatch': [],  # {row, ID, id_year, data_ent, date_year}
+        'series_violations': [],  # {row, ID, data_ent, prev_row, prev_ID, prev_date}
+        'strict_valid_count': 0,
+        'parsed_loose_count': 0,
+        'unparseable_count': 0,
+        'excluded_from_series': 0,
+        'statistics': {},
+    }
+
+    if 'data_ent' not in df.columns:
+        console.print("[red]Column 'data_ent' not found in CSV![/red]")
+        return results
+
+    # Prepare fields
+    id_str_series = df['ID'].astype(str)
+    data_series = df['data_ent'].astype(object)
+
+    parsed_dates: List[Optional[pd.Timestamp]] = [None] * len(df)
+    strict_flags: List[bool] = [False] * len(df)
+    id_years: List[Optional[int]] = [None] * len(df)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console
+    ) as progress:
+        task = progress.add_task("Analyzing data_ent column...", total=len(df))
+        for i, (idx, val) in enumerate(data_series.items()):
+            row = df.loc[idx]
+            pos = row_positions[i]
+            id_str = id_str_series.loc[idx]
+            id_year = _id_expected_year(id_str)
+            id_years[i] = id_year
+            s = None if pd.isna(val) else str(val).strip()
+            if s is None or s == "":
+                results['missing'].append({'row': pos, 'ID': id_str, 'data_ent': val})
+                parsed_dates[i] = None
+                results['unparseable_count'] += 1
+                progress.update(task, advance=1)
+                continue
+            is_strict = _is_strict_dd_mm_yyyy(s)
+            if not is_strict:
+                results['invalid_format'].append({'row': pos, 'ID': id_str, 'data_ent': s})
+            # Try to parse
+            dt = _parse_date_loose(s)
+            if dt is None:
+                results['unparseable_count'] += 1
+            else:
+                if is_strict:
+                    results['strict_valid_count'] += 1
+                else:
+                    results['parsed_loose_count'] += 1
+                # Year match check
+                if id_year is not None and dt.year != id_year:
+                    results['year_mismatch'].append({
+                        'row': pos,
+                        'ID': id_str,
+                        'id_year': id_year,
+                        'data_ent': s,
+                        'date_year': int(dt.year),
+                    })
+            parsed_dates[i] = dt
+            strict_flags[i] = is_strict
+            progress.update(task, advance=1)
+
+    # Series (higher ID -> equal or later date). Sort by numeric ID asc, then by serial pos to preserve stable ordering.
+    # Build a list of tuples for rows with any parsed date; if a date is missing, they are excluded from check.
+    try:
+        ids_int = [int(s) if isinstance(s, str) and s.isdigit() else None for s in id_str_series]
+    except Exception:
+        ids_int = [None for _ in id_str_series]
+
+    sortable = []
+    for i in range(len(df)):
+        if ids_int[i] is None:
+            continue
+        sortable.append((ids_int[i], i))
+    sortable.sort(key=lambda t: t[0])
+
+    last_date = None
+    last_i = None
+    for _, i in sortable:
+        dt = parsed_dates[i]
+        if dt is None:
+            results['excluded_from_series'] += 1
+            continue
+        if last_date is not None and dt < last_date:
+            # violation
+            curr_pos = row_positions[i]
+            prev_pos = row_positions[last_i] if last_i is not None else None
+            results['series_violations'].append({
+                'row': curr_pos,
+                'ID': str(id_str_series.iloc[i]),
+                'data_ent': str(df['data_ent'].iloc[i]),
+                'prev_row': prev_pos,
+                'prev_ID': str(id_str_series.iloc[last_i]) if last_i is not None else '',
+                'prev_date': str(df['data_ent'].iloc[last_i]) if last_i is not None else '',
+            })
+        # Update last_date to max(last_date, dt) to allow equal or later rule
+        if last_date is None or dt >= last_date:
+            last_date = dt
+            last_i = i
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'total_invalid_format': len(results['invalid_format']),
+        'strict_valid_count': results['strict_valid_count'],
+        'parsed_loose_count': results['parsed_loose_count'],
+        'unparseable_count': results['unparseable_count'],
+        'year_mismatch': len(results['year_mismatch']),
+        'series_violations': len(results['series_violations']),
+        'excluded_from_series': results['excluded_from_series'],
+    }
+
+    return results
+
+
+def display_data_ent_overview(results: Dict[str, Any]):
+    t = Table(title="📅 data_ent - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=30)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+    ("Invalid Format (not DD-MM-YYYY)", s['total_invalid_format'], ""),
+    ("Strict valid (DD-MM-YYYY)", s['strict_valid_count'], ""),
+    ("Parsed via fallback", s['parsed_loose_count'], "yyyy-mm-dd and d-m-Y accepted"),
+        ("Unparseable", s['unparseable_count'], ""),
+        ("Year mismatch vs ID", s['year_mismatch'], ""),
+        ("Series violations", s['series_violations'], "Higher ID earlier date"),
+        ("Excluded from series", s['excluded_from_series'], "Missing/unparseable"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+
+def display_data_ent_details(results: Dict[str, Any]):
+    # Missing
+    if results['missing']:
+        console.print("\n[red]❌ Missing data_ent values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing data_ent values.[/green]")
+
+    # Invalid format
+    if results['invalid_format']:
+        console.print("\n[yellow]⚠️ Invalid format (expected DD-MM-YYYY):[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        for e in results['invalid_format'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']))
+        if len(results['invalid_format']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['invalid_format'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All data_ent values match DD-MM-YYYY format.[/green]")
+
+    # Year mismatch
+    if results['year_mismatch']:
+        console.print("\n[red]❌ Year mismatches (ID vs data_ent):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("ID year", justify="right", width=8)
+        tt.add_column("data_ent", width=14)
+        tt.add_column("Date year", justify="right", width=10)
+        for e in results['year_mismatch'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['id_year']), str(e['data_ent']), str(e['date_year']))
+        if len(results['year_mismatch']) > 20:
+            tt.add_row("...", "...", "...", "...", f"... and {len(results['year_mismatch'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All ID years match data_ent years (for parseable dates).[/green]")
+
+    # Series violations
+    if results['series_violations']:
+        console.print("\n[red]❌ Series violations (higher ID earlier date):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        tt.add_column("Prev Row", justify="right", width=8)
+        tt.add_column("Prev ID", width=8)
+        tt.add_column("Prev date", width=14)
+        for e in results['series_violations'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']), str(e['prev_row']), str(e['prev_ID']), str(e['prev_date']))
+        if len(results['series_violations']) > 20:
+            tt.add_row("...", "...", "...", "...", "...", f"... and {len(results['series_violations'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No series violations detected (for parseable dates).[/green]")
+
+
+def save_data_ent_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_data_ent_analysis_{timestamp}.md"
+    s = results['statistics']
+
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - data_ent Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Invalid format (not DD-MM-YYYY): {s['total_invalid_format']}")
+    lines.append(f"- Strict valid (DD-MM-YYYY): {s['strict_valid_count']}")
+    lines.append(f"- Parsed via fallback (yyyy-mm-dd or d-m-Y): {s['parsed_loose_count']}")
+    lines.append(f"- Unparseable: {s['unparseable_count']}")
+    lines.append(f"- Year mismatches (ID vs data): {s['year_mismatch']}")
+    lines.append(f"- Series violations: {s['series_violations']} (excluded: {s['excluded_from_series']})\n")
+
+    # Samples
+    def tbl(rows: List[Dict[str, Any]], headers: List[str], keys: List[str], title: str, limit: int = 50):
+        nonlocal lines
+        if not rows:
+            return
+        lines.append(f"\n### {title}\n")
+        lines.append("| " + " | ".join(headers) + " |")
+        lines.append("| " + " | ".join(['-'*len(h) for h in headers]) + " |")
+        for e in rows[:limit]:
+            values = [str(e.get(k, '')) for k in keys]
+            lines.append("| " + " | ".join(values) + " |")
+        if len(rows) > limit:
+            lines.append(f"| ... | ... | ... | ... | ... |")
+
+    tbl(results['invalid_format'], ["Row", "ID", "data_ent"], ["row", "ID", "data_ent"], "Invalid format (first 50) - expected DD-MM-YYYY")
+    tbl(results['year_mismatch'], ["Row", "ID", "ID year", "data_ent", "Date year"], ["row", "ID", "id_year", "data_ent", "date_year"], "Year mismatches (first 50)")
+    tbl(results['series_violations'], ["Row", "ID", "data_ent", "Prev Row", "Prev ID", "Prev date"], ["row", "ID", "data_ent", "prev_row", "prev_ID", "prev_date"], "Series violations (first 50)")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'data_ent' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -1166,11 +1474,22 @@ def main():
     display_nome_details(nome_results)
     nome_report = save_nome_report(nome_results, csv_file)
 
+    # -------------------------------------------------------
+    # data_ent analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]📅 Analyzing column: data_ent[/bold]")
+    data_ent_results = analyze_data_ent_column(df)
+    display_data_ent_overview(data_ent_results)
+    display_data_ent_details(data_ent_results)
+    data_ent_report = save_data_ent_report(data_ent_results, csv_file)
+
     console.print(f"\n[bold green]✅ Analysis complete![/bold green]")
     console.print(f"[cyan]📊 Analysis time:[/cyan] {analysis_time:.2f} seconds")
     console.print(f"[cyan]📄 ID report:[/cyan] {report_file}")
     console.print(f"[cyan]📄 processo report:[/cyan] {proc_report}")
     console.print(f"[cyan]📄 nome report:[/cyan] {nome_report}")
+    console.print(f"[cyan]📄 data_ent report:[/cyan] {data_ent_report}")
 
 if __name__ == "__main__":
     main()
