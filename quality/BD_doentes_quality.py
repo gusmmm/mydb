@@ -502,6 +502,235 @@ def save_processo_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'processo' report saved to:[/green] {report_file}")
     return report_file
 
+
+# -------------------------------
+# Nome column analysis
+# -------------------------------
+
+def analyze_nome_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze the 'nome' column: empties, non-string values, duplicates with row details."""
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'empty_values': [],  # {row, value, ID, processo}
+        'non_string_values': [],  # {row, value, type, ID, processo}
+        'duplicates': {},  # name_key -> {count, display: original, rows: [...]}
+        'statistics': {},
+    }
+
+    if 'nome' not in df.columns:
+        console.print("[red]Column 'nome' not found in CSV![/red]")
+        return results
+
+    series = df['nome']
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console
+    ) as progress:
+        task = progress.add_task("Analyzing nome column...", total=len(df))
+
+        for pos, (idx, val) in enumerate(series.items(), start=2):
+            raw = val
+            # Empty check
+            if pd.isna(raw) or (isinstance(raw, str) and raw.strip() == ""):
+                results['empty_values'].append({
+                    'row': pos,
+                    'value': None if pd.isna(raw) else raw,
+                    'ID': df.loc[idx].get('ID', ''),
+                    'processo': df.loc[idx].get('processo', ''),
+                })
+                progress.update(task, advance=1)
+                continue
+
+            # String type check
+            if not isinstance(raw, str):
+                results['non_string_values'].append({
+                    'row': pos,
+                    'value': raw,
+                    'type': type(raw).__name__,
+                    'ID': df.loc[idx].get('ID', ''),
+                    'processo': df.loc[idx].get('processo', ''),
+                })
+            progress.update(task, advance=1)
+
+    # Duplicates (allow duplicates but report them). Normalize by trimming spaces.
+    name_keys = series.apply(lambda x: x.strip() if isinstance(x, str) else x)
+    counts = Counter(name_keys)
+    for name_key, cnt in counts.items():
+        if pd.isna(name_key) or name_key == "":
+            continue
+        if cnt > 1:
+            rows: List[Dict[str, Any]] = []
+            matching = df.index[name_keys == name_key]
+            for idx in matching:
+                row = df.loc[idx]
+                pos = int(df.index.get_loc(idx)) + 2 if hasattr(df.index, 'get_loc') else 0
+                rows.append({
+                    'row': pos,
+                    'ID': row.get('ID', ''),
+                    'processo': row.get('processo', ''),
+                    'nome': row.get('nome', ''),
+                    'data_ent': row.get('data_ent', ''),
+                    'data_alta': row.get('data_alta', ''),
+                    'sexo': row.get('sexo', ''),
+                    'origem': row.get('origem', ''),
+                })
+            # Pick a display version (first occurrence's original)
+            display_value = df.loc[matching[0]].get('nome', str(name_key)) if len(matching) > 0 else str(name_key)
+            results['duplicates'][str(name_key)] = {
+                'display': display_value,
+                'count': cnt,
+                'rows': sorted(rows, key=lambda r: r['row'])
+            }
+
+    results['statistics'] = {
+        'total_empty': len(results['empty_values']),
+        'total_non_string': len(results['non_string_values']),
+        'total_duplicates_groups': len(results['duplicates']),
+        'total_duplicated_rows': sum(info['count'] for info in results['duplicates'].values()),
+        'unique_names': len([k for k, v in counts.items() if not (pd.isna(k) or k == '')]),
+    }
+
+    return results
+
+
+def display_nome_overview(results: Dict[str, Any]):
+    table = Table(title="🧑‍⚕️ Nome - Overview", style="cyan")
+    table.add_column("Metric", style="yellow", width=28)
+    table.add_column("Count", justify="right", style="green", width=10)
+    table.add_column("Notes", style="magenta")
+
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Empty Values", s['total_empty'], "Should be 0"),
+        ("Non-String Values", s['total_non_string'], "Should be 0"),
+        ("Unique Names", s['unique_names'], ""),
+        ("Duplicate groups", s['total_duplicates_groups'], "Allowed, listed below"),
+        ("Rows in duplicates", s['total_duplicated_rows'], "Total appearances"),
+    ]
+    for metric, count, note in rows:
+        table.add_row(str(metric), str(count), str(note))
+    console.print(table)
+
+
+def display_nome_details(results: Dict[str, Any]):
+    # Empty
+    if results['empty_values']:
+        console.print("\n[red]❌ Empty 'nome' values:[/red]")
+        t = Table()
+        t.add_column("Row", justify="right", width=6)
+        t.add_column("ID", width=8)
+        t.add_column("processo", width=14)
+        t.add_column("nome", width=40)
+        for e in results['empty_values'][:20]:
+            t.add_row(str(e['row']), str(e['ID']), str(e['processo']), str(e['value']))
+        if len(results['empty_values']) > 20:
+            t.add_row("...", "...", "...", f"... and {len(results['empty_values'])-20} more")
+        console.print(t)
+    else:
+        console.print("\n[green]✅ No empty 'nome' values.[/green]")
+
+    # Non-string
+    if results['non_string_values']:
+        console.print("\n[red]❌ Non-string 'nome' values:[/red]")
+        t = Table()
+        t.add_column("Row", justify="right", width=6)
+        t.add_column("Type", width=10)
+        t.add_column("Value", width=40)
+        t.add_column("ID", width=8)
+        t.add_column("processo", width=14)
+        for e in results['non_string_values'][:20]:
+            t.add_row(str(e['row']), str(e['type']), str(e['value']), str(e['ID']), str(e['processo']))
+        if len(results['non_string_values']) > 20:
+            t.add_row("...", "...", "...", "...", f"... and {len(results['non_string_values'])-20} more")
+        console.print(t)
+    else:
+        console.print("\n[green]✅ All 'nome' values are strings.[/green]")
+
+    # Duplicates
+    if results['duplicates']:
+        console.print("\n[cyan]🔁 Duplicated 'nome' values:[/cyan]")
+        ts = Table(title="Duplicate name groups")
+        ts.add_column("Name", width=34)
+        ts.add_column("Count", justify="right", width=8)
+        for name_key, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            display = info.get('display', name_key)
+            ts.add_row(str(display)[:34], str(info['count']))
+        console.print(ts)
+
+        shown = 0
+        for name_key, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            if shown >= 10:
+                remaining = len(results['duplicates']) - shown
+                if remaining > 0:
+                    console.print(f"[dim]... and {remaining} more duplicate name groups[/dim]")
+                break
+            console.print(f"\n[bold]{info.get('display', name_key)}[/bold] (x{info['count']})")
+            t = Table()
+            t.add_column("Row", justify="right", width=6)
+            t.add_column("ID", width=8)
+            t.add_column("processo", width=14)
+            t.add_column("data_ent", width=12)
+            t.add_column("data_alta", width=12)
+            t.add_column("Sexo", width=6)
+            t.add_column("Origem", width=22)
+            for r in info['rows'][:20]:
+                t.add_row(str(r['row']), str(r['ID']), str(r['processo']), str(r['data_ent']), str(r['data_alta']), str(r['sexo']), str(r['origem'])[:22])
+            if len(info['rows']) > 20:
+                t.add_row("...", "...", "...", "...", "...", "...", f"... and {len(info['rows'])-20} more")
+            console.print(t)
+            shown += 1
+    else:
+        console.print("\n[green]✅ No duplicate names detected.[/green]\n")
+
+
+def save_nome_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_nome_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - 'nome' Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Empty values: {s['total_empty']}")
+    lines.append(f"- Non-string values: {s['total_non_string']}")
+    lines.append(f"- Unique names: {s['unique_names']}")
+    lines.append(f"- Duplicate groups: {s['total_duplicates_groups']} (rows in duplicates: {s['total_duplicated_rows']})\n")
+
+    if results['duplicates']:
+        lines.append("### Duplicate Names\n")
+        lines.append("| Name | Count |")
+        lines.append("|------|-------|")
+        for name_key, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            display = info.get('display', name_key)
+            lines.append(f"| {display} | {info['count']} |")
+
+        # Detail (first 20 groups)
+        lines.append("\n#### Duplicate Details (first 20 groups, 50 rows each)\n")
+        shown = 0
+        for name_key, info in sorted(results['duplicates'].items(), key=lambda kv: -kv[1]['count']):
+            if shown >= 20:
+                break
+            lines.append(f"\n##### {info.get('display', name_key)} (x{info['count']})\n")
+            lines.append("| Row | ID | processo | data_ent | data_alta | Sexo | Origem |")
+            lines.append("|-----|----|----------|----------|-----------|------|--------|")
+            for r in info['rows'][:50]:
+                lines.append(f"| {r['row']} | {r['ID']} | {r['processo']} | {r['data_ent']} | {r['data_alta']} | {r['sexo']} | {r['origem']} |")
+            shown += 1
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+
+    console.print(f"\n[green]📄 'nome' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -927,10 +1156,21 @@ def main():
     display_processo_details(proc_results)
     proc_report = save_processo_report(proc_results, csv_file)
 
+    # -------------------------------------------------------
+    # Nome analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🧑‍⚕️ Analyzing column: nome[/bold]")
+    nome_results = analyze_nome_column(df)
+    display_nome_overview(nome_results)
+    display_nome_details(nome_results)
+    nome_report = save_nome_report(nome_results, csv_file)
+
     console.print(f"\n[bold green]✅ Analysis complete![/bold green]")
     console.print(f"[cyan]📊 Analysis time:[/cyan] {analysis_time:.2f} seconds")
     console.print(f"[cyan]📄 ID report:[/cyan] {report_file}")
     console.print(f"[cyan]📄 processo report:[/cyan] {proc_report}")
+    console.print(f"[cyan]📄 nome report:[/cyan] {nome_report}")
 
 if __name__ == "__main__":
     main()
