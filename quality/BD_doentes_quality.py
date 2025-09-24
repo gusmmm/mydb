@@ -1581,6 +1581,316 @@ def save_sexo_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'sexo' report saved to:[/green] {report_file}")
     return report_file
 
+# -------------------------------
+# data_nasc (birth date) analysis
+# -------------------------------
+
+def analyze_data_nasc_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze data_nasc (birthdate):
+    - missing
+    - strict DD-MM-YYYY format (with fallback parsing for calculations)
+    - birth year bounds: >1900 and < current year
+    - compute age at admission using data_ent (assumption: 'data_int' in request refers to 'data_ent')
+    - flag deviants and outliers: invalid year, negative age, age > 120
+    """
+    now_year = datetime.now().year
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'invalid_format': [],  # {row, ID, data_nasc}
+        'unparseable_count': 0,
+        'strict_valid_count': 0,
+        'parsed_loose_count': 0,
+        'year_out_of_bounds': [],  # {row, ID, data_nasc, year}
+        'age_records': [],  # {row, ID, data_ent, data_nasc, age}
+        'age_negative': [],  # {row, ID, data_ent, data_nasc, age}
+        'age_over_max': [],  # {row, ID, data_ent, data_nasc, age}
+        'age_uncomputed': [],  # {row, ID, reason}
+        'statistics': {},
+    }
+
+    if 'data_nasc' not in df.columns:
+        console.print("[red]Column 'data_nasc' not found in CSV![/red]")
+        return results
+
+    series_nasc = df['data_nasc'].astype(object)
+    series_ent = df['data_ent'].astype(object) if 'data_ent' in df.columns else None
+    id_series = df['ID'].astype(str)
+
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    parsed_nasc: List[Optional[pd.Timestamp]] = [None] * len(df)
+    parsed_ent: List[Optional[pd.Timestamp]] = [None] * len(df)
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing data_nasc column...", total=len(df))
+        for i, (idx, val) in enumerate(series_nasc.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            raw_nasc = None if pd.isna(val) else str(val).strip()
+            if raw_nasc is None or raw_nasc == "":
+                results['missing'].append({'row': pos, 'ID': id_str})
+                parsed_nasc[i] = None
+                results['unparseable_count'] += 1
+                progress.update(task, advance=1)
+                continue
+
+            is_strict = _is_strict_dd_mm_yyyy(raw_nasc)
+            if not is_strict:
+                results['invalid_format'].append({'row': pos, 'ID': id_str, 'data_nasc': raw_nasc})
+            dt_nasc = _parse_date_loose(raw_nasc)
+            if dt_nasc is None:
+                results['unparseable_count'] += 1
+                parsed_nasc[i] = None
+            else:
+                parsed_nasc[i] = dt_nasc
+                if is_strict:
+                    results['strict_valid_count'] += 1
+                else:
+                    results['parsed_loose_count'] += 1
+                # check year bounds
+                if not (1900 < int(dt_nasc.year) < now_year):
+                    results['year_out_of_bounds'].append({'row': pos, 'ID': id_str, 'data_nasc': raw_nasc, 'year': int(dt_nasc.year)})
+
+            # parse data_ent to compute age
+            if series_ent is not None:
+                raw_ent = None if pd.isna(series_ent.iloc[i]) else str(series_ent.iloc[i]).strip()
+                dt_ent = _parse_date_loose(raw_ent) if raw_ent else None
+                parsed_ent[i] = dt_ent
+
+            progress.update(task, advance=1)
+
+    # Compute ages
+    for i in range(len(df)):
+        pos = row_positions[i]
+        id_str = id_series.iloc[i]
+        bn = parsed_nasc[i]
+        ad = parsed_ent[i] if series_ent is not None else None
+        if bn is None or ad is None:
+            reason = "birthdate missing/unparseable" if bn is None else "admission date missing/unparseable"
+            results['age_uncomputed'].append({'row': pos, 'ID': id_str, 'reason': reason})
+            continue
+        # Age computation: whole years at admission
+        age = int(ad.year - bn.year - ((ad.month, ad.day) < (bn.month, bn.day)))
+        rec = {'row': pos, 'ID': id_str, 'data_ent': str(df['data_ent'].iloc[i]), 'data_nasc': str(df['data_nasc'].iloc[i]), 'age': age}
+        results['age_records'].append(rec)
+        if age < 0:
+            results['age_negative'].append(rec)
+        if age > 120:
+            results['age_over_max'].append(rec)
+
+    # Stats for ages
+    ages = [r['age'] for r in results['age_records']]
+    if ages:
+        ages_series = pd.Series(ages)
+        stats = {
+            'age_count': int(len(ages)),
+            'age_min': int(ages_series.min()),
+            'age_max': int(ages_series.max()),
+            'age_mean': float(round(ages_series.mean(), 2)),
+            'age_median': float(ages_series.median()),
+        }
+    else:
+        stats = {
+            'age_count': 0,
+            'age_min': None,
+            'age_max': None,
+            'age_mean': None,
+            'age_median': None,
+        }
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'total_invalid_format': len(results['invalid_format']),
+        'strict_valid_count': results['strict_valid_count'],
+        'parsed_loose_count': results['parsed_loose_count'],
+        'unparseable_count': results['unparseable_count'],
+        'year_out_of_bounds': len(results['year_out_of_bounds']),
+        'age_computed': stats['age_count'],
+        'age_uncomputed': len(results['age_uncomputed']),
+        'age_negative': len(results['age_negative']),
+        'age_over_max': len(results['age_over_max']),
+        'age_min': stats['age_min'],
+        'age_max': stats['age_max'],
+        'age_mean': stats['age_mean'],
+        'age_median': stats['age_median'],
+    }
+    return results
+
+
+def display_data_nasc_overview(results: Dict[str, Any]):
+    t = Table(title="👶 data_nasc - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=34)
+    t.add_column("Count/Value", justify="right", style="green", width=14)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Invalid Format (not DD-MM-YYYY)", s['total_invalid_format'], ""),
+        ("Strict valid (DD-MM-YYYY)", s['strict_valid_count'], ""),
+        ("Parsed via fallback", s['parsed_loose_count'], "Accepted for calculations"),
+        ("Unparseable", s['unparseable_count'], ""),
+        ("Year out of bounds", s['year_out_of_bounds'], ">1900 and < current year"),
+        ("Ages computed", s['age_computed'], "Using data_ent"),
+        ("Ages uncomputed", s['age_uncomputed'], "Missing/unparseable dates"),
+        ("Age negative (<0)", s['age_negative'], "Birth after admission"),
+        ("Age > 120", s['age_over_max'], "Outlier upper bound"),
+        ("Age min", s['age_min'], ""),
+        ("Age max", s['age_max'], ""),
+        ("Age mean", s['age_mean'], ""),
+        ("Age median", s['age_median'], ""),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+
+def display_data_nasc_details(results: Dict[str, Any]):
+    # Missing
+    if results['missing']:
+        console.print("\n[red]❌ Missing data_nasc values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing data_nasc values.[/green]")
+
+    # Invalid format
+    if results['invalid_format']:
+        console.print("\n[yellow]⚠️ Invalid format (expected DD-MM-YYYY):[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_nasc", width=14)
+        for e in results['invalid_format'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_nasc']))
+        if len(results['invalid_format']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['invalid_format'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All data_nasc values match DD-MM-YYYY format.[/green]")
+
+    # Year out of bounds
+    if results['year_out_of_bounds']:
+        console.print("\n[red]❌ Birth year out of bounds (>1900 and < current year):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_nasc", width=14)
+        tt.add_column("Year", justify="right", width=6)
+        for e in results['year_out_of_bounds'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_nasc']), str(e['year']))
+        if len(results['year_out_of_bounds']) > 20:
+            tt.add_row("...", "...", "...", f"... and {len(results['year_out_of_bounds'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All birth years within bounds.[/green]")
+
+    # Negative ages
+    if results['age_negative']:
+        console.print("\n[red]❌ Negative ages (birth after admission):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        tt.add_column("data_nasc", width=14)
+        tt.add_column("Age", justify="right", width=6)
+        for e in results['age_negative'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']), str(e['data_nasc']), str(e['age']))
+        if len(results['age_negative']) > 20:
+            tt.add_row("...", "...", "...", "...", f"... and {len(results['age_negative'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No negative ages detected.[/green]")
+
+    # Over max ages
+    if results['age_over_max']:
+        console.print("\n[red]❌ Ages over 120 (outliers):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_ent", width=14)
+        tt.add_column("data_nasc", width=14)
+        tt.add_column("Age", justify="right", width=6)
+        for e in results['age_over_max'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_ent']), str(e['data_nasc']), str(e['age']))
+        if len(results['age_over_max']) > 20:
+            tt.add_row("...", "...", "...", "...", f"... and {len(results['age_over_max'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No ages over 120 detected.[/green]")
+
+
+def save_data_nasc_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_data_nasc_analysis_{timestamp}.md"
+    s = results['statistics']
+
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - data_nasc Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Invalid format (not DD-MM-YYYY): {s['total_invalid_format']}")
+    lines.append(f"- Strict valid (DD-MM-YYYY): {s['strict_valid_count']}")
+    lines.append(f"- Parsed via fallback: {s['parsed_loose_count']}")
+    lines.append(f"- Unparseable: {s['unparseable_count']}")
+    lines.append(f"- Birth year out of bounds: {s['year_out_of_bounds']} (expected >1900 and < current year)\n")
+
+    # Age stats
+    lines.append("## 🧮 Age Statistics (at admission)\n")
+    lines.append(f"- Ages computed: {s['age_computed']} (uncomputed: {s['age_uncomputed']})")
+    lines.append(f"- Min / Max: {s['age_min']} / {s['age_max']}")
+    lines.append(f"- Mean / Median: {s['age_mean']} / {s['age_median']}\n")
+
+    # Deviations/outliers tables
+    def tbl(rows: List[Dict[str, Any]], headers: List[str], keys: List[str], title: str, limit: int = 50):
+        nonlocal lines
+        if not rows:
+            return
+        lines.append(f"\n### {title}\n")
+        lines.append("| " + " | ".join(headers) + " |")
+        lines.append("| " + " | ".join(['-'*len(h) for h in headers]) + " |")
+        for e in rows[:limit]:
+            values = [str(e.get(k, '')) for k in keys]
+            lines.append("| " + " | ".join(values) + " |")
+        if len(rows) > limit:
+            lines.append("| ... | ... | ... | ... | ... | ... |")
+
+    tbl(results['invalid_format'], ["Row", "ID", "data_nasc"], ["row", "ID", "data_nasc"], "Invalid format (first 50)")
+    tbl(results['year_out_of_bounds'], ["Row", "ID", "data_nasc", "Year"], ["row", "ID", "data_nasc", "year"], "Birth year out of bounds (first 50)")
+    tbl(results['age_negative'], ["Row", "ID", "data_ent", "data_nasc", "Age"], ["row", "ID", "data_ent", "data_nasc", "age"], "Negative ages (first 50)")
+    tbl(results['age_over_max'], ["Row", "ID", "data_ent", "data_nasc", "Age"], ["row", "ID", "data_ent", "data_nasc", "age"], "Ages over 120 (first 50)")
+
+    # Missing / uncomputed
+    if results['missing']:
+        lines.append("\n### Missing data_nasc Rows (first 100)\n")
+        lines.append("| Row | ID |")
+        lines.append("|-----|----|")
+        for e in results['missing'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} |")
+    if results['age_uncomputed']:
+        lines.append("\n### Age Uncomputed (first 100)\n")
+        lines.append("| Row | ID | Reason |")
+        lines.append("|-----|----|--------|")
+        for e in results['age_uncomputed'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} | {e['reason']} |")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'data_nasc' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -2067,6 +2377,17 @@ def main():
     display_sexo_details(sexo_results)
     sexo_report = save_sexo_report(sexo_results, csv_file)
     console.print(f"[cyan]📄 sexo report:[/cyan] {sexo_report}")
+
+    # -------------------------------------------------------
+    # data_nasc analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]👶 Analyzing column: data_nasc[/bold]")
+    data_nasc_results = analyze_data_nasc_column(df)
+    display_data_nasc_overview(data_nasc_results)
+    display_data_nasc_details(data_nasc_results)
+    data_nasc_report = save_data_nasc_report(data_nasc_results, csv_file)
+    console.print(f"[cyan]📄 data_nasc report:[/cyan] {data_nasc_report}")
 
 if __name__ == "__main__":
     main()
