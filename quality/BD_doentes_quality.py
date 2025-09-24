@@ -1417,6 +1417,170 @@ def save_destino_report(results: Dict[str, Any], csv_file: Path) -> Path:
     console.print(f"\n[green]📄 'destino' report saved to:[/green] {report_file}")
     return report_file
 
+# -------------------------------
+# sexo (gender) analysis
+# -------------------------------
+
+def _expected_sexo_values() -> set[str]:
+    """Return expected 'sexo' categories. Allow override via env var BD_DOENTES_SEXO_EXPECTED (pipe-separated)."""
+    env = os.getenv("BD_DOENTES_SEXO_EXPECTED", "").strip()
+    if env:
+        raw = [v.strip() for v in env.split("|") if v.strip()]
+        return set(raw)
+    # Default from codebook
+    return {"M", "F", "other"}
+
+
+def analyze_sexo_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'sexo': check missing and values against expected set (M, F, other)."""
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'frequencies': Counter(),
+        'distinct_values': [],
+        'deviant_values': [],  # {row, ID, sexo}
+        'statistics': {},
+        'expected_set': sorted(list(_expected_sexo_values())),
+    }
+
+    if 'sexo' not in df.columns:
+        console.print("[red]Column 'sexo' not found in CSV![/red]")
+        return results
+
+    expected = _expected_sexo_values()
+    expected_cf = {v.casefold() for v in expected}
+
+    series = df['sexo'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing sexo column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            s = str(val).strip()
+            results['frequencies'][s] += 1
+            if s.casefold() not in expected_cf:
+                results['deviant_values'].append({'row': pos, 'ID': id_str, 'sexo': s})
+            progress.update(task, advance=1)
+
+    results['distinct_values'] = sorted(results['frequencies'].items(), key=lambda kv: (-kv[1], kv[0]))
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'distinct_count': len(results['frequencies']),
+        'total_deviants': len(results['deviant_values']),
+    }
+    return results
+
+
+def display_sexo_overview(results: Dict[str, Any]):
+    t = Table(title="🚻 sexo - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=28)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Distinct values", s['distinct_count'], ""),
+        ("Deviant values", s['total_deviants'], f"Not in expected: {', '.join(results['expected_set'])}"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+    # Frequencies (top 20)
+    if results['distinct_values']:
+        tf = Table(title="sexo value frequencies (top 20)")
+        tf.add_column("sexo", width=10)
+        tf.add_column("Count", justify="right", width=8)
+        for value, cnt in results['distinct_values'][:20]:
+            tf.add_row(str(value), str(cnt))
+        if len(results['distinct_values']) > 20:
+            tf.add_row("...", f"... and {len(results['distinct_values'])-20} more")
+        console.print(tf)
+
+
+def display_sexo_details(results: Dict[str, Any]):
+    # Missing
+    if results['missing']:
+        console.print("\n[red]❌ Missing sexo values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing sexo values.[/green]")
+
+    # Deviants
+    if results['deviant_values']:
+        console.print("\n[yellow]⚠️ Values not in expected categories (M, F, other):[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("sexo", width=12)
+        for e in results['deviant_values'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['sexo']))
+        if len(results['deviant_values']) > 20:
+            tt.add_row("...", "...", f"... and {len(results['deviant_values'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All sexo values are within expected categories.[/green]")
+
+
+def save_sexo_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_sexo_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    lines: List[str] = []
+    lines.append("# BD_doentes.csv - sexo Column Quality Control Report\n")
+    lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    lines.append(f"**Source File:** {csv_file}\n")
+    lines.append("\n## 📊 Summary\n")
+    lines.append(f"- Total rows: {results['total_rows']}")
+    lines.append(f"- Missing: {s['total_missing']}")
+    lines.append(f"- Distinct values: {s['distinct_count']}")
+    lines.append(f"- Deviant values (not in expected {{ {', '.join(results['expected_set'])} }}): {s['total_deviants']}\n")
+
+    # Frequencies
+    if results['distinct_values']:
+        lines.append("### Value Frequencies (top 100)\n")
+        lines.append("| sexo | Count |")
+        lines.append("|------|-------|")
+        for value, cnt in results['distinct_values'][:100]:
+            lines.append(f"| {value} | {cnt} |")
+
+    if results['deviant_values']:
+        lines.append("\n### Deviant Rows (first 100)\n")
+        lines.append("| Row | ID | sexo |")
+        lines.append("|-----|----|------|")
+        for e in results['deviant_values'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} | {e['sexo']} |")
+
+    if results['missing']:
+        lines.append("\n### Missing Rows (first 100)\n")
+        lines.append("| Row | ID |")
+        lines.append("|-----|----|")
+        for e in results['missing'][:100]:
+            lines.append(f"| {e['row']} | {e['ID']} |")
+
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("\n".join(lines) + "\n")
+    console.print(f"\n[green]📄 'sexo' report saved to:[/green] {report_file}")
+    return report_file
+
 def create_header():
     """Create a beautiful header for the quality control report"""
     title = Text("🏥 BD_doentes.csv Quality Control Report", style="bold white")
@@ -1892,6 +2056,17 @@ def main():
 
     # Final summary
     console.print(f"[cyan]📄 destino report:[/cyan] {destino_report}")
+
+    # -------------------------------------------------------
+    # sexo analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🚻 Analyzing column: sexo[/bold]")
+    sexo_results = analyze_sexo_column(df)
+    display_sexo_overview(sexo_results)
+    display_sexo_details(sexo_results)
+    sexo_report = save_sexo_report(sexo_results, csv_file)
+    console.print(f"[cyan]📄 sexo report:[/cyan] {sexo_report}")
 
 if __name__ == "__main__":
     main()
