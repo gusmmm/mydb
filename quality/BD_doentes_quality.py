@@ -2251,6 +2251,54 @@ def analyze_ent_VMI_column(df: pd.DataFrame) -> Dict[str, Any]:
     return results
 
 
+def analyze_lesao_inal_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'lesao_inal':
+    - check missing/empty
+    - compute value frequencies (expected: 'SIM' for yes, 'NAO' for no)
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'frequencies': Counter(),
+        'distinct_values': [],
+        'statistics': {},
+    }
+
+    if 'lesao_inal' not in df.columns:
+        console.print("[red]Column 'lesao_inal' not found in CSV![/red]")
+        return results
+
+    series = df['lesao_inal'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing lesao_inal column...", total=len(df))
+        for i, (idx, val) in enumerate(series.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            
+            # Count frequency
+            val_str = str(val).strip()
+            results['frequencies'][val_str] += 1
+            progress.update(task, advance=1)
+
+    # Convert Counter to sorted list by frequency (desc) then by value (asc)
+    freq_items = list(results['frequencies'].items())
+    freq_items.sort(key=lambda x: (-x[1], x[0]))
+    results['distinct_values'] = freq_items
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'distinct_count': len(freq_items),
+    }
+    return results
+
+
 def display_ent_VMI_overview(results: Dict[str, Any]):
     t = Table(title="💬 ent_VMI - Overview", style="cyan")
     t.add_column("Metric", style="yellow", width=28)
@@ -2276,6 +2324,31 @@ def display_ent_VMI_overview(results: Dict[str, Any]):
         console.print(tf)
 
 
+def display_lesao_inal_overview(results: Dict[str, Any]):
+    t = Table(title="🫁 lesao_inal - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=28)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Distinct values", s['distinct_count'], "Expected: 'SIM' (yes), 'NAO' (no)"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+    # Show all value frequencies
+    if results['distinct_values']:
+        tf = Table(title="lesao_inal value frequencies (all)")
+        tf.add_column("lesao_inal", width=12)
+        tf.add_column("Count", justify="right", width=8)
+        for value, cnt in results['distinct_values']:
+            tf.add_row(str(value), str(cnt))
+        console.print(tf)
+
+
 def display_ent_VMI_details(results: Dict[str, Any]):
     # Missing rows
     if results['missing']:
@@ -2290,6 +2363,22 @@ def display_ent_VMI_details(results: Dict[str, Any]):
         console.print(tt)
     else:
         console.print("\n[green]✅ No missing ent_VMI values.[/green]")
+
+
+def display_lesao_inal_details(results: Dict[str, Any]):
+    # Missing rows
+    if results['missing']:
+        console.print("\n[red]❌ Missing lesao_inal values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing lesao_inal values.[/green]")
 
 
 def save_ent_VMI_report(results: Dict[str, Any], csv_file: Path) -> Path:
@@ -2327,6 +2416,69 @@ def save_ent_VMI_report(results: Dict[str, Any], csv_file: Path) -> Path:
     with open(report_file, 'w', encoding='utf-8') as f:
         f.write("\n".join(lines) + "\n")
     console.print(f"\n[green]📄 'ent_VMI' report saved to:[/green] {report_file}")
+    return report_file
+
+
+def save_lesao_inal_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_lesao_inal_analysis_{timestamp}.md"
+
+    content = f"""# BD_doentes.csv - lesao_inal Column Analysis
+
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+Source: {csv_file}
+
+## Overview Statistics
+
+- **Total Rows**: {results['total_rows']:,}
+- **Missing Values**: {results['statistics']['total_missing']:,} ({results['statistics']['total_missing']/results['total_rows']*100:.1f}%)
+- **Distinct Values**: {results['statistics']['distinct_count']:,}
+
+## Value Frequencies
+
+| Value | Count | Percentage |
+|-------|-------|------------|
+"""
+    
+    for value, count in results['distinct_values']:
+        percentage = count / results['total_rows'] * 100
+        content += f"| {value} | {count:,} | {percentage:.2f}% |\n"
+    
+    # Missing values section
+    if results['missing']:
+        content += f"\n## Missing Values\n\n**Count**: {len(results['missing']):,}\n\n"
+        content += "| Row | ID |\n|-----|----|\n"
+        for entry in results['missing'][:100]:
+            content += f"| {entry['row']} | {entry['ID']} |\n"
+        if len(results['missing']) > 100:
+            content += f"| ... | ... and {len(results['missing'])-100} more |\n"
+    
+    # Data quality assessment
+    content += "\n\n## Data Quality Assessment\n\n"
+    if results['statistics']['total_missing'] == 0:
+        content += "✅ **No missing values detected**\n\n"
+    else:
+        content += f"❌ **{results['statistics']['total_missing']:,} missing values need attention**\n\n"
+    
+    # Recommendations
+    content += "### Recommendations\n\n"
+    if results['statistics']['total_missing'] > 0:
+        content += f"- Investigate {results['statistics']['total_missing']:,} missing lesao_inal entries\n"
+    
+    expected_values = ['SIM', 'NAO']
+    found_values = [str(v[0]).upper() for v in results['distinct_values']]
+    unexpected_values = [v for v in found_values if v not in expected_values and v != 'NAN']
+    if unexpected_values:
+        content += f"- Standardize non-standard values: {', '.join(unexpected_values)}\n"
+        content += "- Consider normalizing to consistent 'SIM'/'NAO' format\n"
+    
+    content += "\n---\n*Report generated by BD_doentes quality control system*"
+    
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
     return report_file
 
 def create_header():
@@ -2859,6 +3011,17 @@ def main():
     display_ent_VMI_details(ent_VMI_results)
     ent_VMI_report = save_ent_VMI_report(ent_VMI_results, csv_file)
     console.print(f"[cyan]📄 ent_VMI report:[/cyan] {ent_VMI_report}")
+
+    # -------------------------------------------------------
+    # lesao_inal analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🫁 Analyzing column: lesao_inal[/bold]")
+    lesao_inal_results = analyze_lesao_inal_column(df)
+    display_lesao_inal_overview(lesao_inal_results)
+    display_lesao_inal_details(lesao_inal_results)
+    lesao_inal_report = save_lesao_inal_report(lesao_inal_results, csv_file)
+    console.print(f"[cyan]📄 lesao_inal report:[/cyan] {lesao_inal_report}")
 
 if __name__ == "__main__":
     main()
