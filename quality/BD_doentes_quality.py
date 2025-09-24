@@ -2347,6 +2347,112 @@ def analyze_etiologia_column(df: pd.DataFrame) -> Dict[str, Any]:
     return results
 
 
+def analyze_data_queim_column(df: pd.DataFrame) -> Dict[str, Any]:
+    """Analyze 'data_queim':
+    - check missing/empty
+    - validate DD-MM-YYYY format
+    - check that date is equal or before data_ent
+    """
+    results: Dict[str, Any] = {
+        'total_rows': len(df),
+        'missing': [],  # {row, ID}
+        'invalid_format': [],  # {row, ID, data_queim}
+        'strict_valid_count': 0,
+        'parsed_loose_count': 0,
+        'unparseable_count': 0,
+        'after_data_ent': [],  # {row, ID, data_queim, data_ent}
+        'statistics': {},
+    }
+
+    if 'data_queim' not in df.columns:
+        console.print("[red]Column 'data_queim' not found in CSV![/red]")
+        return results
+
+    if 'data_ent' not in df.columns:
+        console.print("[red]Column 'data_ent' not found in CSV for comparison![/red]")
+        return results
+
+    series_queim = df['data_queim'].astype(object)
+    series_ent = df['data_ent'].astype(object)
+    id_series = df['ID'].astype(str)
+    row_positions: List[int] = list(range(2, len(df) + 2))
+
+    # Arrays to store parsed dates for comparison
+    parsed_queim = [None] * len(df)
+    parsed_ent = [None] * len(df)
+
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+        task = progress.add_task("Analyzing data_queim column...", total=len(df))
+        for i, (idx, val) in enumerate(series_queim.items()):
+            pos = row_positions[i]
+            id_str = id_series.iloc[i]
+            
+            # Check if missing
+            if pd.isna(val) or (isinstance(val, str) and val.strip() == ""):
+                results['missing'].append({'row': pos, 'ID': id_str})
+                progress.update(task, advance=1)
+                continue
+            
+            # Validate format and parse date
+            val_str = str(val).strip()
+            is_strict = _is_strict_dd_mm_yyyy(val_str)
+            dt_queim = _parse_date_loose(val_str)
+            
+            if dt_queim is None:
+                results['invalid_format'].append({
+                    'row': pos, 
+                    'ID': id_str, 
+                    'data_queim': val_str
+                })
+                results['unparseable_count'] += 1
+            else:
+                if is_strict:
+                    results['strict_valid_count'] += 1
+                else:
+                    results['parsed_loose_count'] += 1
+                    results['invalid_format'].append({
+                        'row': pos, 
+                        'ID': id_str, 
+                        'data_queim': val_str
+                    })
+            
+            parsed_queim[i] = dt_queim
+            
+            # Parse data_ent for comparison
+            ent_val = series_ent.iloc[i]
+            if not pd.isna(ent_val) and isinstance(ent_val, str) and ent_val.strip():
+                dt_ent = _parse_date_loose(str(ent_val).strip())
+                parsed_ent[i] = dt_ent
+            
+            progress.update(task, advance=1)
+
+    # Compare data_queim <= data_ent when both parseable
+    for i in range(len(df)):
+        dt_queim = parsed_queim[i]
+        dt_ent = parsed_ent[i]
+        if dt_queim is not None and dt_ent is not None:
+            if dt_queim > dt_ent:  # data_queim should be <= data_ent
+                pos = row_positions[i]
+                id_str = id_series.iloc[i]
+                results['after_data_ent'].append({
+                    'row': pos,
+                    'ID': id_str,
+                    'data_queim': str(series_queim.iloc[i]),
+                    'data_ent': str(series_ent.iloc[i])
+                })
+
+    results['statistics'] = {
+        'total_missing': len(results['missing']),
+        'total_invalid_format': len(results['invalid_format']),
+        'strict_valid_count': results['strict_valid_count'],
+        'parsed_loose_count': results['parsed_loose_count'],
+        'unparseable_count': results['unparseable_count'],
+        'after_data_ent_count': len(results['after_data_ent']),
+    }
+
+    return results
+
+
 def display_ent_VMI_overview(results: Dict[str, Any]):
     t = Table(title="💬 ent_VMI - Overview", style="cyan")
     t.add_column("Metric", style="yellow", width=28)
@@ -2422,6 +2528,26 @@ def display_etiologia_overview(results: Dict[str, Any]):
         console.print(tf)
 
 
+def display_data_queim_overview(results: Dict[str, Any]):
+    t = Table(title="🔥 data_queim - Overview", style="cyan")
+    t.add_column("Metric", style="yellow", width=32)
+    t.add_column("Count", justify="right", style="green", width=10)
+    t.add_column("Notes", style="magenta")
+    s = results['statistics']
+    rows = [
+        ("Total Rows", results['total_rows'], ""),
+        ("Missing", s['total_missing'], "Should be 0"),
+        ("Invalid Format (not DD-MM-YYYY)", s['total_invalid_format'], ""),
+        ("Strict valid (DD-MM-YYYY)", s['strict_valid_count'], ""),
+        ("Parsed via fallback", s['parsed_loose_count'], "yyyy-mm-dd and d-m-Y accepted"),
+        ("Unparseable", s['unparseable_count'], ""),
+        ("After data_ent", s['after_data_ent_count'], "Should be equal or before data_ent"),
+    ]
+    for metric, count, note in rows:
+        t.add_row(str(metric), str(count), str(note))
+    console.print(t)
+
+
 def display_ent_VMI_details(results: Dict[str, Any]):
     # Missing rows
     if results['missing']:
@@ -2468,6 +2594,52 @@ def display_etiologia_details(results: Dict[str, Any]):
         console.print(tt)
     else:
         console.print("\n[green]✅ No missing etiologia values.[/green]")
+
+
+def display_data_queim_details(results: Dict[str, Any]):
+    # Missing values
+    missing_count = results['statistics']['total_missing']
+    if missing_count > 0:
+        console.print(f"\n[red]❌ Missing data_queim values:[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        for e in results['missing'][:20]:
+            tt.add_row(str(e['row']), str(e['ID']))
+        if len(results['missing']) > 20:
+            tt.add_row("...", f"... and {len(results['missing'])-20} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ No missing data_queim values.[/green]")
+    
+    # Invalid format
+    if results['invalid_format']:
+        console.print(f"\n[yellow]⚠️ Invalid format (expected DD-MM-YYYY):[/yellow]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_queim", width=15)
+        for e in results['invalid_format'][:10]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_queim']))
+        if len(results['invalid_format']) > 10:
+            tt.add_row("...", "...", f"... and {len(results['invalid_format'])-10} more")
+        console.print(tt)
+    
+    # Date chronology violations (after data_ent)
+    if results['after_data_ent']:
+        console.print(f"\n[red]❌ data_queim after data_ent (should be equal or before):[/red]")
+        tt = Table()
+        tt.add_column("Row", justify="right", width=6)
+        tt.add_column("ID", width=8)
+        tt.add_column("data_queim", width=12)
+        tt.add_column("data_ent", width=12)
+        for e in results['after_data_ent'][:10]:
+            tt.add_row(str(e['row']), str(e['ID']), str(e['data_queim']), str(e['data_ent']))
+        if len(results['after_data_ent']) > 10:
+            tt.add_row("...", "...", "...", f"... and {len(results['after_data_ent'])-10} more")
+        console.print(tt)
+    else:
+        console.print("\n[green]✅ All burn dates are equal or before admission dates (for parseable dates).[/green]")
 
 
 def save_ent_VMI_report(results: Dict[str, Any], csv_file: Path) -> Path:
@@ -2622,6 +2794,115 @@ Source: {csv_file}
     # Note about etiology categories - this would need domain expertise to define expected values
     content += "- Review etiology categories for consistency and standardization\n"
     content += "- Consider mapping to standardized burn etiology classification system\n"
+    
+    content += "\n---\n*Report generated by BD_doentes quality control system*"
+    
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    return report_file
+
+
+def save_data_queim_report(results: Dict[str, Any], csv_file: Path) -> Path:
+    reports_dir = Path("/home/gusmmm/Desktop/mydb/files/reports")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_file = reports_dir / f"BD_doentes_data_queim_analysis_{timestamp}.md"
+
+    s = results['statistics']
+    content = f"""# BD_doentes.csv - data_queim Column Analysis
+
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+Source: {csv_file}
+
+## Overview Statistics
+
+- **Total Rows**: {results['total_rows']:,}
+- **Missing Values**: {s['total_missing']:,} ({s['total_missing']/results['total_rows']*100:.1f}%)
+- **Invalid Format**: {s['total_invalid_format']:,} ({s['total_invalid_format']/results['total_rows']*100:.1f}%)
+- **Strict Valid (DD-MM-YYYY)**: {s['strict_valid_count']:,}
+- **Parsed via Fallback**: {s['parsed_loose_count']:,}
+- **Unparseable**: {s['unparseable_count']:,}
+- **After data_ent**: {s['after_data_ent_count']:,}
+
+## Format Validation
+
+### Expected Format
+- **Standard**: DD-MM-YYYY (e.g., 15-03-2023)
+- **Accepted Fallbacks**: YYYY-MM-DD, D-M-Y variations
+
+"""
+    
+    # Missing values section
+    if results['missing']:
+        content += f"\n## Missing Values\n\n**Count**: {len(results['missing']):,}\n\n"
+        content += "| Row | ID |\n|-----|----|\n"
+        for entry in results['missing'][:50]:
+            content += f"| {entry['row']} | {entry['ID']} |\n"
+        if len(results['missing']) > 50:
+            content += f"| ... | ... and {len(results['missing'])-50} more |\n"
+    
+    # Invalid format section
+    if results['invalid_format']:
+        content += f"\n## Invalid Format\n\n**Count**: {len(results['invalid_format']):,}\n\n"
+        content += "| Row | ID | data_queim |\n|-----|----|-----------|\n"
+        for entry in results['invalid_format'][:50]:
+            content += f"| {entry['row']} | {entry['ID']} | {entry['data_queim']} |\n"
+        if len(results['invalid_format']) > 50:
+            content += f"| ... | ... | ... and {len(results['invalid_format'])-50} more |\n"
+    
+    # Chronology violations section
+    if results['after_data_ent']:
+        content += f"\n## Chronology Violations (data_queim > data_ent)\n\n**Count**: {len(results['after_data_ent']):,}\n\n"
+        content += "| Row | ID | data_queim | data_ent |\n|-----|----|-----------|---------|\n"
+        for entry in results['after_data_ent'][:50]:
+            content += f"| {entry['row']} | {entry['ID']} | {entry['data_queim']} | {entry['data_ent']} |\n"
+        if len(results['after_data_ent']) > 50:
+            content += f"| ... | ... | ... | ... and {len(results['after_data_ent'])-50} more |\n"
+    
+    # Data quality assessment
+    content += "\n\n## Data Quality Assessment\n\n"
+    
+    quality_score = 0
+    total_checks = 4
+    
+    if s['total_missing'] == 0:
+        content += "✅ **No missing values detected**\n"
+        quality_score += 1
+    else:
+        content += f"❌ **{s['total_missing']:,} missing values need attention**\n"
+    
+    if s['total_invalid_format'] == 0:
+        content += "✅ **All dates follow DD-MM-YYYY format**\n"
+        quality_score += 1
+    else:
+        content += f"⚠️ **{s['total_invalid_format']:,} dates have format issues**\n"
+    
+    if s['unparseable_count'] == 0:
+        content += "✅ **All dates are parseable**\n"
+        quality_score += 1
+    else:
+        content += f"❌ **{s['unparseable_count']:,} dates are unparseable**\n"
+    
+    if s['after_data_ent_count'] == 0:
+        content += "✅ **All burn dates are chronologically valid (≤ admission date)**\n"
+        quality_score += 1
+    else:
+        content += f"❌ **{s['after_data_ent_count']:,} burn dates are after admission date**\n"
+    
+    content += f"\n**Overall Quality Score**: {quality_score}/{total_checks} ({quality_score/total_checks*100:.1f}%)\n\n"
+    
+    # Recommendations
+    content += "### Recommendations\n\n"
+    if s['total_missing'] > 0:
+        content += f"- Investigate {s['total_missing']:,} missing data_queim entries\n"
+    if s['total_invalid_format'] > 0:
+        content += f"- Standardize {s['total_invalid_format']:,} dates to DD-MM-YYYY format\n"
+    if s['unparseable_count'] > 0:
+        content += f"- Review {s['unparseable_count']:,} unparseable date entries for data entry errors\n"
+    if s['after_data_ent_count'] > 0:
+        content += f"- Verify {s['after_data_ent_count']:,} cases where burn date is after admission date\n"
+        content += "- Consider if these represent delayed diagnosis rather than burn occurrence\n"
     
     content += "\n---\n*Report generated by BD_doentes quality control system*"
     
@@ -3182,6 +3463,17 @@ def main():
     display_etiologia_details(etiologia_results)
     etiologia_report = save_etiologia_report(etiologia_results, csv_file)
     console.print(f"[cyan]📄 etiologia report:[/cyan] {etiologia_report}")
+
+    # -------------------------------------------------------
+    # data_queim analysis
+    # -------------------------------------------------------
+    console.print("\n" + "="*80)
+    console.print("[bold]🔥 Analyzing column: data_queim[/bold]")
+    data_queim_results = analyze_data_queim_column(df)
+    display_data_queim_overview(data_queim_results)
+    display_data_queim_details(data_queim_results)
+    data_queim_report = save_data_queim_report(data_queim_results, csv_file)
+    console.print(f"[cyan]📄 data_queim report:[/cyan] {data_queim_report}")
 
 if __name__ == "__main__":
     main()
